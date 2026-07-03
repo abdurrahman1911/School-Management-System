@@ -1813,7 +1813,7 @@ model.TermNumber == 2 ? "الفصل الدراسي الثاني" : "الفصل �
         public async Task<IActionResult> SubjectsManagement()
         {
             var subjects = await _ITManagerService.GetAllSubjectsAsync();
-            var user = _context.Users.FirstOrDefault(e=>e.ID==int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))).
+            var user = _context.Users.FirstOrDefault(e=>e.ID==int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             return View(subjects);
         }
 
