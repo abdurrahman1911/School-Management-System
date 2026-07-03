@@ -1,0 +1,164 @@
+﻿.page-container {
+    max-width: 900px;
+    margin: 30px auto;
+    direction: rtl;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* الهيدر العلوي */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+    .header-section h1 {
+        font-size: 22px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+/* بطاقة الفورم البيضاء */
+.form-card {
+    background: #fff;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+
+        .form-group label i {
+            margin-left: 8px;
+            color: #666;
+        }
+
+/* تقسيم الصفوف */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+/* الحقول */
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.text-danger {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+}
+
+input.input-validation-error,
+select.input-validation-error {
+    border: 1px solid #e74c3c !important;
+    background-color: #fdf2f2;
+    .form-control:focus {
+        border-color: #8cb4ff;
+        background-color: #fff;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(140, 180, 255, 0.15);
+    }
+}
+/* الأزرار */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn-save {
+    background-color: #8cb4ff;
+    color: white;
+}
+
+    .btn-save:hover {
+        background-color: #79a3f0;
+        transform: translateY(-1px);
+    }
+
+.btn-cancel {
+    background-color: #fff;
+    color: #777;
+    border: 1px solid #ddd;
+}
+
+.btn-back {
+    background-color: #fff;
+    color: #444;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.form-hint {
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
+    display: block;
+}
+
+/* الموبايل */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+
+
+.btn btn-save {
+    background-color: #00ff37;
+    color: white;
+}
+
+
+body .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}

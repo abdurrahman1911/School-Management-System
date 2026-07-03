@@ -1,0 +1,564 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model AssignmentDashbordViewModel
+@{
+    ViewData["Title"] = "إدارة الواجبات";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/Teacher/assignments.css" />
+
+    <style>
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #eef2f5;
+            border-radius: 15px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            line-height: 1.2;
+            order: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 0.95rem;
+            color: #718096;
+            margin: 5px 0 0 0;
+            font-weight: 500;
+            order: 2;
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #fff;
+        }
+
+        .stat-card.total .stat-icon {
+            background-color: #63b3ed;
+        }
+
+        .stat-card.ongoing .stat-icon {
+            background-color: #48bb78;
+        }
+
+        .stat-card.upcoming .stat-icon {
+            background-color: #f56565;
+        }
+
+        .stat-card.finished .stat-icon {
+            background-color: #a0aec0;
+        }
+
+        .no-exams-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 15px;
+            background-color: #f7fafc;
+            margin: 30px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .no-exams-icon {
+            font-size: 4.5rem;
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+
+        .no-exams-text {
+            font-size: 1.3rem;
+            color: #4a5568;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .no-exams-hint {
+            font-size: 0.95rem;
+            color: #718096;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+            width: 100%;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group-buttons {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            outline: none;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+            .filter-select:focus {
+                border-color: #3182ce;
+                background-color: #fff;
+                box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+            }
+
+        .filter-group-buttons .btn {
+            flex: 1;
+            padding: 11px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        #applyExamFilter {
+            background-color: #3182ce;
+            color: white;
+        }
+
+            #applyExamFilter:hover {
+                background-color: #2b6cb0;
+            }
+
+        #clearExamFilter {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0 !important;
+        }
+
+            #clearExamFilter:hover {
+                background-color: #e2e8f0;
+            }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents"> ملاحظات الطلاب </a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments" class="active">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="logout">تسجيل الخروج</a>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+
+    <div class="main-content" id="mainContent">
+        <div class="page active" id="assignments">
+            <div class="header">
+                <h1><i class="fas fa-tasks"></i> إدارة الواجبات</h1>
+                <div class="header-actions">
+                    <a asp-controller="Teacher" asp-action="AddAssignment" class="btn add-assignment-btn">
+                        <i class="fas fa-plus"></i> إضافة واجب جديد
+                    </a>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-top-row">
+                    <div class="filter-group">
+                        <label><i class="fas fa-graduation-cap"></i> المستوى:</label>
+                        <select class="filter-select" id="stageFilter">
+                            <option value="">جميع المستويات</option>
+                            @foreach (var item in Model.Stages)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-users"></i> الصف:</label>
+                        <select class="filter-select" id="levelFilter">
+                            <option value="">جميع الصفوف</option>
+                            @foreach (var item in Model.Levels)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-chalkboard-teacher"></i> الفصل:</label>
+                        <select class="filter-select" id="classFilter">
+                            <option value="">جميع الفصول</option>
+                            @foreach (var item in Model.Classes)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-book"></i> المادة:</label>
+                        <select class="filter-select" id="subjectFilter">
+                            <option value="">جميع المواد</option>
+                            @foreach (var item in Model.Subjects)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-bottom-row">
+                    <div class="filter-group status-container">
+                        <label><i class="fas fa-info-circle"></i> الحالة:</label>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">جميع الحالات</option>
+                            <option value="جاري">جاري</option>
+                            <option value="منتهي">منتهي</option>
+                            <option value="لم يبدأ بعد">لم يبدأ بعد</option>
+                        </select>
+                    </div>
+
+                    <div class="buttons-container">
+                        <button type="button" id="btnApplyFilter" class="btn-filter-apply">
+                            تطبيق الفلتر <i class="fas fa-filter"></i>
+                        </button>
+                        <button type="button" id="btnReset" class="btn-filter-reset">
+                            إعادة تعيين <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="attendance-stats">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: var(--primary-color);"><i class="fas fa-tasks"></i></div>
+                    <div class="stat-info"><h3 id="totalCountDisplay">@Model.totalAssignments</h3><p>إجمالي الواجبات</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon present"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info"><h3 id="completedCountDisplay">@Model.completedAssignments</h3><p>الواجبات المنتهية</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon absent"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="stat-info"><h3 id="lateCountDisplay">@Model.lateAssignments</h3><p>الواجبات القادمة/الجاري</p></div>
+                </div>
+            </div>
+
+            @if (Model.Assignments != null && Model.Assignments.Any())
+            {
+                <div class="table-container" id="tableContainer">
+                    <table class="data-table" id="assignmentsTable">
+                        <thead>
+                            <tr>
+                                <th>اسم الواجب</th>
+                                <th>المادة</th>
+                                <th>تاريخ البدء</th>
+                                <th>تاريخ الاستحقاق</th>
+                                <th>الملف</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Assignments)
+                            {
+                                <tr class="assignment-row"
+                                    id="assignment-row-@item.Id"
+                                    data-stage="@item.stageId"
+                                    data-level="@item.levelId"
+                                    data-class="@item.classId"
+                                    data-subject="@item.subjectId"
+                                    data-status="@item.Status">
+                                    <td>@item.Name</td>
+                                    <td>@item.Subject</td>
+                                    <td>@item.StartDate.ToString("yyyy/MM/dd")</td>
+                                    <td>@item.EndDate.ToString("yyyy/MM/dd")</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.FileName))
+                                        {
+                                            <a href="@item.FileName" target="_blank" class="btn btn-small btn-download" style="display: inline-flex !important; justify-content: center; align-items: center; width: 35px; height: 35px; border-radius: 6px; background-color: #3182ce; color: #fff;">
+                                                <i class="fas fa-file-download"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span>لا يوجد</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="status-badge @(item.Status == "منتهي" ? "status-expired" : "status-upcoming")">@item.Status</span>
+                                    </td>
+                                    <td style="vertical-align:middle; text-align:center; flex-direction: row !important; justify-content: center !important; align-items: center !important; gap: 6px !important; white-space: nowrap !important; min-width: 140px !important;">
+                                        <a asp-action="EditAssignment" asp-route-id="@item.Id" class="btn btn-small btn-edit" title="تعديل الواجب"
+                                           style="display: inline-flex !important; justify-content: center; align-items: center; width: 35px; height: 35px; border-radius: 6px; background-color: #4da3ff; color: white; margin: 0 !important; font-size: 14px; text-decoration: none;">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        <a asp-action="AssignmentSubmissions" asp-route-id="@item.Id" class="btn btn-small btn-info" title="عرض التسليمات"
+                                           style="display: inline-flex !important; justify-content: center; align-items: center; width: 35px; height: 35px; border-radius: 6px; background-color: #2b6cb0; color: white; margin: 0 !important; font-size: 14px; text-decoration: none;">
+                                            <i class="fas fa-users-viewfinder"></i>
+                                        </a>
+
+                                        <button class="btn btn-small btn-danger" onclick="confirmDelete(@item.Id)" title="حذف الواجب"
+                                                style="display: inline-flex !important; justify-content: center; align-items: center; width: 35px; height: 35px; border-radius: 6px; background-color: #e53e3e; color: white; border: none; margin: 0 !important; font-size: 14px; cursor: pointer;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noMatchingDataBox" style="display: none;">
+                    <div class="no-assignments-box" style="border: none; background: transparent;">
+                        <i class="fas fa-search no-assignments-icon" style="font-size: 5rem; color: #cbd5e0;"></i>
+                        <p class="no-assignments-text" style="font-size: 1.5rem; color: #718096; font-weight: normal;">لا توجد نتائج مطابقة للبحث</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="no-assignments-box">
+                    <i class="fas fa-file-signature no-assignments-icon"></i>
+                    <p class="no-assignments-text">لا توجد واجبات مضافة حالياً</p>
+                    <p class="no-assignments-hint">قم بالضغط على زر "إضافة واجب جديد" بالأعلى للبدء في إنشاء واجبات للطلاب.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    @Html.AntiForgeryToken()
+
+    <script src="~/js/Teacher/assignments.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            function filterAssignments() {
+                const stageVal = document.getElementById('stageFilter').value;  // المستوى
+                const levelVal = document.getElementById('levelFilter').value;  // الصف
+                const classVal = document.getElementById('classFilter').value;  // الفصل
+                const subjectVal = document.getElementById('subjectFilter').value; // المادة
+                const statusVal = document.getElementById('statusFilter').value; // الحالة
+
+                const rows = document.querySelectorAll('.assignment-row');
+                const tableContainer = document.getElementById('tableContainer');
+                const noMatchBox = document.getElementById('noMatchingDataBox');
+
+                let visibleTotal = 0;
+                let visibleCompleted = 0;
+                let visibleLate = 0;
+
+                rows.forEach(row => {
+                    // الآن السكريبت يقرأ البيانات الحقيقية بنجاح
+                    const matchStage = !stageVal || row.getAttribute('data-stage') === stageVal;
+                    const matchLevel = !levelVal || row.getAttribute('data-level') === levelVal;
+                    const matchClass = !classVal || row.getAttribute('data-class') === classVal;
+                    const matchSubject = !subjectVal || row.getAttribute('data-subject') === subjectVal;
+                    const matchStatus = !statusVal || row.getAttribute('data-status') === statusVal;
+
+                    if (matchStage && matchLevel && matchClass && matchSubject && matchStatus) {
+                        row.style.display = "";
+                        visibleTotal++;
+
+                        const currentStatus = row.getAttribute('data-status');
+                        if (currentStatus === "منتهي") {
+                            visibleCompleted++;
+                        } else {
+                            visibleLate++;
+                        }
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                const totalDisplay = document.getElementById('totalCountDisplay');
+                const completedDisplay = document.getElementById('completedCountDisplay');
+                const lateDisplay = document.getElementById('lateCountDisplay');
+
+                if(totalDisplay) totalDisplay.textContent = visibleTotal;
+                if(completedDisplay) completedDisplay.textContent = visibleCompleted;
+                if(lateDisplay) lateDisplay.textContent = visibleLate;
+
+                if (rows.length > 0) {
+                    if (visibleTotal === 0) {
+                        if(tableContainer) tableContainer.style.display = "none";
+                        if(noMatchBox) noMatchBox.style.display = "";
+                    } else {
+                        if(tableContainer) tableContainer.style.display = "";
+                        if(noMatchBox) noMatchBox.style.display = "none";
+                    }
+                }
+            }
+
+            const btnApplyFilter = document.getElementById('btnApplyFilter');
+            if (btnApplyFilter) {
+                btnApplyFilter.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    filterAssignments();
+                });
+            }
+
+            const btnReset = document.getElementById('btnReset');
+            if (btnReset) {
+                btnReset.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const filterSelects = document.querySelectorAll('.filter-select');
+                    filterSelects.forEach(select => select.value = "");
+                    filterAssignments();
+                });
+            }
+        });
+
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'هل أنت متأكد من الحذف؟',
+                text: "تنبيه: سيؤدي هذا إلى حذف الواجب وجميع إجابات الطلاب المحلولة المرتبطة به نهائيًا!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، احذفه!',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                    fetch(`/Teacher/DeleteAssignment/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': token
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'تم الحذف!',
+                                text: data.message || "تم حذف الواجب بنجاح.",
+                                icon: 'success',
+                                confirmButtonText: 'موافق',
+                                confirmButtonColor: '#3085d6'
+                            });
+
+                            const targetRow = document.getElementById(`assignment-row-${id}`);
+                            if (targetRow) {
+                                targetRow.style.opacity = '0';
+                                targetRow.style.transform = 'scale(0.95)';
+
+                                setTimeout(() => {
+                                    targetRow.remove();
+                                    const remainingRows = document.querySelectorAll('.assignment-row');
+                                    if (remainingRows.length === 0) {
+                                        window.location.reload();
+                                    }
+                                }, 300);
+                            }
+                        } else {
+                            Swal.fire({
+                                title: 'فشل الحذف',
+                                text: data.message || "حدث خطأ أثناء محاولة الحذف.",
+                                icon: 'error',
+                                confirmButtonText: 'موافق',
+                                confirmButtonColor: '#3085d6'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'خطأ في النظام',
+                            text: 'حدثت مشكلة أثناء الاتصال بالسيرفر، يرجى المحاولة لاحقاً.',
+                            icon: 'error',
+                            confirmButtonText: 'موافق',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

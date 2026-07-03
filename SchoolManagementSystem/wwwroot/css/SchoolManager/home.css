@@ -1,0 +1,161 @@
+﻿
+/* المحتوى */
+.content {
+    flex: 1;
+    background-color: #eef3f6;
+    padding: 30px;
+    height: 100vh;
+    overflow-y: auto;
+    margin-right: 230px;
+}
+
+/* كروت الإحصائيات */
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: #fff;
+    width: 180px;
+    padding: 20px 0;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.number {
+    font-size: 28px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.label {
+    color: #555;
+}
+
+/* الجراف */
+.chart-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.chart {
+    height: 180px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    padding: 15px;
+    border-right: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+}
+
+/* شكل الأعمدة الجديد */
+.bar {
+    width: 25px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(180deg, #3498db, #1abc9c);
+    height: 0;
+    transition: height 1s ease-in-out, background 0.5s ease;
+}
+
+/* ======== Responsive ======== */
+@media screen and (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-right: 200px;
+        padding: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+    }
+
+    .menu {
+        flex-direction: row;
+        gap: 10px;
+        overflow-x: auto;
+    }
+
+    .logout-container {
+        margin-left: auto;
+        margin-top: 0;
+    }
+
+    .content {
+        margin: 0;
+        padding: 15px;
+        height: auto;
+    }
+
+    .chart {
+        gap: 10px;
+        height: 140px;
+    }
+
+    .bar {
+        width: 20px;
+    }
+}
+
+
+.chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 20px;
+
+    height: 180px;
+    padding: 10px;
+
+    border-bottom: 1px solid #ccc;
+}
+
+.chart-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+
+    height: 100%;
+}
+
+.bar {
+    width: 70px;
+    min-height: 20px;
+
+    border-radius: 10px 10px 0 0;
+
+    transition: 0.5s;
+}
+
+.bar-label {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 14px;
+}

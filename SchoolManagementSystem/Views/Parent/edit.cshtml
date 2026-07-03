@@ -1,0 +1,152 @@
+@using SchoolManagementSystem.ViewModel
+@model SettingViewModel
+@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>تعديل البيانات - بوابة ولي الأمر</title>
+	<meta name="description" content="تعديل البيانات الشخصية - بوابة ولي الأمر الإلكترونية">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+</head>
+
+<body style="background-color:  #dce6ec;">
+	<div class="container">
+		<!-- Sidebar Navigation -->
+		<aside class="sidebar">
+			<div class="logo">
+				<div class="user-info">
+					<div class="user-avatar">@(ViewBag.ParentFirstLetter ?? "م")</div>
+					<span>@(ViewBag.ParentFullName ?? "مستخدم")</span>
+				</div>
+			</div>
+			<ul class="nav-links">
+				<li><a asp-controller="Parent" asp-action="Index">الصفحة الرئيسية</a></li>
+				<li><a asp-controller="Parent" asp-action="Performance">أداء الطلاب</a></li>
+				<li><a asp-controller="Parent" asp-action="Schedule">الجدول الدراسي</a></li>
+				<li><a asp-controller="Parent" asp-action="Grades">الدرجات</a></li>
+				<li><a asp-controller="Parent" asp-action="Attendance">الحضور</a></li>
+				<li><a asp-controller="Parent" asp-action="Assignments">الواجبات</a></li>
+				<li><a asp-controller="Parent" asp-action="Edit" class="active">تعديل البيانات</a></li>
+			</ul>
+			<a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="main-content edit-page-bg">
+			<!-- Edit Section -->
+			<section class="edit-section">
+				<!-- Password Change Card -->
+
+				<div class="edit-card">
+
+					<h2 class="edit-card-title">تعديل كلمة المرور</h2>
+
+					<div class="password-form show">
+						<form method="post" asp-controller="Parent" asp-action="Edit" class="w-50 mx-auto mt-4">
+							<div class="form-group">
+								<label class="form-label">كلمة المرور الحالية</label>
+								<div class="input-wrapper">
+									<input asp-for="CurrentPassword" type="password" class="form-input" id="currentPassword" placeholder="ادخل كلمة المرور الحالية">
+									<span class="toggle" onclick="togglePassword('currentPassword', this)">
+										<i class="fa-solid fa-eye-slash"></i>
+
+									</span>
+									<span asp-validation-for="CurrentPassword" class="text-danger"></span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="form-label">كلمة المرور الجديدة</label>
+								<div class="input-wrapper">
+									<input asp-for="NewPassword" type="password" class="form-input" id="newPassword" placeholder="ادخل كلمة المرور الجديدة">
+									<span class="toggle" onclick="togglePassword('newPassword', this)">
+										<i class="fa-solid fa-eye-slash"></i>
+									</span>
+									<span asp-validation-for="NewPassword" class="text-danger"></span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="form-label">تأكيد كلمة المرور</label>
+								<div class="input-wrapper">
+									<input asp-for="ConfirmPassword" type="password" class="form-input" id="confirmPassword" placeholder="اعد تأكيد كلمة المرور الجديدة">
+									<span class="toggle" onclick="togglePassword('confirmPassword', this)">
+										<i class="fa-solid fa-eye-slash"></i>
+									</span>
+									<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+								</div>
+							</div>
+
+							<div class="save-btn-wrapper">
+								<button type="submit" class="save-btn" id="savePassword" value="Update">حفظ البيانات</button>
+							</div>
+						</form>
+					</div>
+
+
+				</div>
+
+			</section>
+		</main>
+	</div>
+	<script src="~/js/Teacher/edit-data.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+	@* <script src="~/js/Parent/parent_script.js"></script>
+	<script>
+		// Toggle password visibility
+		const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+		togglePasswordBtns.forEach(btn => {
+			btn.addEventListener('click', function () {
+				const targetId = this.getAttribute('data-target');
+				const input = document.getElementById(targetId);
+				if (input.type === 'password') {
+					input.type = 'text';
+					this.classList.add('active');
+				} else {
+					input.type = 'password';
+					this.classList.remove('active');
+				}
+			});
+		});
+
+		// Save password functionality
+		document.getElementById('savePassword').addEventListener('click', function () {
+			const currentPassword = document.getElementById('currentPassword').value;
+			const newPassword = document.getElementById('newPassword').value;
+			const confirmPassword = document.getElementById('confirmPassword').value;
+
+			if (!currentPassword || !newPassword || !confirmPassword) {
+				alert('الرجاء ملء جميع الحقول');
+				return;
+			}
+
+			if (newPassword !== confirmPassword) {
+				alert('كلمة المرور الجديدة غير متطابقة');
+				return;
+			}
+
+			if (newPassword.length < 6) {
+				alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+				return;
+			}
+
+			alert('تم تغيير كلمة المرور بنجاح');
+			document.getElementById('currentPassword').value = '';
+			document.getElementById('newPassword').value = '';
+			document.getElementById('confirmPassword').value = '';
+		});
+	</script> *@
+</body>
+
+</html>

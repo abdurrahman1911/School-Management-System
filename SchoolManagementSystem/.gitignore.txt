@@ -1,0 +1,23 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build Folders
+bin/
+obj/
+
+# NuGet Packages
+*.nupkg
+packages/
+
+# Logs
+*.log
+
+# Others
+*.db
+*.DS_Store
+appsettings.Development.json
+appsettings.json

@@ -1,0 +1,160 @@
+﻿         @{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إضافة مدير</title>
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+</head>
+
+<body>
+
+<div class="page-container">
+
+<form asp-action="AddManager" method="post">
+
+    <h1>إضافة مدير جديد</h1>
+
+    <hr>
+
+    <!-- ===================== البحث ===================== -->
+    <h2>البحث عن المدير</h2>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+
+        <select id="managerSearchType">
+            <option value="">-- اختر نوع البحث --</option>
+            <option value="phone">رقم الهاتف</option>
+            <option value="nationalid">رقم الهوية</option>
+        </select>
+
+        <input type="text"
+               id="managerSearch"
+               placeholder="ابحث هنا">
+
+        <button type="button" onclick="searchManager()">
+            بحث
+        </button>
+
+        <a asp-action="AddUser" class="btn-add">
+            إضافة
+        </a>
+
+    </div>
+
+    <br><br>
+
+    <!-- ===================== RESULT ===================== -->
+    <div id="managerResult"
+         style="display:none; border:1px solid #ccc; padding:15px; width:350px;">
+
+        <img src="https://via.placeholder.com/100" width="100">
+
+        <p><strong>الاسم:</strong> <span id="managerName"></span></p>
+        <p><strong>رقم الهاتف:</strong> <span id="managerPhone"></span></p>
+                <p><strong>البريد الإلكتروني:</strong> <span id="managerEmail"></span></p>
+
+        <p><strong>العنوان:</strong> <span id="managerHouse"></span></p>
+
+    </div>
+
+    <hr>
+
+    <!-- ===================== FORM ===================== -->
+
+   <div class="form-group">
+        <label>المرحلة</label>
+        <select name="Stage" class="form-control">
+                        <option value="">-- اخترالمرحله --</option>
+
+            <option>المرحلة الابتدائية</option>
+            <option>المرحلة المتوسطة</option>
+            <option>المرحلة الثانوية</option>
+        </select>
+    </div>
+
+    <div class="form-actions">
+
+        <a asp-action="ManagersManagement">
+            إلغاء
+        </a>
+
+        <button type="submit">
+            حفظ
+        </button>
+
+    </div>
+
+    <!-- ===================== FAKE DATA ===================== -->
+    <div id="managersData" style="display:none;">
+       
+
+        <div class="manager"
+             data-nationalid="2001"
+             data-phone="01011111111"
+             data-name="أحمد مدير"
+              data-email="ahmed@gmail.com"
+             data-house="بيت 1">
+        </div>
+
+        <div class="manager"
+             data-nationalid="2002"
+             data-phone="01122222222"
+             data-name="محمد مدير"
+             data-email="mohamed@gmail.com"
+             data-house="بيت 2">
+        </div>
+
+    </div>
+
+</form>
+
+</div>
+
+<script>
+
+function searchManager() {
+
+    const value = document.getElementById("managerSearch").value.trim();
+    const type  = document.getElementById("managerSearchType").value;
+
+    if (!type) {
+        alert("من فضلك اختر نوع البحث");
+        return;
+    }
+
+    const managers = document.querySelectorAll("#managersData .manager");
+
+    let found = null;
+
+    managers.forEach(m => {
+        if (m.dataset[type] === value) {
+            found = m;
+        }
+    });
+
+    if (found) {
+
+         document.getElementById("managerName").textContent = found.dataset.name;
+        document.getElementById("managerPhone").textContent = found.dataset.phone;
+                document.getElementById("managerEmail").textContent = found.dataset.email;
+        document.getElementById("managerHouse").textContent = found.dataset.house;
+
+        document.getElementById("managerResult").style.display = "block";
+    }
+    else {
+        document.getElementById("managerResult").style.display = "none";
+        alert(" هذا المدير غير موجود يرجى الضغط على زر الإضافة");
+    }
+}
+
+</script>
+
+</body>
+</html>

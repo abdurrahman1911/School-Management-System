@@ -1,0 +1,19 @@
+﻿@model string
+
+@if (!string.IsNullOrEmpty(Model))
+{
+    var version = DateTime.Now.Ticks;
+    var finalUrl = $"{(Model.StartsWith("/") ? Model : "/" + Model)}?v={version}";
+
+    <div class="current-table-display text-center">
+        <h3 style="margin-bottom:15px; color:#2c3e50;">جدول المعلم الحالي:</h3>
+        <img src="@finalUrl" style="width:100%; max-width:600px; border-radius:8px; border:2px solid #ddd;" />
+
+        <div style="margin-top: 20px;">
+            <button type="button" onclick="showTeacherUploadSection()"
+                    style="background-color: #3498db; color: white; padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                تعديل جدول المعلم
+            </button>
+        </div>
+    </div>
+}

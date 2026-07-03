@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewData["Title"] = "إضافة درجة";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/Teacher/addandeditgrades.css" />
+
+    <title>إضافة درجة</title>
+
+  
+</head>
+<body>
+
+<div class="form-container">
+
+    <h2>إضافة درجة جديدة</h2>
+
+    <form>
+
+        <div class="form-group">
+            <label for="student">اسم الطالب</label>
+
+            <select id="student" class="form-control">
+                <option selected disabled>اختر الطالب</option>
+                <option>أحمد محمد</option>
+                <option>محمد خالد</option>
+                <option>سارة علي</option>
+                <option>فاطمة أحمد</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="subject">المادة</label>
+
+            <select id="subject" class="form-control">
+                <option selected disabled>اختر المادة</option>
+                <option>الرياضيات</option>
+                <option>اللغة العربية</option>
+                <option>اللغة الإنجليزية</option>
+                <option>العلوم</option>
+                <option>الدراسات الاجتماعية</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="grade">الدرجة</label>
+
+            <input type="number"
+                   id="grade"
+                   class="form-control"
+                   placeholder="أدخل الدرجة"
+                   min="0"
+                   max="100" />
+        </div>
+
+        <div class="form-group">
+            <label for="date">تاريخ الدرجة</label>
+
+            <input type="date"
+                   id="date"
+                   class="form-control" />
+        </div>
+
+            <div class="form-actions">
+
+                <button type="submit" class="btn">
+                    حفظ
+                </button>
+
+                <a asp-controller="Teacher"
+                   asp-action="Grades"
+                   class="btn btn-cancel">
+                    إلغاء
+                </a>
+
+            </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+﻿@using SchoolManagementSystem.ViewModel
+@model SettingViewModel
+@{
+    ViewData["Title"] = "تعديل البيانات";
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="~/css/Supervisor/editProfile.css" />
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+
+    <style>
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+        .password-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+            .password-field .toggle {
+                position: absolute;
+                left: 10px; 
+                cursor: pointer;
+                color: #777;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <main class="content">
+            <div class="box">
+
+                <h3 class="title">تعديل كلمة المرور</h3>
+
+                <form asp-action="EditProfile" asp-controller="Supervisor" method="post">
+
+                    <div class="form-group">
+                        <label>كلمة المرور الحالية</label>
+                        <div class="password-field">
+                            <input asp-for="CurrentPassword" type="password" id="currentPassword" placeholder="ادخل كلمة المرور الحالية">
+                            <span class="toggle" onclick="togglePassword('currentPassword', this)">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور الجديدة</label>
+                        <div class="password-field">
+                            <input asp-for="NewPassword" type="password" id="newPassword" placeholder="ادخل كلمة المرور الجديدة">
+                            <span class="toggle" onclick="togglePassword('newPassword', this)">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <div class="password-field">
+                            <input asp-for="ConfirmPassword" type="password" id="confirmPassword" placeholder="اعد كتابة كلمة المرور الجديدة">
+                            <span class="toggle" onclick="togglePassword('confirmPassword', this)">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="save-btn">حفظ التعديلات</button>
+                </form>
+
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="admin">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+
+                    </div>
+
+                    <h4>
+                        <a asp-controller="Supervisor" asp-action="SupervisorProfile">
+                            @(Model.NavigationInfo?.FullName ?? "مشرف")
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+                <a asp-controller="Supervisor" asp-action="StudentPage">
+                    الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersPage">
+                    المعلمون
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable">
+                    جدول الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable">
+                    جدول المعلمين
+                </a>
+              
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence">
+                    غياب المعلمين
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence">
+                    غياب الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="Notes">
+                    الملاحظات
+                </a>
+                <a asp-controller="Supervisor" asp-action="EditProfile" class="active">
+                    تعديل البيانات
+                </a>
+            </nav>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        function togglePassword(inputId, el) {
+            const input = document.getElementById(inputId);
+            const icon = el.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        }
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

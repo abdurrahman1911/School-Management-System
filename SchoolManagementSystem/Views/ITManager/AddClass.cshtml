@@ -1,0 +1,142 @@
+@using SchoolManagementSystem.ViewModel.ITManager;
+@model AddEditClassViewModel;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إضافة فصل جديد</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+    <style>
+        .text-danger {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <form asp-controller="ITManager"
+              asp-action="AddClass"
+              method="post">
+            <h1>إضافة فصل جديد</h1>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label>المرحلة</label>
+                <select name="StageID" id="stageSelect" class="form-control" required>
+                    <option value="">-- اختر المرحلة --</option>
+                    @if (Model.Stages != null)
+                    {
+                        foreach (var stage in Model.Stages)
+                        {
+                            <option value="@stage.Stage.ID">@stage.Stage.Name</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="StageID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label>الصف</label>
+                <select name="LevelID" id="levelSelect" class="form-control" required disabled>
+                    <option value="">-- اختر الصف --</option>
+                </select>
+                <span asp-validation-for="LevelID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label>اسم الفصل</label>
+                <input type="text"
+                       name="ClassName"
+                       class="form-control"
+                       placeholder="مثال: A أو ب"
+                       value="@Model.ClassName"
+                       required />
+                <span asp-validation-for="ClassName" class="text-danger"></span>
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-controller="ITManager"
+                   asp-action="ClassesManagement">
+                    إلغاء
+                </a>
+
+                <button type="submit">
+                    حفظ
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var schoolData = @Html.Raw(Json.Serialize(Model.Stages?.Select(s => new
+            {
+                stageId = s.Stage != null ? s.Stage.ID : 0,
+                levels = s.Levels != null ? s.Levels.Select(l => new
+                {
+                    levelId = l.Level != null ? l.Level.ID : 0,
+                    levelName = l.Level != null ? l.Level.Name : ""
+                }).ToList() : null
+            }))) || [];
+
+            var $stageSelect = $('#stageSelect');
+            var $levelSelect = $('#levelSelect');
+
+            function populateLevels(stageId) {
+                $levelSelect.empty().append('<option value="">-- اختر الصف --</option>').prop('disabled', true);
+
+                if (!stageId || !schoolData) return;
+
+                try {
+                    var dataArray = Array.isArray(schoolData) ? schoolData : (schoolData.$values || []);
+                    var selectedStage = dataArray.find(s => s.stageId == stageId || s.StageId == stageId);
+                    
+                    if (selectedStage) {
+                        var stageLevels = selectedStage.levels || selectedStage.Levels || [];
+                        if (!Array.isArray(stageLevels)) {
+                            stageLevels = stageLevels.$values || [];
+                        }
+
+                        if (stageLevels.length > 0) {
+                            $.each(stageLevels, function (i, lvl) {
+                                var lvlId = lvl.levelId || lvl.LevelId;
+                                var lvlName = lvl.levelName || lvl.LevelName;
+                                $levelSelect.append('<option value="' + lvlId + '">' + lvlName + '</option>');
+                            });
+                            $levelSelect.prop('disabled', false);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error parsing schoolData", e);
+                }
+            }
+
+            $stageSelect.change(function () {
+                populateLevels($(this).val());
+            });
+        });
+    </script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+</body>
+</html>

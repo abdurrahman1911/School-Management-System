@@ -1,0 +1,751 @@
+﻿@model SchoolManagementSystem.ViewModel.ITManager.ITStudentManagementViewModel
+
+@{
+
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <title>إدارة الطلاب</title>
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+    <link rel="stylesheet" href="~/css/ITManager/studentmanagment.css" />
+
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+    <style>
+
+            /* إضافة تنسيق بسيط لقوائم الفلترة ليناسب التصميم */
+
+            .filters-group {
+                display: flex;
+                gap: 10px;
+                margin-right: 15px;
+            }
+
+
+
+            .filter-select {
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                outline: none;
+            }
+
+
+
+          
+
+            .user-avatar {
+                width: 90px;
+                height: 90px;
+                overflow: hidden; /* important */
+
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+
+
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+
+
+    <button class="menu-toggle" id="menuToggle">
+
+        ☰
+
+    </button>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="profile">
+
+                <div class="user-info">
+
+                    <div class="user-avatar">
+
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+
+                        {
+
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+
+                        }
+
+                        else
+
+                        {
+
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+
+                        }
+
+                    </div>
+
+                    <h4> <span>@Model.NavigationInfo.FullName</span></h4>
+
+                </div>
+
+            </div>
+
+
+
+            <ul class="menu">
+
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+
+                <li class="active"><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+
+            </ul>
+
+
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+
+                تسجيل الخروج
+
+            </a>
+
+        </aside>
+
+
+
+        <main class="content">
+
+            <div class="student-management-container">
+                @if (TempData["SuccessMessage"] != null)
+
+                {
+
+                    <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #155724; background-color: #d4edda; border-color: #c3e6cb;">
+
+                        @TempData["SuccessMessage"]
+
+                    </div>
+
+                }
+
+
+
+                @if (TempData["ErrorMessage"] != null)
+
+                {
+
+                    <div class="alert alert-danger" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb;">
+
+                        @TempData["ErrorMessage"]
+
+                    </div>
+
+                }
+                <h1 class="page-title">إدارة الطلاب</h1>
+
+
+
+             
+
+
+
+                <div class="actions-bar">
+
+                    <a asp-controller="ITManager" asp-action="AddNewStudent" class="btn-add">
+
+                        <i class="fas fa-plus"></i> إضافة طالب جديد
+
+                    </a>
+
+
+
+                    <div class="filters-group">
+
+                        <select id="stageFilter" class="filter-select">
+
+                            <option value="">كل المراحل</option>
+
+                            @if (Model.Stages != null)
+
+                            {
+
+                                foreach (var stageObj in Model.Stages)
+
+                                {
+
+                                    <option value="@stageObj.Stage.ID">@stageObj.Stage.Name</option>
+
+                                }
+
+                            }
+
+                        </select>
+
+
+
+                        <select id="levelFilter" class="filter-select">
+
+                            <option value="">كل الصفوف</option>
+
+                        </select>
+
+
+
+                        <select id="classFilter" class="filter-select">
+
+                            <option value="">كل الفصول</option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="search-container">
+
+                        <select id="searchType" class="search-type">
+
+                            <option value="">-- اختر نوع البحث --</option>
+
+
+
+                            <option value="phone">رقم الهاتف</option>
+
+                            <option value="nationalid">رقم الهوية</option>
+
+                        </select>
+
+
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search search-icon"></i>
+
+                            <input type="text" class="search-input" placeholder="ابحث..." id="searchInput">
+
+                            <button class="search-clear" id="clearSearch" style="display:none; background:none; border:none; cursor:pointer;">
+
+                                <i class="fas fa-times"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="table-container">
+
+                    <div class="table-wrapper">
+
+
+
+                        <table class="students-table" id="studentsTable">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>اسم الطالب</th>
+
+                                    <th>ولي الامر</th>
+
+                                    <th>المرحلة</th>
+
+                                    <th>الصف</th>
+
+                                    <th>الفصل</th>
+
+                                    <th>تاريخ الانضمام</th>
+
+                                    <th>الإجراءات</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @if (Model.Students != null && Model.Students.Any())
+
+                                {
+
+                                    foreach (var student in Model.Students)
+
+                                    {
+
+                                        // إضافة Data Attributes لتسهيل عملية الفلترة بالـ JavaScript
+
+                                        <tr data-nationalid="@student.SSN"
+                                            data-phone="@student.PhoneNumber"
+                                            data-stageid="@student.StageId"
+                                            data-levelid="@student.LevelId"
+                                            data-classid="@student.ClassID">
+
+
+
+                                            <td>@student.StudentName</td>
+
+                                            <td>@student.ParentName</td>
+
+                                            <td>@(student.StageName ?? "غير مقيد في مرحلة")</td>
+
+                                            <td>@(student.LevelName ?? "غير مقيد في مستوي")</td>
+
+                                            <td>@(student.ClassName ?? "غير مقيد في فصل")</td>
+
+                                            <td>@student.JoinDate.ToString("yyyy-MM-dd")</td>
+
+                                            <td class="actions-cell">
+
+                                                <a asp-controller="ITManager" asp-action="EditStudent" asp-route-SSN="@student.SSN" class="action-edit">
+
+                                                    <i class="fas fa-edit"></i> تعديل
+
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+
+                                    }
+
+                                }
+
+                                else
+
+                                {
+
+                                    <tr>
+
+                                        <td colspan="7" style="text-align: center;">لا يوجد طلاب حالياً.</td>
+
+                                    </tr>
+
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <script>
+
+            const hierarchyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Stages?.Select(s => new
+
+                {
+
+                            stageId = s.Stage.ID,
+
+                                            levels = s.Levels?.Select(l => new
+
+                                            {
+
+                                                            levelId = l.Level.ID,
+
+                                                            levelName = l.Level.Name,
+
+                                                            classes = l.Classes?.Select(c => new
+
+                                                            {
+
+                                                                            classId = c.ID,
+
+                                                                            className = c.Name
+
+                                                            })
+
+                                            })
+
+            })));
+
+    </script>
+
+
+
+    <script>
+
+            // المتغيرات الخاصة بعناصر البحث والفلترة
+
+            const searchInput = document.getElementById('searchInput');
+
+            const searchTypeSelect = document.getElementById('searchType');
+
+            const clearSearchBtn = document.getElementById('clearSearch');
+
+            const stageFilter = document.getElementById('stageFilter');
+
+            const levelFilter = document.getElementById('levelFilter');
+
+            const classFilter = document.getElementById('classFilter');
+
+
+
+            // 1. منطق الفلاتر المتسلسلة (Cascading Dropdowns)
+
+            stageFilter.addEventListener('change', function () {
+
+                // إعادة تعيين القوائم التابعة
+
+                levelFilter.innerHTML = '<option value="">كل الصفوف</option>';
+
+                classFilter.innerHTML = '<option value="">كل الفصول</option>';
+
+
+
+                const selectedStageId = this.value;
+
+
+
+                if (selectedStageId && hierarchyData) {
+
+                    const stageObj = hierarchyData.find(s => s.stageId == selectedStageId);
+
+                    if (stageObj && stageObj.levels) {
+
+                        stageObj.levels.forEach(level => {
+
+                            levelFilter.innerHTML += `<option value="${level.levelId}">${level.levelName}</option>`;
+
+                        });
+
+                    }
+
+                }
+
+                filterTable(); // تحديث الجدول
+
+            });
+
+
+
+            levelFilter.addEventListener('change', function () {
+
+                // إعادة تعيين الفصول
+
+                classFilter.innerHTML = '<option value="">كل الفصول</option>';
+
+
+
+                const selectedStageId = stageFilter.value;
+
+                const selectedLevelId = this.value;
+
+
+
+                if (selectedStageId && selectedLevelId && hierarchyData) {
+
+                    const stageObj = hierarchyData.find(s => s.stageId == selectedStageId);
+
+                    const levelObj = stageObj?.levels?.find(l => l.levelId == selectedLevelId);
+
+
+
+                    if (levelObj && levelObj.classes) {
+
+                        levelObj.classes.forEach(cls => {
+
+                            classFilter.innerHTML += `<option value="${cls.classId}">${cls.className}</option>`;
+
+                        });
+
+                    }
+
+                }
+
+                filterTable(); // تحديث الجدول
+
+            });
+
+
+
+            classFilter.addEventListener('change', filterTable);
+
+            searchTypeSelect.addEventListener('change', filterTable);
+
+            searchInput.addEventListener('keyup', filterTable);
+
+
+
+            clearSearchBtn.addEventListener('click', function () {
+
+                searchInput.value = '';
+
+                filterTable();
+
+                searchInput.focus();
+
+            });
+
+
+
+            // 2. منطق تصفية الجدول الشامل
+
+            function filterTable() {
+
+                const searchValue = searchInput.value.toLowerCase().trim();
+
+                const searchType = searchTypeSelect.value;
+
+
+
+                const selectedStage = stageFilter.value;
+
+                const selectedLevel = levelFilter.value;
+
+                const selectedClass = classFilter.value;
+
+
+
+                const rows = document.querySelectorAll('#studentsTable tbody tr');
+
+
+
+                rows.forEach(row => {
+
+                    // تخطي صف "لا يوجد طلاب" إذا كان موجوداً
+
+                    if(!row.hasAttribute('data-nationalid')) return;
+
+
+
+                    const phone = row.dataset.phone?.toLowerCase() || '';
+
+                    const nationalId = row.dataset.nationalid?.toLowerCase() || '';
+
+                    const stageId = row.dataset.stageid || '';
+
+                    const levelId = row.dataset.levelid || '';
+
+                    const classId = row.dataset.classid || '';
+
+
+
+                    // فحص التطابق مع نص البحث
+
+                    let textMatch = false;
+
+                    if (searchValue === '') {
+
+                        textMatch = true;
+
+                    } else {
+
+                        if (searchType === "phone") {
+
+                            textMatch = phone.includes(searchValue);
+
+                        } else if (searchType === "nationalid") {
+
+                            textMatch = nationalId.includes(searchValue);
+
+                        }
+
+                    }
+
+
+
+                    // فحص التطابق مع القوائم المنسدلة
+
+                    const stageMatch = (selectedStage === '' || stageId === selectedStage);
+
+                    const levelMatch = (selectedLevel === '' || levelId === selectedLevel);
+
+                    const classMatch = (selectedClass === '' || classId === selectedClass);
+
+
+
+                    // إظهار الصف فقط إذا توافق مع جميع الشروط
+
+                    if (textMatch && stageMatch && levelMatch && classMatch) {
+
+                        row.style.display = '';
+
+                    } else {
+
+                        row.style.display = 'none';
+
+                    }
+
+                });
+
+
+
+                clearSearchBtn.style.display = searchValue ? 'inline-block' : 'none';
+
+            }
+
+
+
+            // 3. دالة الحذف المؤقتة (ستحتاج لربطها بـ AJAX لحذفها من قاعدة البيانات)
+
+            function deleteStudent(button, studentId) {
+
+                if(confirm("هل أنت متأكد من حذف هذا الطالب؟")) {
+
+                    // يفضل هنا إرسال طلب AJAX للـ Controller (Delete Action)
+
+                    const row = button.closest('tr');
+
+                    row.remove();
+
+                }
+
+            }
+
+
+
+                 const menuToggle = document.getElementById("menuToggle");
+
+            const sidebar = document.querySelector(".sidebar");
+
+            const overlay = document.getElementById("sidebarOverlay");
+
+
+
+            menuToggle.addEventListener("click", () => {
+
+            sidebar.classList.add("active");
+
+            overlay.classList.add("active");
+
+            menuToggle.classList.add("hidden");
+
+            });
+
+
+
+            overlay.addEventListener("click", () => {
+
+            sidebar.classList.remove("active");
+
+            overlay.classList.remove("active");
+
+            menuToggle.classList.remove("hidden");
+
+            });
+
+    </script>
+
+</body>
+
+</html>``` for additional info. this is the stages object class ```public class StageInSchool
+
+{
+
+public Stage Stage { get; set; }
+
+
+
+public List<LevelInStage>
+Levels { get; set; }
+
+
+
+}
+
+public class LevelInStage
+
+{
+
+public Level Level { get; set; }
+
+
+
+public List<Class>
+Classes { get; set; }
+
+
+
+}

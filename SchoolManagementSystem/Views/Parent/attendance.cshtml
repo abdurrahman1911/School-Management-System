@@ -1,0 +1,251 @@
+@using SchoolManagementSystem.ViewModel.Parent
+@model ChildrenAbsenceViewModel
+@{
+    Layout = null;
+    // Compute first letter for avatar from ParentFullName
+    var firstLetter = !string.IsNullOrEmpty(Model.ParentFullName)
+        ? Model.ParentFullName.Substring(0, 1)
+        : "و";
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحضور - بوابة ولي الأمر</title>
+    <meta name="description" content="سجل حضور الطلاب - بوابة ولي الأمر الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@firstLetter</div>
+                    <span>@Model.ParentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Parent" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Parent" asp-action="Performance">أداء الطلاب</a></li>
+                <li><a asp-controller="Parent" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Parent" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Parent" asp-action="Attendance" class="active">الحضور</a></li>
+                <li><a asp-controller="Parent" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Parent" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">📋 سجل الحضور والغياب</h1>
+                <div class="child-selector">
+                    <label class="child-selector-label">اختر الطالب:</label>
+                    <select id="child-select" class="child-selector-dropdown" onchange="changeChild()">
+                        @foreach (var child in Model.ChildrenAbsences)
+                        {
+                            <option value="@child.StudentId">@child.FullName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Attendance Summary Cards -->
+            <div class="performance-grid">
+                <!-- Card 1: Present Days -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-attendance" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-attendance-pct">0%</div>
+                    </div>
+                    <div class="performance-icon excellent"></div>
+                    <div class="performance-value" id="kpi-attendance-pct-hidden">0%</div>
+                    <div class="performance-label">نسبة الحضور</div>
+                </div>
+
+                <!-- Card 2: Absence Days -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-absences" cx="45" cy="45" r="40" style="stroke: #ef4444;"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-absences">0</div>
+                    </div>
+                    <div class="performance-icon needs-improvement"></div>
+                    <div class="performance-value" id="kpi-absences-hidden">0</div>
+                    <div class="performance-label">أيام الغياب</div>
+                </div>
+
+                <!-- Card 3: Total School Days -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-total" cx="45" cy="45" r="40" style="stroke: #3b82f6;"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-total-days">0</div>
+                    </div>
+                    <div class="performance-icon good"></div>
+                    <div class="performance-value" id="kpi-total-days-hidden">0</div>
+                    <div class="performance-label">إجمالي أيام الفصل</div>
+                </div>
+            </div>
+
+            <!-- Absence Details Table -->
+            <h2 class="section-title">سجل الغياب في الفصل الدراسي</h2>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>التاريخ</th>
+                            <th>اليوم</th>
+                            <th>السبب</th>
+                        </tr>
+                    </thead>
+                    <tbody id="absences-tbody">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">جاري تحميل البيانات...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Parent/parent_script.js"></script>
+    <script>
+        // ── Circumference for r=40 ──
+        var CIRC = 2 * Math.PI * 40;
+
+        function setRing(id, pct) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            var offset = CIRC - (CIRC * Math.min(pct, 100) / 100);
+            el.style.strokeDasharray = CIRC;
+            el.style.strokeDashoffset = offset;
+        }
+
+        function animateValue(el, end, suffix, duration) {
+            if (!el) return;
+            var start = 0;
+            var startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                var current = Math.floor(progress * end);
+                el.textContent = current + (suffix || '');
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = end + (suffix || '');
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Arabic day names
+        var arabicDays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+        // Attendance data per child - from database
+        var attendanceByChild = @Html.Raw(Json.Serialize(
+            Model.ChildrenAbsences.ToDictionary(
+                c => c.StudentId.ToString(),
+                c => new {
+                    absences = c.Absences.Select(a => new {
+                        date = a.AbsenceDate.ToString("yyyy-MM-dd"),
+                        reason = a.Reason ?? "غير محدد"
+                    }).ToList(),
+                    absenceCount = c.Absences.Count,
+                    totalSchoolDays = c.TotalSchoolDays,
+                    presentDays = c.PresentDays,
+                    attendanceRate = c.AttendanceRate
+                }
+            )
+        ));
+
+        var defaultChildId = '@(Model.ChildrenAbsences.FirstOrDefault()?.StudentId)';
+
+        function updateAttendanceUI() {
+            var savedChild = localStorage.getItem('selectedChild') || defaultChildId;
+            var data = attendanceByChild[savedChild] || attendanceByChild[defaultChildId];
+
+            if (!data) return;
+
+            var absenceCount = data.absenceCount;
+            var totalDays = data.totalSchoolDays;
+            var presentDays = data.presentDays;
+            var attendancePct = Math.round(data.attendanceRate);
+
+            // Update KPI cards
+            setRing('ring-attendance', attendancePct);
+            setRing('ring-absences', totalDays > 0 ? Math.min((absenceCount / totalDays) * 100, 100) : 0);
+            setRing('ring-total', 100);
+
+            animateValue(document.getElementById('kpi-attendance-pct'), attendancePct, '%', 900);
+            animateValue(document.getElementById('kpi-absences'), absenceCount, '', 900);
+            animateValue(document.getElementById('kpi-total-days'), totalDays, '', 900);
+
+            // Update label for total days card to show absence count context
+            // Update absences table
+            var tbody = document.getElementById('absences-tbody');
+            tbody.innerHTML = '';
+
+            if (data.absences && data.absences.length > 0) {
+                data.absences.forEach(function (a, i) {
+                    var tr = document.createElement('tr');
+                    tr.style.animation = 'fadeInUp .4s ease both';
+                    tr.style.animationDelay = (i * 0.06) + 's';
+
+                    var dateObj = new Date(a.date);
+                    var dayName = arabicDays[dateObj.getDay()];
+                    var formattedDate = dateObj.toLocaleDateString('ar-EG', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    tr.innerHTML =
+                        '<td>' + (i + 1) + '</td>' +
+                        '<td>' + formattedDate + '</td>' +
+                        '<td>' + dayName + '</td>' +
+                        '<td><span class="grade-score low">' + a.reason + '</span></td>';
+                    tbody.appendChild(tr);
+                });
+            } else {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="4" style="text-align:center; padding:24px; color:#999;">🎉 لا يوجد غياب مسجل - ممتاز!</td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Override changeChild to also update attendance data
+        var originalChangeChild = changeChild;
+        changeChild = function () {
+            originalChangeChild();
+            updateAttendanceUI();
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('selectedChild') && defaultChildId) {
+                localStorage.setItem('selectedChild', defaultChildId);
+            }
+            syncUIWithSelection();
+            updateAttendanceUI();
+        });
+    </script>
+</body>
+
+</html>

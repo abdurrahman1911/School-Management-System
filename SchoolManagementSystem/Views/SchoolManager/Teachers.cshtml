@@ -1,0 +1,857 @@
+﻿@model SchoolManagement.Models.ViewModels.TeachersPageViewModel
+@{
+    Layout = null;
+    string managerFirstLetter = !string.IsNullOrEmpty(Model.ManagerName) ? Model.ManagerName.Trim().Substring(0, 1).ToUpper() : "م";
+
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدارس الأوائل الأهلية - المعلمين</title>
+
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/sidebar-layout.css")" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+    <link rel="stylesheet" href="~/css/SchoolManager/teachers.css" />
+
+
+    <style>
+        
+        body {
+            background-color: #f1f5f9;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 30px auto;
+            border-right: 5px solid #1a6889;
+        }
+
+        .stats-info {
+            text-align: right;
+            width: 100%;
+        }
+
+            .stats-info h3 {
+                margin: 0;
+                font-size: 15px;
+                color: #64748b;
+                font-weight: 600;
+            }
+
+            .stats-info .number {
+                font-size: 28px;
+                font-weight: bold;
+                color: #1e293b;
+                margin-top: 5px;
+            }
+
+        .stats-container i {
+            font-size: 35px;
+            color: #1a6889;
+            background: #e0f2fe;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .page-title {
+            color: #1a6889;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .teachers-list-container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .teacher-list-item {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+        }
+
+            .teacher-list-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                border-color: #cbd5e1;
+            }
+
+        .teacher-right-side {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .teacher-avatar-img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+        }
+
+        /* تنسيق الحرف البديل للمعلم في القائمة */
+        .teacher-avatar-placeholder {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: #e0f2fe;
+            color: #1a6889;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            border: 2px solid #cbd5e1;
+        }
+
+        /* تنسيق الحرف البديل للمدير في السايد بار */
+        .manager-avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            margin: 0 auto;
+        }
+
+        /* تنسيق الحرف البديل داخل المودال */
+        .modal-avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #e0f2fe;
+            color: #1a6889;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: bold;
+            border: 2px solid #e2e8f0;
+        }
+
+        .teacher-meta h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: #1e293b;
+            font-weight: bold;
+        }
+
+        .subjects-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-subject {
+            background-color: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .actions-holder {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-details {
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+            .btn-details:hover {
+                background-color: #1e3a8a;
+            }
+
+        .btn-add-note {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+            .btn-add-note:hover {
+                background-color: #059669;
+            }
+
+        .btn-view-notes {
+            background-color: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+            .btn-view-notes:hover {
+                background-color: #d97706;
+            }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+            .modal-box {
+                background: white;
+                border-radius: 16px;
+                width: 100%;
+                max-width: 450px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                overflow: hidden;
+                direction: rtl;
+            }
+
+
+           
+
+
+
+            .modal-header {
+                background: #1d4ed8 ;
+                color: white !important;
+                padding: 15px 20px !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px;
+            }
+
+                .modal-header h2 {
+                    color: #fff !important;
+                    margin: 0 !important;
+                    font-size: 15px !important;
+                    font-weight: 600 !important;
+                    flex: 1; 
+                }
+
+            .btn-close-modal {
+                margin-right: auto !important;
+                background: transparent !important;
+                border: none !important;
+                color: #fff !important;
+                font-size: 22px !important;
+                cursor: pointer !important;
+            }
+
+                .btn-close-modal:hover {
+                    opacity: 1;
+                }
+
+            .modal-body {
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 7px;
+                text-align: right;
+            }
+
+        .modal-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+            flex-direction: row;
+        }
+
+        .modal-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+        }
+
+        .modal-profile-info {
+            flex: 1;
+            text-align: right;
+        }
+
+            .modal-profile-info h3 {
+                margin: 0 0 5px 0;
+                color: #1e293b;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .modal-profile-info p {
+                margin: 0;
+                color: #64748b;
+                font-size: 13px;
+            }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 15px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: right;
+        }
+
+            .info-item label {
+                display: block;
+                font-size: 12px;
+                color: #64748b;
+                margin-bottom: 4px;
+                font-weight: 600;
+            }
+
+            .info-item span {
+                font-size: 14px;
+                color: #1e293b;
+                font-weight: 500;
+            }
+
+        .modal-schedule-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            text-align: right;
+        }
+
+            .modal-schedule-section h4 {
+                margin: 0 0 10px 0;
+                font-size: 14px;
+                color: #475569;
+                font-weight: bold;
+            }
+
+        .schedule-box-container {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            padding: 15px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+            .schedule-box-container img {
+                width: 100%;
+                max-height: 350px;
+                object-fit: contain;
+                border-radius: 6px;
+                display: none;
+                margin-top: 10px;
+            }
+
+        .no-schedule-text {
+            font-size: 13px;
+            color: #64748b;
+            padding: 10px 0;
+            display: block;
+        }
+
+        .note-textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+            .note-textarea:focus {
+                outline: none;
+                border-color: #1a6889;
+            }
+
+        .notes-list-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .note-item-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .note-text-content {
+            flex: 1;
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .note-date-stamp {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .btn-delete-note {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+            .btn-delete-note:hover {
+                color: #b91c1c;
+            }
+
+        .no-notes-alert {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile" style="text-align: center; padding: 25px 10px;">
+                @if (string.IsNullOrEmpty(Model.ManagerPhotoUrl) || Model.ManagerPhotoUrl == "schoolManagerImage.jpg")
+                {
+                    <div class="avatar-letter-sidebar">@managerFirstLetter</div>
+                }
+                else
+                {
+                    <img src="@Url.Content("~/images/users/" + Model.ManagerPhotoUrl)" class="manager-img" alt="مدير المدرسة" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid #fff; object-fit: cover;">
+                }
+                <h4 style="margin-top: 10px; font-size: 16px; color: white;">@Model.ManagerName</h4>
+            </div>
+            <ul class="menu" style="list-style: none; padding: 0; margin: 0;">
+                <li><a asp-controller="SchoolManager" asp-action="Home"> الصفحة الرئيسية</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Students"> الطلاب</a></li>
+                <li class="active" style="background-color: #1d4ed8;"><a asp-controller="SchoolManager" asp-action="Teachers" style="color: white;"> المعلمين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Supervisors"> المشرفين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="SuccessFailure"> النجاح والرسوب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Attendance"> الغياب والحضور</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="EditProfile"> تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout"> تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+            <div class="stats-container">
+                <div class="stats-info">
+                    <h3>قائمة المعلمين وتوزيع الحصص</h3>
+                    <div class="number">@Model.TotalTeachersCount معلمين</div>
+                </div>
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+
+            <h2 class="page-title"><i class="fas fa-users"></i> دليل المعلمين المسجلين بالمدرسة</h2>
+
+            <div class="teachers-list-container">
+                @foreach (var teacher in Model.Teachers)
+                {
+                    <div class="teacher-list-item">
+                        <div class="teacher-card-content">
+                        <div class="teacher-right-side">
+                            @if (!string.IsNullOrEmpty(teacher.PhotoUrl))
+                            {
+                                    <img src="@Url.Content("~/images/users/" + teacher.PhotoUrl)" class="teacher-avatar-img" alt="صورة المعلم">
+                            }
+                            else
+                            {
+                                <div class="teacher-avatar-placeholder">
+                                    @(string.IsNullOrEmpty(teacher.Name) ? "م" : teacher.Name.Trim().Substring(0, 1))
+                                </div>
+                            }
+                            <div class="teacher-meta">
+                                <h3>@teacher.Name</h3>
+                                <div class="subjects-row">
+                                    @if (teacher.Subjects != null && teacher.Subjects.Any())
+                                    {
+                                        @foreach (var subject in teacher.Subjects)
+                                        {
+                                            <span class="badge badge-subject">@subject</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#94a3b8; font-size:12px;">لم يتم تعيين مواد</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="actions-holder">
+                            <button class="btn-details" onclick="openTeacherModal('@teacher.Name', '@teacher.Email', '@teacher.Phone', '@teacher.HireDate', '@(string.IsNullOrEmpty(teacher.PhotoUrl) ? "" : Url.Content("~/images/" + teacher.PhotoUrl))', '@string.Join(" ، ", teacher.Classes ?? new List<string>())', '@teacher.TeacherScheduleUrl')">
+                                <i class="fas fa-info-circle"></i> التفاصيل
+                            </button>
+
+                            <button class="btn-add-note" onclick="openAddNoteModal('@teacher.UserId', '@teacher.Name')">
+                                <i class="fas fa-plus-circle"></i> إضافة ملاحظة
+                            </button>
+
+                            <button class="btn-view-notes" onclick="openViewNotesModal('@teacher.UserId', '@teacher.Name')">
+                                <i class="fas fa-sticky-note"></i> عرض الملاحظات
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+
+                }
+            </div>
+
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="teacherModal">
+        <div class="modal-box">
+                <div class="modal-header" style="background-color: #1d4ed8;">
+                <h2><i class="fas fa-user-id"></i> الملف الشخصي الكامل للمعلم</h2>
+                <button class="btn-close-modal" onclick="closeModal('teacherModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-profile-header">
+                    <img id="modalImg" src="" class="modal-avatar" alt="صورة المعلم">
+                    <div id="modalImgPlaceholder" class="modal-avatar-placeholder"></div>
+                    <div class="modal-profile-info">
+                        <h3 id="modalName">اسم المعلم</h3>
+                        <p id="modalEmail">Email@school.com</p>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label><i class="fas fa-phone"></i> رقم الهاتف:</label>
+                        <span id="modalPhone">غير مسجل</span>
+                    </div>
+                    <div class="info-item">
+                        <label><i class="fas fa-calendar-alt"></i> تاريخ التعيين:</label>
+                        <span id="modalHireDate">0000-00-00</span>
+                    </div>
+                    <div class="info-item" style="grid-column: span 2;">
+                        <label><i class="fas fa-door-open"></i> الفصول الحالية التي يدرّس لها:</label>
+                        <span id="modalClasses">لا توجد فصول مسجلة حالياً</span>
+                    </div>
+                </div>
+
+                <div class="modal-schedule-section">
+                    <h4><i class="fas fa-calendar-week"></i> الجدول الدراسي الشخصي للمعلم:</h4>
+                    <div class="schedule-box-container">
+                        <span class="no-schedule-text" id="noScheduleText">لا يوجد جدول دراسي مرفوع لهذا المعلم حالياً</span>
+                        <img id="modalScheduleImg" src="" alt="جدول الحصص المخصص للمعلم">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addNoteModal">
+        <div class="modal-box" style="max-width: 500px;">
+            <div class="modal-header" style="background-color: #10b981;">
+            <h2><i class="fas fa-plus-circle"></i> إضافة ملاحظة إدارية جديدة</h2>
+
+                <button class="btn-close-modal"  onclick="closeModal('addNoteModal')">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <p style="margin:0; font-size:14px; color:#475569;">المعلم: <strong id="addNoteTeacherName" style="color:#111827;"></strong></p>
+                <input type="hidden" id="addNoteTargetUserId" />
+                <textarea id="noteTextInput" class="note-textarea" placeholder="اكتب تفاصيل الملاحظة والتقييم هنا..."></textarea>
+                <button class="btn-add-note" style="justify-content: center; width: 100%; padding: 12px;" onclick="submitNewNote()">
+                    <i class="fas fa-save"></i> حفظ الملاحظة بالسجلات
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="viewNotesModal">
+        <div class="modal-box">
+            <div class="modal-header" style="background-color: #f59e0b;">
+            <h2><i class="fas fa-list-alt"></i> سجل الملاحظات والتقارير الإدارية</h2>
+
+                <button class="btn-close-modal"  onclick="closeModal('viewNotesModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin:0 0 10px 0; font-size:14px; color:#475569;">ملاحظات المعلم: <strong id="viewNotesTeacherName" style="color:#111827;"></strong></p>
+                <div class="notes-list-wrapper" id="notesContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function openTeacherModal(name, email, phone, hireDate, photoUrl, classes, scheduleUrl) {
+            document.getElementById("modalName").innerText = name;
+            document.getElementById("modalEmail").innerText = email;
+            document.getElementById("modalPhone").innerText = phone ? phone : "غير مسجل";
+            document.getElementById("modalHireDate").innerText = hireDate;
+
+            const modalImg = document.getElementById("modalImg");
+            const modalImgPlaceholder = document.getElementById("modalImgPlaceholder");
+
+            // فحص الصورة داخل الـ JavaScript للمودال المنبثق
+            if (photoUrl && photoUrl.trim() !== "") {
+                modalImg.src = photoUrl;
+                modalImg.style.display = "block";
+                modalImgPlaceholder.style.display = "none";
+            } else {
+                modalImg.style.display = "none";
+                modalImgPlaceholder.innerText = name ? name.trim().substring(0, 1) : "م";
+                modalImgPlaceholder.style.display = "flex";
+            }
+
+            if(classes && classes.trim() !== "") {
+                document.getElementById("modalClasses").innerText = classes;
+            } else {
+                document.getElementById("modalClasses").innerText = "لا توجد فصول مسجلة حالياً لهذا المعلم";
+            }
+
+            const scheduleImg = document.getElementById("modalScheduleImg");
+            const noScheduleTxt = document.getElementById("noScheduleText");
+
+            if (scheduleUrl && scheduleUrl.trim() !== "") {
+                let cleanUrl = scheduleUrl.trim();
+                scheduleImg.src = cleanUrl.startsWith("/") ? cleanUrl : "/" + cleanUrl;
+                scheduleImg.style.display = "block";
+                noScheduleTxt.style.display = "none";
+            }
+            else {
+                scheduleImg.style.display = "none";
+                noScheduleTxt.style.display = "block";
+            }
+
+            document.getElementById("teacherModal").style.display = "flex";
+        }
+
+        function openAddNoteModal(targetUserId, teacherName) {
+            document.getElementById("addNoteTargetUserId").value = targetUserId;
+            document.getElementById("addNoteTeacherName").innerText = teacherName;
+            document.getElementById("noteTextInput").value = "";
+            document.getElementById("addNoteModal").style.display = "flex";
+        }
+
+        function submitNewNote() {
+            const targetUserId = document.getElementById("addNoteTargetUserId").value;
+            const text = document.getElementById("noteTextInput").value.trim();
+
+            if(!text) {
+                alert("يرجى كتابة نص الملاحظة أولاً!");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("targetUserId", targetUserId);
+            formData.append("noteText", text);
+
+            fetch('/SchoolManager/AddNote', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    alert(data.message);
+                    closeModal('addNoteModal');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(() => alert("حدث خطأ أثناء الاتصال بالسيرفر."));
+        }
+
+        function openViewNotesModal(targetUserId, teacherName) {
+            document.getElementById("viewNotesTeacherName").innerText = teacherName;
+            const container = document.getElementById("notesContainer");
+            container.innerHTML = "<p style='text-align:center; color:#64748b;'>جاري تحميل الملاحظات...</p>";
+
+            document.getElementById("viewNotesModal").style.display = "flex";
+
+            fetch(`/SchoolManager/GetNotes?targetUserId=${targetUserId}`)
+            .then(res => res.json())
+            .then(notes => {
+                container.innerHTML = "";
+                if(notes.length === 0) {
+                    container.innerHTML = "<div class='no-notes-alert'><i class='fas fa-folder-open' style='font-size:24px; margin-bottom:8px; display:block;'></i>لا توجد ملاحظات مسجلة لهذا المعلم بعد.</div>";
+                    return;
+                }
+
+                notes.forEach(note => {
+                    container.innerHTML += `
+                        <div class="note-item-card" id="note_card_${note.id}">
+                            <div class="note-text-content">
+                                ${note.text}
+                                <span class="note-date-stamp"><i class="far fa-clock"></i> ${note.date}</span>
+                            </div>
+                            <button class="btn-delete-note" onclick="deleteNote(${note.id})" title="حذف الملاحظة">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            })
+            .catch(() => container.innerHTML = "<p style='color:red; text-align:center;'>فشل جلب الملاحظات</p>");
+        }
+
+        function deleteNote(noteId) {
+            if(!confirm("هل أنت متأكد من رغبتك في حذف هذه الملاحظة نهائياً؟")) return;
+
+            let formData = new FormData();
+            formData.append("noteId", noteId);
+
+            fetch('/SchoolManager/DeleteNote', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    const element = document.getElementById(`note_card_${noteId}`);
+                    if(element) element.remove();
+
+                    const container = document.getElementById("notesContainer");
+                    if(container.children.length === 0) {
+                        container.innerHTML = "<div class='no-notes-alert'><i class='fas fa-folder-open' style='font-size:24px; margin-bottom:8px; display:block;'></i>لا توجد ملاحظات مسجلة لهذا المعلم بعد.</div>";
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(() => alert("فشل الاتصال بالسيرفر."));
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = "none";
+            }
+        }
+
+                 const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+    </script>
+</body>
+</html>

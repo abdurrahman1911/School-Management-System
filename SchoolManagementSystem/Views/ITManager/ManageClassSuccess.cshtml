@@ -1,0 +1,358 @@
+﻿@model SchoolManagementSystem.ViewModel.ITManager.ManageSuccessViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحديد الطلاب الناجحين</title>
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+    <style>
+            /* Avatar Styling */
+            .user-avatar {
+                width: 90px;
+                height: 90px;
+                overflow: hidden;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            /* Form and Card Styling */
+            .enrollment-container {
+                padding: 20px;
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+
+            .custom-card {
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                border: 1px solid #eef2f5;
+                overflow: hidden;
+                margin-bottom: 20px;
+            }
+
+            .custom-card-header {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                padding: 20px 25px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+                .custom-card-header h4 {
+                    margin: 0;
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                }
+
+            .custom-card-body {
+                padding: 30px;
+            }
+
+            .form-label {
+                color: #334155;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            .form-select {
+                width: 100%;
+                padding: 10px 15px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                color: #1e293b;
+                background-color: #f8fafc;
+            }
+
+            .btn-submit {
+                background: #10b981;
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: background 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+                .btn-submit:hover {
+                    background: #059669;
+                }
+
+            /* Table Styling */
+            .students-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+                .students-table th {
+                    background-color: #f1f5f9;
+                    color: #475569;
+                    padding: 12px 15px;
+                    text-align: right;
+                    border-bottom: 2px solid #cbd5e1;
+                    font-weight: 600;
+                }
+
+                .students-table td {
+                    padding: 12px 15px;
+                    border-bottom: 1px solid #e2e8f0;
+                    color: #334155;
+                    vertical-align: middle;
+                }
+
+                .students-table tr:hover {
+                    background-color: #f8fafc;
+                }
+
+            /* Checkbox Styling */
+            .custom-checkbox {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (Model.NavigationInfo != null)
+                        {
+                            if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                            {
+                                <text>@Model.NavigationInfo.FullName[0]</text>
+                            }
+                            else
+                            {
+                                <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                            }
+                        }
+                    </div>
+                    <h4><span>@(Model.NavigationInfo?.FullName ?? "مدير النظام")</span></h4>
+                </div>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li class="active"><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+            <div class="enrollment-container">
+                @if (TempData["SuccessMessage"] != null)
+
+                {
+
+                    <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #155724; background-color: #d4edda; border-color: #c3e6cb;">
+
+                        @TempData["SuccessMessage"]
+
+                    </div>
+
+                }
+
+
+
+                @if (TempData["ErrorMessage"] != null)
+
+                {
+
+                    <div class="alert alert-danger" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb;">
+
+                        @TempData["ErrorMessage"]
+
+                    </div>
+
+                }
+                <form asp-action="ManageClassSuccess" asp-controller="ITManager" method="post">
+
+                    <input type="hidden" asp-for="SelectedStageId" />
+                    <input type="hidden" asp-for="SelectedLevelId" />
+                    <input type="hidden" asp-for="SelectedClassId" />
+                    <input type="hidden" asp-for="CurrentAcademicTermId" />
+
+                    <div class="custom-card">
+                        <div class="custom-card-header">
+                            <i class="fas fa-calendar-alt fa-lg"></i>
+                            <h4>تحديد التيرم القادم</h4>
+                        </div>
+                        <div class="custom-card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="NextAcademicTermId" class="form-label fw-bold">اختر التيرم التالي لترقية الطلاب إليه:</label>
+                                    <select asp-for="NextAcademicTermId" class="form-select" required
+                                            oninvalid="this.setCustomValidity('يرجى اختيار التيرم التالي لترقية الطلاب إليه')"
+                                            oninput="this.setCustomValidity('')">
+                                        <option value="">-- التيرم التالي --</option>
+                                        @if (Model.termsData != null)
+                                        {
+                                            foreach (var term in Model.termsData)
+                                            {
+                                                <option value="@term.TermID">@term.YearName - @term.TermName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="custom-card">
+                        <div class="custom-card-header">
+                            <i class="fas fa-users fa-lg"></i>
+                            <h4>قائمة طلاب الفصل</h4>
+                        </div>
+                        <div class="custom-card-body" style="padding: 0;">
+                            <table class="students-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">م</th>
+                                        <th>اسم الطالب</th>
+                                        <th style="width: 150px; text-align: center;">
+                                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                                <input type="checkbox" id="selectAll" class="custom-checkbox" />
+                                                <label for="selectAll" style="margin: 0; cursor: pointer;">تحديد الكل كـ ناجح</label>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.classStudentsData != null && Model.classStudentsData.Any())
+                                    {
+                                        for (int i = 0; i < Model.classStudentsData.Count; i++)
+                                        {
+                                            <tr>
+                                                <td>@(i + 1)</td>
+                                                <td>
+                                                    <input type="hidden" asp-for="@Model.classStudentsData[i].StudentId" />
+                                                    <input type="hidden" asp-for="@Model.classStudentsData[i].StudentName" />
+
+                                                    @Model.classStudentsData[i].StudentName
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <input type="checkbox" asp-for="@Model.classStudentsData[i].IsSuccess" class="custom-checkbox student-checkbox" />
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3" style="text-align: center; padding: 30px;">لا يوجد طلاب في هذا الفصل.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <div style="padding: 20px; text-align: left; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+                                <button type="submit" class="btn-submit">
+                                    حفظ وترقية الطلاب <i class="fas fa-check-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+            // Sidebar Toggle Logic
+            const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+
+            // Select All Logic
+            document.addEventListener("DOMContentLoaded", function () {
+                const selectAllCheckbox = document.getElementById('selectAll');
+                const studentCheckboxes = document.querySelectorAll('.student-checkbox');
+
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.addEventListener('change', function () {
+                        studentCheckboxes.forEach(function (checkbox) {
+                            checkbox.checked = selectAllCheckbox.checked;
+                        });
+                    });
+                }
+
+                // Optional: Uncheck "Select All" if a single student is unchecked manually
+                studentCheckboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        if (!this.checked) {
+                            selectAllCheckbox.checked = false;
+                        }
+                    });
+                });
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+@using SchoolManagementSystem.ViewModel
+@model ParentGradesViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدرجات - بوابة ولي الأمر</title>
+    <meta name="description" content="درجات الطلاب - بوابة ولي الأمر الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.ParentFirstLetter</div>
+                    <span>@Model.ParentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Parent" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Parent" asp-action="Performance">أداء الطلاب</a></li>
+                <li><a asp-controller="Parent" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Parent" asp-action="Grades" class="active">الدرجات</a></li>
+                <li><a asp-controller="Parent" asp-action="Attendance">الحضور</a></li>
+                <li><a asp-controller="Parent" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Parent" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">📝 سجل الدرجات</h1>
+                <div class="child-selector">
+                    <label class="child-selector-label">اختر الطالب:</label>
+                    <select id="child-select" class="child-selector-dropdown" onchange="changeChild()">
+                        @foreach (var child in Model.Children)
+                        {
+                            <option value="@child.StudentId">@child.FullName - @child.GradeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grades Table -->
+            <h2 class="section-title">التفاصيل الدراسية للمواد</h2>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المادة</th>
+                            <th>نوع الاختبار</th>
+                            <th>الدرجة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grades-tbody">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">جاري تحميل البيانات...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Parent/parent_script.js"></script>
+    <script>
+        // Grades data per child - from database
+        var gradesByChild = @Html.Raw(Json.Serialize(
+            Model.Children.ToDictionary(
+                c => c.StudentId.ToString(),
+                c => c.AllGrades.Select(g => new {
+                    subject = g.SubjectName,
+                    examName = g.ExamName,
+                    score = g.Score,
+                    date = g.Date
+                }).ToList()
+            )
+        ));
+
+        var defaultChildId = '@(Model.Children.FirstOrDefault()?.StudentId)';
+
+        function updateGradesUI() {
+            var savedChild = localStorage.getItem('selectedChild') || defaultChildId;
+            var childGrades = gradesByChild[savedChild] || gradesByChild[defaultChildId];
+
+            var tbody = document.getElementById('grades-tbody');
+            tbody.innerHTML = '';
+
+            if (childGrades && childGrades.length > 0) {
+                childGrades.forEach(function (g, i) {
+                    var tr = document.createElement('tr');
+                    tr.style.animation = 'fadeInUp .4s ease both';
+                    tr.style.animationDelay = (i * 0.06) + 's';
+
+                    var cls = 'medium';
+                    if (g.score) {
+                        var parts = g.score.split('/');
+                        if (parts.length === 2 && parseFloat(parts[1]) > 0) {
+                            var pct = (parseFloat(parts[0]) / parseFloat(parts[1])) * 100;
+                            if (pct >= 85) cls = 'high';
+                            else if (pct < 60) cls = 'low';
+                        }
+                    }
+
+                    tr.innerHTML =
+                        '<td>' + g.subject + '</td>' +
+                        '<td>' + g.examName + '</td>' +
+                        '<td><span class="grade-score ' + cls + '">' + g.score + '</span></td>' +
+                        '<td>' + g.date + '</td>';
+                    tbody.appendChild(tr);
+                });
+            } else {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="4" style="text-align:center; padding:24px; color:#999;">لا توجد درجات مسجلة لهذا الطالب للعام الحالي</td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Override changeChild to also update grades data
+        var originalChangeChild = changeChild;
+        changeChild = function () {
+            if (typeof originalChangeChild === 'function') {
+                originalChangeChild();
+            }
+            updateGradesUI();
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('selectedChild') && defaultChildId) {
+                localStorage.setItem('selectedChild', defaultChildId);
+            }
+            if (typeof syncUIWithSelection === 'function') {
+                syncUIWithSelection();
+            }
+            updateGradesUI();
+        });
+    </script>
+</body>
+
+</html>

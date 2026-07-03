@@ -1,0 +1,221 @@
+@{
+    Layout = null;
+}
+@using SchoolManagementSystem.ViewModel.ITManager;
+@model AddEditStudentClassEnrollmentViewModel;
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+    <style>
+        .text-danger {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+        .validation-summary {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
+        }
+
+        <form asp-controller="ITManager"
+              asp-action="EditStudentClass"
+              method="post">
+            
+            <input type="hidden" name="ID" value="@Model.ID" />
+
+            <h1>تعديل بيانات تسجيل الطالب</h1>
+
+            <div class="form-group">
+                <label>اسم الطالب</label>
+                <select name="StudentId" id="studentSelect" class="form-control">
+                    <option value="">-- اختر الطالب --</option>
+                    @if (Model.Students != null)
+                    {
+                        @foreach (var student in Model.Students)
+                        {
+                            <option value="@student.Id"
+                                    selected="@(student.Id == Model.StudentId ? "selected" : null)">
+                                @student.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>المرحلة</label>
+                <select name="StageID" id="stageSelect" class="form-control">
+                    <option value="">-- اختر المرحلة --</option>
+                    @if (Model.Stages != null)
+                    {
+                        @foreach (var stage in Model.Stages)
+                        {
+                            <option value="@stage.Stage.ID"
+                                    selected="@(stage.Stage.ID == Model.StageID ? "selected" : null)">
+                                @stage.Stage.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>الصف</label>
+                <select name="LevelID" id="levelSelect" class="form-control" disabled>
+                    <option value="">-- اختر الصف --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>الفصل</label>
+                <select name="ClassId" id="classSelect" class="form-control" disabled>
+                    <option value="">-- اختر الفصل --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>الترم الدراسي</label>
+                <select name="AcademicTermId" id="termSelect" class="form-control">
+                    <option value="">-- اختر الترم الدراسي --</option>
+                    @if (Model.AcademicTerms != null)
+                    {
+                        @foreach (var term in Model.AcademicTerms)
+                        {
+                            <option value="@term.Id"
+                                    selected="@(term.Id == Model.AcademicTermId ? "selected" : null)">
+                                @term.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-controller="ITManager"
+                   asp-action="SudentClassEnrollment">
+                    إلغاء
+                </a>
+
+                <button type="submit">
+                    حفظ
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var schoolData = @Html.Raw(Json.Serialize(Model.Stages?.Select(s => new
+            {
+                stageId = s.Stage != null ? s.Stage.ID : 0,
+                stageName = s.Stage != null ? s.Stage.Name : "",
+                levels = s.Levels != null ? s.Levels.Select(l => new
+                {
+                    levelId = l.Level != null ? l.Level.ID : 0,
+                    levelName = l.Level != null ? l.Level.Name : "",
+                    classes = l.Classes != null ? l.Classes.Select(c => new
+                    {
+                        classId = c.ID,
+                        className = c.Name
+                    }).ToList() : null
+                }).ToList() : null
+            })));
+
+            var $stageSelect = $('#stageSelect');
+            var $levelSelect = $('#levelSelect');
+            var $classSelect = $('#classSelect');
+
+            var preSelectedStageId = '@Model.StageID';
+            var preSelectedLevelId = '@Model.LevelID';
+            var preSelectedClassId = '@Model.ClassId';
+
+            function populateLevels(stageId, selectedLevelId) {
+                $levelSelect.empty().append('<option value="">-- اختر الصف --</option>').prop('disabled', true);
+                $classSelect.empty().append('<option value="">-- اختر الفصل --</option>').prop('disabled', true);
+
+                if (!stageId) return;
+
+                var selectedStage = schoolData.find(s => s.stageId == stageId);
+                if (selectedStage && selectedStage.levels && selectedStage.levels.length > 0) {
+                    $.each(selectedStage.levels, function (i, lvl) {
+                        $levelSelect.append('<option value="' + lvl.levelId + '">' + lvl.levelName + '</option>');
+                    });
+                    $levelSelect.prop('disabled', false);
+
+                    if (selectedLevelId && selectedLevelId != '0') {
+                        $levelSelect.val(selectedLevelId);
+                    }
+                }
+            }
+
+            function populateClasses(stageId, levelId, selectedClassId) {
+                $classSelect.empty().append('<option value="">-- اختر الفصل --</option>').prop('disabled', true);
+
+                if (!stageId || !levelId) return;
+
+                var selectedStage = schoolData.find(s => s.stageId == stageId);
+                if (selectedStage) {
+                    var selectedLevel = selectedStage.levels.find(l => l.levelId == levelId);
+                    if (selectedLevel && selectedLevel.classes && selectedLevel.classes.length > 0) {
+                        $.each(selectedLevel.classes, function (i, cls) {
+                            $classSelect.append('<option value="' + cls.classId + '">' + cls.className + '</option>');
+                        });
+                        $classSelect.prop('disabled', false);
+
+                        if (selectedClassId && selectedClassId != '0') {
+                            $classSelect.val(selectedClassId);
+                        }
+                    }
+                }
+            }
+
+            $stageSelect.change(function () {
+                populateLevels($(this).val());
+            });
+
+            $levelSelect.change(function () {
+                populateClasses($stageSelect.val(), $(this).val());
+            });
+
+            // Initialize if values are pre-selected (on edit load or validation error return)
+            if (preSelectedStageId && preSelectedStageId != '0') {
+                populateLevels(preSelectedStageId, preSelectedLevelId);
+                if (preSelectedLevelId && preSelectedLevelId != '0') {
+                    populateClasses(preSelectedStageId, preSelectedLevelId, preSelectedClassId);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

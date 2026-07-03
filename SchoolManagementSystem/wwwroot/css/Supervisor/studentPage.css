@@ -1,0 +1,139 @@
+﻿ @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #eef2f5;
+}
+
+/* الهيكل العام */
+.layout {
+    display: flex;
+    flex-direction: row-reverse;
+    min-height: 100vh;
+}
+
+/* المحتوى */
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.box {
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* الاختيارات */
+.selectors {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+    .selectors div {
+        width: 200px;
+    }
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    background: #e6f0f7;
+}
+
+/* الجدول */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* زر إضافة */
+.btn {
+    margin-top: 20px;
+    padding: 10px 25px;
+    background: #8aa9c2;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .btn:hover {
+        background: #7696b2;
+    }
+
+
+/* ===== Popup ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+    .modal-content input,
+    .modal-content select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+.form-row.double {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+    .modal-actions button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .modal-actions .confirm {
+        background: #8aa9c2;
+    }
+
+    .modal-actions .cancel {
+        background: #ccc;
+    }

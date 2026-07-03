@@ -1,0 +1,78 @@
+﻿@model SchoolManagementSystem.ViewModel.Teacher.ExamGradesViewModel
+
+@{
+    ViewData["Title"] = "درجات الاختبار";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>درجات الاختبار - نظام إدارة المدرسة</title>
+    <link rel="stylesheet" href="~/css/Teacher/exams.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <h1><i class="fas fa-chart-bar"></i> درجات الاختبار: @(Model.Subject ?? "تفاصيل الاختبار")</h1>
+            <a asp-controller="Teacher" asp-action="Exams" class="btn btn-cancel">
+                <i class="fas fa-arrow-right"></i> العودة إلى الاختبارات
+            </a>
+        </div>
+
+        <div class="exam-summary">
+            <div class="summary-grid">
+                <div><strong>المادة:</strong> @(Model.Subject ?? "غير مححدد")</div>
+                <div><strong>التاريخ:</strong> @Model.Date.ToString("yyyy-MM-dd")</div>
+                <div><strong>الدرجة الكلية:</strong> @Model.TotalDegree</div>
+                <div><strong>عدد الطلاب:</strong> @Model.StudentCount</div>
+                <div><strong>درجة النجاح:</strong> @Model.SuccessDegree</div>
+            </div>
+        </div>
+
+        <div class="grades-table-container">
+            <h2><i class="fas fa-list"></i> قائمة الدرجات</h2>
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">رقم الطالب</th>
+                        <th style="text-align: center;">اسم الطالب</th>
+                        <th style="text-align: center;">الدرجة</th>
+                        <th style="text-align: center;">الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.StudentGrades != null && Model.StudentGrades.Any())
+                    {
+                        foreach (var student in Model.StudentGrades)
+                        {
+                            <tr>
+                                <td style="text-align: center; vertical-align: middle;">@student.Code</td>
+                                <td style="text-align: center; vertical-align: middle;">@student.Name</td>
+                                <td style="text-align: center; vertical-align: middle;">@student.grade</td>
+
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <span class="status @(student.status == "ناجح" ? "passed" : "failed")"
+                                          style="display: inline-block; text-align: center; margin: 0 auto;">
+                                        @student.status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px; color: #888;">
+                                <i class="fas fa-info-circle"></i> لا توجد درجات مسجلة لهذا الاختبار.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

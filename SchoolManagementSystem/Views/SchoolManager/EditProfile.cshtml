@@ -1,0 +1,191 @@
+﻿@using SchoolManagementSystem.ViewModel
+@model SettingViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "تعديل البيانات";
+}
+
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="~/css/SchoolManager/sidebar-layout.css" />
+    <link rel="stylesheet" href="~/css/SchoolManager/editProfile.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+
+    <style>
+        .avatar-letter-sidebar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #218cbb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 auto;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-letter {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            margin: 0 auto;
+        }
+        /* تنسيق بسيط للتأكد من ظهور رسائل الخطأ باللون الأحمر بشكل أنيق */
+        .text-danger {
+            color: #e74c3c;
+            font-size: 13px;
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="user-avatar">
+                    @if (Model?.NavigationInfo?.ProfilePhotoUrl == null || string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <span class="avatar-letter">@(Model?.NavigationInfo?.FullName?[0])</span>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" class="manager-img" alt="Profile Photo">
+                    }
+                </div>
+                <h4>
+                    <a asp-controller="SchoolManager" asp-action="SchoolManagerProfile">
+                        @(Model?.NavigationInfo?.FullName)
+                    </a>
+                </h4>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="SchoolManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Students">الطلاب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Teachers">المعلمين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Supervisors">المشرفين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="SuccessFailure">النجاح والرسوب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Attendance">الغياب والحضور</a></li>
+                <li class="active"><a asp-controller="SchoolManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+            <div class="box">
+
+                <h3 class="title">تعديل كلمة المرور</h3>
+
+                <form asp-action="EditProfile" asp-controller="SchoolManager" method="post">
+
+                    <div class="form-group">
+                        <label>كلمة المرور الحالية</label>
+                        <div class="password-field">
+                            <input asp-for="CurrentPassword" placeholder="ادخل كلمة المرور الحالية" />
+                            <span class="toggle" onclick="togglePassword('CurrentPassword', this)">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور الجديدة</label>
+                        <div class="password-field">
+                            <input asp-for="NewPassword" placeholder="ادخل كلمة المرور الجديدة" />
+                            <span class="toggle" onclick="togglePassword('NewPassword', this)">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <div class="password-field">
+                            <input asp-for="ConfirmPassword" placeholder="اعد كتابة كلمة المرور الجديدة" />
+                            <span class="toggle" onclick="togglePassword('ConfirmPassword', this)">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="save-btn">حفظ التعديلات</button>
+
+                </form>
+
+            </div>
+        </main>
+
+    </div>
+
+    <script src="@Url.Content("~/js/SchoolManager/editProfile.js")" defer></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+
+    <script>
+        function togglePassword(inputId, toggleSpan) {
+            const input = document.getElementById(inputId);
+            const icon = toggleSpan.querySelector("i");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+        }
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>

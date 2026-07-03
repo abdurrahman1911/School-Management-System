@@ -1,0 +1,307 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model EditAssignmentViewModel
+@{
+    ViewData["Title"] = "تعديل الواجب";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعديل الواجب - نظام إدارة المدرسة</title>
+    <link rel="stylesheet" href="~/css/Teacher/assignments.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <h1><i class="fas fa-edit"></i> تعديل الواجب: @Model.Name</h1>
+            <a asp-controller="Teacher" asp-action="Assignments" class="btn btn-cancel">
+                <i class="fas fa-arrow-right"></i> العودة إلى الواجبات
+            </a>
+        </div>
+
+        <div class="form-container">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                </div>
+            }
+
+            <form id="editAssignmentForm" method="post"
+                  asp-action="EditAssignment"
+                  asp-controller="Teacher"
+                  enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="ID" />
+                <input type="hidden" asp-for="ExistingFilePath" />
+
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> اسم الواجب:</label>
+                    <input asp-for="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-book"></i> الفصل:</label>
+                        <input type="text" class="form-control" value="@Model.ClassName" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-book"></i> المادة:</label>
+                        <input type="text" class="form-control" value="@Model.SubjectName" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> تاريخ البدء:</label>
+                        <input asp-for="startDate" id="startDate" type="date" class="form-control" value="@(Model.startDate.ToString("yyyy-MM-dd"))" required />
+                        <span asp-validation-for="startDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-check"></i> تاريخ الاستحقاق:</label>
+                        <input asp-for="endDate" id="endDate" type="date" class="form-control" value="@(Model.endDate.ToString("yyyy-MM-dd"))" required />
+                        <span asp-validation-for="endDate" id="endDateValidation" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-paperclip"></i> رفع ملف جديد (PDF أو DOCX) (اختياري):</label>
+                        <input asp-for="File" id="fileInput" class="form-control" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                        <span asp-validation-for="File" class="text-danger"></span>
+                    </div>
+                </div>
+
+                @if (Model != null && !string.IsNullOrEmpty(Model.ExistingFilePath))
+                {
+                    // كود ذكي لتحديد نوع الملف الحالي لعرض الأيقونة واللون المناسب له تلقائياً
+                    var isWord = Model.ExistingFilePath.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
+                    var fileColorClass = isWord ? "btn-word-theme" : "btn-pdf-theme";
+                    var fileIconClass = isWord ? "fa-file-word" : "fa-file-pdf";
+
+                    <div class="form-group current-file-box">
+                        <div class="alert alert-current-file">
+                            <div class="d-flex align-items-center justify-content-between style-file-row">
+                                <span class="info-text">
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>يوجد ملف مرفوع حالياً للواجب:</strong>
+                                </span>
+
+                                <a href="/Uploads/Homework/@System.IO.Path.GetFileName(Model.ExistingFilePath)"
+                                   target="_blank"
+                                   class="btn-file-icon @fileColorClass"
+                                   title="عرض أو تحميل الملف الحالي">
+                                    <i class="fas @fileIconClass"></i>
+                                    <i class="fas fa-arrow-up-right-from-square mini-icon"></i>
+                                </a>
+                            </div>
+                            <span class="form-hint-highlight">
+                                📌 إذا تُرِك حقل الرفع فارغاً، سيتم الإبقاء على هذا الملف دون تغيير.
+                            </span>
+                        </div>
+                    </div>
+                }
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
+                    <a asp-controller="Teacher" asp-action="Assignments" class="btn btn-cancel">
+                        <i class="fas fa-times"></i> إلغاء
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("editAssignmentForm");
+            const startDateInput = document.getElementById("startDate");
+            const endDateInput = document.getElementById("endDate");
+            const endDateValidation = document.getElementById("endDateValidation");
+            const fileInput = document.getElementById("fileInput");
+
+            // 1. التحقق من التواريخ
+            function validateDates() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+
+                if (startDateInput.value && endDateInput.value) {
+                    if (endDate < startDate) {
+                        endDateValidation.textContent = "عذراً، لا يمكن أن يكون تاريخ الاستحقاق قبل تاريخ البدء.";
+                        endDateInput.classList.add("input-validation-error");
+                        return false;
+                    } else {
+                        endDateValidation.textContent = "";
+                        endDateInput.classList.remove("input-validation-error");
+                        return true;
+                    }
+                }
+                return true;
+            }
+
+            startDateInput.addEventListener("change", validateDates);
+            endDateInput.addEventListener("change", validateDates);
+
+            // 2. التحقق من امتداد وحجم الملف المرفوع الجديد (PDF أو DOCX)
+            if(fileInput) {
+                fileInput.addEventListener("change", function (e) {
+                    if (e.target.files.length > 0) {
+                        var fileName = e.target.files[0].name;
+                        var fileSize = e.target.files[0].size;
+                        var extension = fileName.split('.').pop().toLowerCase();
+
+                        // الفحص الأول: الصيغة
+                        if (extension !== 'pdf' && extension !== 'docx') {
+                            Swal.fire({
+                                title: 'صيغة ملف غير مدعومة!',
+                                text: 'عفواً، يجب رفع ملف بصيغة PDF أو DOCX فقط.',
+                                icon: 'error',
+                                confirmButtonText: 'موافق',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            fileInput.value = '';
+                            return;
+                        }
+
+                        // الفحص الثاني: الحجم (10 ميجا بايت)
+                        var maxSizeInBytes = 10 * 1024 * 1024;
+                        if (fileSize > maxSizeInBytes) {
+                            Swal.fire({
+                                title: 'حجم الملف كبير جداً!',
+                                text: 'عفواً، الحد الأقصى لحجم الملف المسموح به هو 10 ميجابايت.',
+                                icon: 'warning',
+                                confirmButtonText: 'موافق',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            fileInput.value = '';
+                        }
+                    }
+                });
+            }
+
+            // الفحص النهائي عند الإرسال
+            form.addEventListener("submit", function (event) {
+                if (!validateDates()) {
+                    event.preventDefault();
+                    endDateInput.focus();
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .text-danger {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .input-validation-error {
+            border-color: #dc2626 !important;
+            background-color: #fef2f2 !important;
+        }
+
+        .current-file-box {
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-current-file {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .style-file-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* الزر العام للملف الحالي */
+        .btn-file-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff !important;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none !important;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* ثيم اللون الأحمر لملفات الـ PDF */
+        .btn-pdf-theme {
+            background-color: #dc2626;
+        }
+
+            .btn-pdf-theme:hover {
+                background-color: #b91c1c;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            }
+
+        /* ثيم اللون الأزرق لملفات الـ Word الاحترافي */
+        .btn-word-theme {
+            background-color: #2b579a;
+        }
+
+            .btn-word-theme:hover {
+                background-color: #1e3d6b;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            }
+
+        .btn-file-icon .fa-file-pdf, .btn-file-icon .fa-file-word {
+            font-size: 1.3rem;
+        }
+
+        .btn-file-icon .mini-icon {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .form-hint-highlight {
+            font-size: 0.85rem;
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+    </style>
+</body>
+</html>

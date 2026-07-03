@@ -1,0 +1,394 @@
+/* ═══════════════════════════════════════════════════════════════
+   Performance Page – Premium Redesign
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes progressFill {
+    from {
+        stroke-dashoffset: 251;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.04);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Page Header ────────────────────────────────────────────── */
+.perf-page .page-header {
+    background: linear-gradient(135deg, #f0f7fb 0%, #e8f0fe 100%);
+    border: none;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(67, 135, 171, 0.08);
+    animation: fadeInUp .5s ease both;
+}
+
+.perf-page .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(180deg, #4387AB, #2FC4B2);
+    border-radius: 0 16px 16px 0;
+}
+
+.perf-page .page-title {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1e3a5f, #4387AB);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Child Selector ─────────────────────────────────────────── */
+.perf-page .child-selector-dropdown {
+    padding: 10px 18px;
+    border: 2px solid #c5dce8;
+    border-radius: 12px;
+    background: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    color: #1e3a5f;
+    transition: all .3s ease;
+    box-shadow: 0 2px 8px rgba(67, 135, 171, .08);
+    cursor: pointer;
+}
+
+.perf-page .child-selector-dropdown:focus {
+    outline: none;
+    border-color: #4387AB;
+    box-shadow: 0 0 0 3px rgba(67, 135, 171, .15);
+}
+
+/* ── KPI Cards Grid ─────────────────────────────────────────── */
+.perf-page .performance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+/* Individual Card */
+.perf-page .performance-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    padding: 28px 20px 24px;
+    text-align: center;
+    transition: all .35s cubic-bezier(.4, 0, .2, 1);
+    box-shadow: 0 4px 24px rgba(67, 135, 171, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    animation: fadeInUp .6s ease both;
+}
+
+.perf-page .performance-card:nth-child(1) {
+    animation-delay: .08s;
+}
+
+.perf-page .performance-card:nth-child(2) {
+    animation-delay: .16s;
+}
+
+.perf-page .performance-card:nth-child(3) {
+    animation-delay: .24s;
+}
+
+.perf-page .performance-card:nth-child(4) {
+    animation-delay: .32s;
+}
+
+/* Top gradient stripe */
+.perf-page .performance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    border-radius: 20px 20px 0 0;
+}
+
+.perf-page .performance-card:nth-child(1)::before {
+    background: linear-gradient(90deg, #43e97b, #38f9d7);
+}
+
+.perf-page .performance-card:nth-child(2)::before {
+    background: linear-gradient(90deg, #4387AB, #56CCF2);
+}
+
+.perf-page .performance-card:nth-child(3)::before {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.perf-page .performance-card:nth-child(4)::before {
+    background: linear-gradient(90deg, #f7971e, #ffd200);
+}
+
+.perf-page .performance-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 36px rgba(67, 135, 171, 0.18),
+        0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Progress Ring ──────────────────────────────────────────── */
+.progress-ring-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 14px;
+}
+
+.progress-ring-wrap svg {
+    transform: rotate(-90deg);
+    width: 90px;
+    height: 90px;
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: #e8ecf1;
+    stroke-width: 6;
+}
+
+.progress-ring-fill {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 251;
+    stroke-dashoffset: 251;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Color per card */
+.perf-page .performance-card:nth-child(1) .progress-ring-fill {
+    stroke: #2ecc71;
+}
+
+.perf-page .performance-card:nth-child(2) .progress-ring-fill {
+    stroke: #4387AB;
+}
+
+.perf-page .performance-card:nth-child(3) .progress-ring-fill {
+    stroke: #764ba2;
+}
+
+.perf-page .performance-card:nth-child(4) .progress-ring-fill {
+    stroke: #f7971e;
+}
+
+/* Value inside ring */
+.progress-ring-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #1e3a5f;
+}
+
+/* ── Card Icon (replacing old .performance-icon) ────────────── */
+.perf-page .performance-icon {
+    display: none;
+}
+
+/* ── Card Value & Label ─────────────────────────────────────── */
+.perf-page .performance-value {
+    display: none;
+}
+
+.perf-page .performance-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3a5778;
+    letter-spacing: .3px;
+}
+
+/* ── Section Title ──────────────────────────────────────────── */
+.perf-page .section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e3a5f;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeInUp .6s ease both;
+    animation-delay: .4s;
+}
+
+.perf-page .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: linear-gradient(180deg, #4387AB, #2FC4B2);
+    border-radius: 4px;
+}
+
+/* ── Grades Table ───────────────────────────────────────────── */
+.perf-page .data-table-wrapper {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(67, 135, 171, 0.08);
+    border: 1px solid rgba(67, 135, 171, 0.08);
+    animation: fadeInUp .6s ease both;
+    animation-delay: .48s;
+}
+
+.perf-page .data-table {
+    border: none;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.perf-page .data-table thead th {
+    background: linear-gradient(135deg, #4387AB, #3a7a9d);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 16px 20px;
+    border: none;
+    text-align: center;
+    letter-spacing: .3px;
+}
+
+.perf-page .data-table thead th:first-child {
+    border-radius: 0 16px 0 0;
+}
+
+.perf-page .data-table thead th:last-child {
+    border-radius: 16px 0 0 0;
+}
+
+.perf-page .data-table tbody td {
+    padding: 14px 20px;
+    border: none;
+    border-bottom: 1px solid #f0f2f5;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    transition: background .2s ease;
+}
+
+.perf-page .data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.perf-page .data-table tbody tr {
+    transition: all .2s ease;
+}
+
+.perf-page .data-table tbody tr:hover td {
+    background: linear-gradient(135deg, rgba(67, 135, 171, .04), rgba(47, 196, 178, .04));
+}
+
+/* Score badge in table */
+.grade-score {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 54px;
+}
+
+.grade-score.high {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.grade-score.medium {
+    background: #fff8e1;
+    color: #e65100;
+}
+
+.grade-score.low {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .perf-page .performance-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .perf-page .performance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .perf-page .page-header {
+        flex-direction: column;
+        gap: 14px;
+        text-align: center;
+    }
+}

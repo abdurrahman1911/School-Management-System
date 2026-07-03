@@ -1,0 +1,27 @@
+@using SchoolManagementSystem.ViewModel.Teacher
+@model List<TeacherStudentViewModel>
+
+@foreach (var student in Model)
+{
+    <tr>
+        <td>@student.FullName</td>
+        <td>@student.AbsencesCount</td>
+        <td>@student.Performance</td>
+        <td>@student.ExamPercentage</td>
+        <td>
+            <button class="btn-info show-details"
+                    data-name="@student.FullName"
+                    data-phone="@student.StudentPhone"
+                    data-parent="@student.ParentPhone"
+                    data-attendance="@student.AbsencesCount"
+                    data-grade="@student.ExamPercentage">
+                بيانات الطالب
+            </button>
+            <button class="btn-success get-absence-btn"
+                    data-id="@student.StudentId"
+                    data-name="@student.FullName">
+                أيام الغياب
+            </button>
+        </td>
+    </tr>
+}

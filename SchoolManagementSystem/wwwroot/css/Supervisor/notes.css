@@ -1,0 +1,162 @@
+﻿ @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+body {
+    margin: 0;
+    background: #eef2f5;
+}
+
+/* ================= الهيكل ================= */
+.layout {
+    display: flex;
+    flex-direction: row-reverse;
+    min-height: 100vh;
+}
+
+/* ================= المحتوى ================= */
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.box {
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 8px;
+}
+
+/* ================= العنوان ================= */
+.table-title {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+    .table-title.center {
+        text-align: center;
+    }
+
+/* ================= جدول الملاحظات ================= */
+.notes-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+    .notes-table th {
+        background: #b7d0e4;
+        padding: 12px;
+        font-weight: bold;
+    }
+
+    .notes-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .notes-table tr:last-child td {
+        border-bottom: none;
+    }
+
+/* ================= القائمة الجانبية ================= */
+
+
+
+/* ================= Responsive ================= */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+   
+}
+
+
+
+   .teacher-notes-section {
+             background: white;
+             padding: 25px;
+             border-radius: 10px;
+             margin-top: 30px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+             border-top: 3px solid #4387AB;
+         }
+
+         .section-title {
+             color: #4387AB;
+             font-size: 22px;
+             margin-bottom: 25px;
+             padding-bottom: 15px;
+             border-bottom: 2px solid #edf7fc;
+             font-weight: 700;
+         }
+
+         /* Notes form */
+         .notes-form {
+             background: #f8fafc;
+             padding: 20px;
+             border-radius: 8px;
+             margin-bottom: 25px;
+             border: 1px solid #e8f4fc;
+         }
+
+             .notes-form .form-group {
+                 margin-bottom: 15px;
+             }
+
+             .notes-form label {
+                 display: block;
+                 margin-bottom: 8px;
+                 color: #4387AB;
+                 font-weight: 600;
+                 font-size: 15px;
+             }
+
+         .form-input, .form-select, .form-textarea {
+             width: 100%;
+             padding: 10px 12px;
+             border: 1px solid #d1e7f3;
+             border-radius: 6px;
+             font-size: 15px;
+             background: white;
+             color: #333;
+             font-family: 'Cairo', sans-serif;
+         }
+
+             .form-input:focus, .form-select:focus, .form-textarea:focus {
+                 outline: none;
+                 border-color: #4387AB;
+                 box-shadow: 0 0 0 3px rgba(67, 135, 171, 0.1);
+             }
+
+         .form-textarea {
+             resize: vertical;
+             min-height: 100px;
+         }
+
+         .save-note-btn {
+             background: #28a745;
+             color: white;
+             padding: 10px 20px;
+             border: none;
+             border-radius: 6px;
+             font-size: 16px;
+             font-weight: 600;
+             cursor: pointer;
+             transition: all 0.3s;
+             margin-top: 10px;
+             width: 100%;
+         }
+
+             .save-note-btn:hover {
+                 background: #218838;
+                 transform: translateY(-2px);
+             }

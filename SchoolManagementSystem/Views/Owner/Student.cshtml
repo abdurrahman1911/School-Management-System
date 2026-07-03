@@ -1,0 +1,427 @@
+﻿@using Newtonsoft.Json
+@using SchoolManagementSystem.ViewModel.Owner
+@model OwnerStudentsViewModel
+@{
+    ViewData["Title"] = "قائمة الطلاب";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+        <link rel="stylesheet" href="~/css/Admin/studentmanagment.css" />
+    <link rel="stylesheet" href="~/css/Admin/students.css" />
+    <link rel="stylesheet" href="~/css/Admin/res.css" />
+
+    <style>
+            body {
+                font-family: 'Cairo', sans-serif;
+                background-color: #f4f7f6;
+            }
+
+
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .sidebar .logo {
+                padding: 25px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .user-info span {
+                font-size: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            .filters-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            }
+
+            .filter-select, .search-type {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            }
+    
+
+            
+
+            
+        </style>
+
+ 
+    </head>
+
+<body>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationViewModel.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationViewModel.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationViewModel.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationViewModel.FullName</span>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+                <li><a asp-controller="Owner" asp-action="Notifications">الإشعارات</a></li>
+
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student" class="active">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+    </aside>
+
+    <div class="main-content" id="mainContent">
+        <div class="page active" id="students">
+
+            <div class="content-header">
+                <h1><i class="fas fa-users"></i> @ViewData["Title"]</h1>
+            </div>
+
+            <div class="actions-bar">
+                <div class="filters-group">
+                    <select id="stageFilter" class="filter-select">
+                        <option value="">كل المراحل</option>
+                        @if (Model.Stages != null)
+                        {
+                            foreach (var stageObj in Model.Stages)
+                            {
+                                <option value="@stageObj.Stage.GetType().GetProperty("ID")?.GetValue(stageObj.Stage)">
+                                    @stageObj.Stage.GetType().GetProperty("Name")?.GetValue(stageObj.Stage)
+                                </option>
+                            }
+                        }
+                    </select>
+
+                    <select id="levelFilter" class="filter-select">
+                        <option value="">كل الصفوف</option>
+                    </select>
+
+                    <select id="classFilter" class="filter-select">
+                        <option value="">كل الفصول</option>
+                    </select>
+                </div>
+
+                <div class="search-container">
+                    <select id="searchType" class="search-type">
+                        <option value="" selected disabled>-- اختر نوع البحث --</option>
+                        <option value="studentssn">رقم هوية الطالب (SSN)</option>
+                        <option value="studentphone">هاتف الطالب</option>
+                        <option value="parentssn">رقم هوية ولي الأمر (SSN)</option>
+                        <option value="parentphone">هاتف ولي الأمر</option>
+                    </select>
+
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="ابحث هنا..." id="searchInput">
+                        <button class="search-clear" id="clearSearch" style="display:none; background:none; border:none; cursor:pointer; position:absolute; left:10px;">
+                            <i class="fas fa-times text-danger"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+                <div class="top-scroll">
+                    <div class="top-scroll-inner"></div>
+                </div>
+
+            <div class="table-container">
+                <div class="table-wrapper">
+                    <table class="students-table" id="studentsTable" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #007bff; color: white; text-align: right;">
+                                <th style="padding: 12px;">اسم الطالب/ة</th>
+                                <th style="padding: 12px;">هاتف الطالب</th>
+                                <th style="padding: 12px;">اسم ولي الامر</th>
+                                <th style="padding: 12px;">صلة القرابة</th>
+                                <th style="padding: 12px;">هاتف ولي الامر</th>
+                                <th style="padding: 12px;">المرحلة</th>
+                                <th style="padding: 12px;">الصف</th>
+                                <th style="padding: 12px;">الفصل</th>
+                                <th style="padding: 12px;">تاريخ التخرج او المغادرة</th>
+
+                                <th style="padding: 12px; text-align: center;">أيام الغياب</th>
+                                <th style="padding: 12px; text-align: center;">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.SchoolStudents != null && Model.SchoolStudents.Any())
+                            {
+                                foreach (var student in Model.SchoolStudents)
+                                {
+                                    <tr style="border-bottom: 1px solid #eee;"
+                                        data-studentssn="@(student.StudentSSN ?? "")"
+                                        data-studentphone="@(student.StudentPhone ?? "")"
+                                        data-parentssn="@(student.ParentSSN ?? "")"
+                                        data-parentphone="@(student.ParentPhone ?? "")"
+                                        data-stageid="@student.StageID"
+                                        data-levelid="@student.LevelID"
+                                        data-classid="@student.ClassID">
+
+                                        <td style="padding: 12px;">@student.StudentName</td>
+                                        <td style="padding: 12px;">@student.StudentPhone</td>
+                                        <td style="padding: 12px;">@student.ParentName</td>
+                                        <td style="padding: 12px;">@student.ParentRelation</td>
+                                        <td style="padding: 12px;">@student.ParentPhone</td>
+                                        <td style="padding: 12px;">@(student.StageName ?? "غير مقيد")</td>
+                                        <td style="padding: 12px;">@(student.LevelName ?? "غير مقيد")</td>
+                                        <td style="padding: 12px;">@(student.ClassName ?? "غير مقيد")</td>
+                                        <td>@(student.ExitDate?.ToString("yyyy-MM-dd") ?? "مستمر بالمدرسة")</td>
+                                        <td style="padding: 12px; text-align: center; font-weight: bold;">@student.AbsencesCount</td>
+                                        <td class="actions-cell" style="padding: 12px;">
+                                            <div class="action-btns">
+                                                <a asp-controller="Owner" asp-action="UserDetails" asp-route-UserID="@student.StudentUserID" class="btn btn-primary btn-sm">البيانات</a>
+                                                <a asp-controller="Owner" asp-action="UserDetails" asp-route-UserID="@student.ParentUserID" class="btn btn-primary btn-sm">ولي الامر</a>
+                                                <a asp-controller="Owner" asp-action="UserAbcense" asp-route-UserID="@student.StudentUserID" class="btn btn-success btn-sm">الغياب</a>
+                                                <a asp-controller="Owner" asp-action="StudentDegrees" asp-route-StudentID="@student.StudentID" class="btn btn-danger btn-sm">الدرجات</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="10" style="text-align: center; padding: 30px; font-size: 1.1rem; color: #666;">
+                                        لا يوجد طلاب حالياً لعرضهم.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+            const hierarchyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Stages?.Select(s => new
+            {
+                    stageId = s.Stage.GetType().GetProperty("ID")?.GetValue(s.Stage),
+                    levels = s.Levels?.Select(l => new
+                    {
+                            levelId = l.Level.GetType().GetProperty("ID")?.GetValue(l.Level),
+                            levelName = l.Level.GetType().GetProperty("Name")?.GetValue(l.Level),
+                            classes = l.Classes?.Select(c => new
+                            {
+                                    classId = c.GetType().GetProperty("ID")?.GetValue(c),
+                                    className = c.GetType().GetProperty("Name")?.GetValue(c)
+                            })
+                    })
+            })));
+    </script>
+
+    <script>
+            const searchInput = document.getElementById('searchInput');
+            const searchTypeSelect = document.getElementById('searchType');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const stageFilter = document.getElementById('stageFilter');
+            const levelFilter = document.getElementById('levelFilter');
+            const classFilter = document.getElementById('classFilter');
+
+            // Cascading Dropdowns
+            stageFilter.addEventListener('change', function () {
+                levelFilter.innerHTML = '<option value="">كل الصفوف</option>';
+                classFilter.innerHTML = '<option value="">كل الفصول</option>';
+                const selectedStageId = this.value;
+
+                if (selectedStageId && hierarchyData) {
+                    const stageObj = hierarchyData.find(s => s.stageId == selectedStageId);
+                    if (stageObj && stageObj.levels) {
+                        stageObj.levels.forEach(level => {
+                            levelFilter.innerHTML += `<option value="${level.levelId}">${level.levelName}</option>`;
+                        });
+                    }
+                }
+                filterTable();
+            });
+
+            levelFilter.addEventListener('change', function () {
+                classFilter.innerHTML = '<option value="">كل الفصول</option>';
+                const selectedStageId = stageFilter.value;
+                const selectedLevelId = this.value;
+
+                if (selectedStageId && selectedLevelId && hierarchyData) {
+                    const stageObj = hierarchyData.find(s => s.stageId == selectedStageId);
+                    const levelObj = stageObj?.levels?.find(l => l.levelId == selectedLevelId);
+
+                    if (levelObj && levelObj.classes) {
+                        levelObj.classes.forEach(cls => {
+                            classFilter.innerHTML += `<option value="${cls.classId}">${cls.className}</option>`;
+                        });
+                    }
+                }
+                filterTable();
+            });
+
+            classFilter.addEventListener('change', filterTable);
+            searchTypeSelect.addEventListener('change', filterTable);
+            searchInput.addEventListener('keyup', filterTable);
+
+            clearSearchBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                filterTable();
+                searchInput.focus();
+            });
+
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase().trim();
+                const searchType = searchTypeSelect.value;
+
+                const selectedStage = stageFilter.value;
+                const selectedLevel = levelFilter.value;
+                const selectedClass = classFilter.value;
+
+                const rows = document.querySelectorAll('#studentsTable tbody tr');
+
+                rows.forEach(row => {
+                    if(!row.hasAttribute('data-studentssn')) return;
+
+                    const studentSsn = row.dataset.studentssn.toLowerCase();
+                    const studentPhone = row.dataset.studentphone.toLowerCase();
+                    const parentSsn = row.dataset.parentssn.toLowerCase();
+                    const parentPhone = row.dataset.parentphone.toLowerCase();
+
+                    const stageId = row.dataset.stageid;
+                    const levelId = row.dataset.levelid;
+                    const classId = row.dataset.classid;
+
+                    let textMatch = true;
+                    if (searchValue !== '') {
+                        textMatch = false;
+                        if (searchType === "studentssn") {
+                            textMatch = studentSsn.includes(searchValue);
+                        } else if (searchType === "studentphone") {
+                            textMatch = studentPhone.includes(searchValue);
+                        } else if (searchType === "parentssn") {
+                            textMatch = parentSsn.includes(searchValue);
+                        } else if (searchType === "parentphone") {
+                            textMatch = parentPhone.includes(searchValue);
+                        } else {
+                            textMatch = studentSsn.includes(searchValue) ||
+                                        studentPhone.includes(searchValue) ||
+                                        parentSsn.includes(searchValue) ||
+                                        parentPhone.includes(searchValue);
+                        }
+                    }
+
+                    const stageMatch = (selectedStage === '' || stageId === selectedStage);
+                    const levelMatch = (selectedLevel === '' || levelId === selectedLevel);
+                    const classMatch = (selectedClass === '' || classId === selectedClass);
+
+                    if (textMatch && stageMatch && levelMatch && classMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                clearSearchBtn.style.display = searchValue ? 'block' : 'none';
+            }
+
+            // Sidebar Mobile Logic
+            const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+            const topScroll = document.querySelector(".top-scroll");
+            const topInner = document.querySelector(".top-scroll-inner");
+            const tableContainer = document.querySelector(".table-container");
+
+            function syncWidth() {
+            topInner.style.width = tableContainer.scrollWidth + "px";
+            }
+
+            syncWidth();
+            window.addEventListener("resize", syncWidth);
+
+            topScroll.addEventListener("scroll", () => {
+            tableContainer.scrollLeft = topScroll.scrollLeft;
+            });
+
+            tableContainer.addEventListener("scroll", () => {
+            topScroll.scrollLeft = tableContainer.scrollLeft;
+            });
+
+    </script>
+</body>
+</html>

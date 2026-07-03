@@ -1,0 +1,567 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    display: flex;
+    background-color: #f5f5f5;
+    color: #333;
+    direction: rtl;
+    min-height: 100vh;
+}
+
+
+.profile {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.manager-img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.profile h4 a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 230px;
+    background: #4387AB;
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.sidebar .logo {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* ========== Menu ========== */
+.nav-links {
+    list-style: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    flex: 1 !important;
+    padding-right: 0 !important;
+}
+
+.nav-links li a {
+    width: 200px;
+    height: 48px;
+    display: block;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav-links li a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.nav-links a:hover {
+    background: #0d3f56 !important;
+    font-weight: bold !important;
+}
+
+/* ========== Logout ========== */
+.logout {
+    margin-top: auto;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+}
+
+.logout:hover {
+    background: #0d3f56;
+    color: #fff;
+}
+
+/* ========== Main content ========== */
+.main-content {
+    flex: 1;
+    margin-right: 230px;
+    padding: 20px;
+    background: #f8fafc;
+    width: calc(100% - 230px);
+}
+
+.content-header {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #4387AB;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.content-header h1 {
+    color: #4387AB;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.date {
+    background: #edf7fc;
+    color: #4387AB;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Page content wrapper */
+.content-body {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ========== Teachers Table Section (As per image_266f46.png) ========== */
+.table-section {
+    width: 100%;
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow-x: auto;
+}
+
+#teachersTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+/* Table Header */
+#teachersTable th {
+    background: #4387AB;
+    color: white;
+    padding: 4px 6px; 
+    text-align: center;
+    border: 1px solid #367599;
+    white-space: nowrap; 
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Table Cells */
+#teachersTable td {
+    padding: 4px 6px;
+    text-align: center;
+    border: 1px solid #e8f4fc;
+    white-space: nowrap; 
+    font-size: 13px;
+    color: #495057;
+    vertical-align: middle;
+}
+
+/* Table Rows Hover & Zebra Striping */
+#teachersTable tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+#teachersTable tbody tr:hover {
+    background: #f5f7fb;
+    transition: 0.3s;
+}
+
+/* Column limits if needed */
+#teachersTable th:last-child,
+#teachersTable td:last-child {
+    width: 250px;
+}
+
+/* ========== Action Buttons inside the Table ========== */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styling Buttons to match image_266f46.png */
+#teachersTable .btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+    color: white !important;
+    min-width: 70px;
+    text-align: center;
+}
+
+/* البيانات (Blue) */
+#teachersTable .btn-primary {
+    background: #2563eb;
+}
+
+/* الغياب (Red) */
+#teachersTable .btn-success {
+    background:  #28a745;
+}
+
+/* المواد (Green) */
+#teachersTable .btn-danger {
+    background: #dc3545;
+}
+
+#teachersTable .btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+/* ========== Teacher notes section ========== */
+.teacher-notes-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-top: 3px solid #4387AB;
+}
+
+.section-title {
+    color: #4387AB;
+    font-size: 22px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #edf7fc;
+    font-weight: 700;
+}
+
+/* Notes form */
+.notes-form {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #e8f4fc;
+}
+
+.notes-form .form-group {
+    margin-bottom: 15px;
+}
+
+.notes-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4387AB;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1e7f3;
+    border-radius: 6px;
+    font-size: 15px;
+    background: white;
+    color: #333;
+    font-family: 'Cairo', sans-serif;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #4387AB;
+    box-shadow: 0 0 0 3px rgba(67, 135, 171, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.save-note-btn {
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.save-note-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+/* ========== Modal Styles ========== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 25px;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    color: #4387AB;
+}
+
+.modal-header h2 {
+    font-size: 1.3rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.form-group label i {
+    color: #4387AB;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: white;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4387AB;
+    box-shadow: 0 0 0 3px rgba(67, 135, 171, 0.1);
+}
+
+.form-control[readonly] {
+    background-color: #f8fafc;
+    cursor: not-allowed;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+/* Attendance days grid */
+.attendance-days {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.day-attendance {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.day-name {
+    font-weight: bold;
+    color: #4387AB;
+    margin-bottom: 8px;
+}
+
+.att-status {
+    font-weight: 600;
+}
+
+.att-status.present {
+    color: #28a745;
+}
+
+.att-status.absent {
+    color: #dc3545;
+}
+
+.attendance-summary {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* ========== Responsive Design (Media Queries) ========== */
+@media (max-width: 768px) {
+    .main-content {
+        margin-right: 0;
+        padding: 15px;
+        width: 100%;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    #teachersTable {
+        min-width: 800px;
+    }
+
+    #teachersTable th,
+    #teachersTable td {
+        font-size: 13px;
+        padding: 10px 6px;
+    }
+
+    #teachersTable .btn {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+
+}
+
+
+body .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}

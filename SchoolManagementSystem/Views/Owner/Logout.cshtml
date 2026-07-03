@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "تسجبل الخروج";
+}
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>تسجيل الخروج</title>
+    <link rel="stylesheet" href="~/css/Admin/logout.css"/>
+    
+   
+
+</head>
+<body>
+  <aside class="sidebar">    
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">ص</div>
+                <span>صالح الشمري</span>
+            </div>
+        </div>
+        
+      <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+
+</ul>
+<a asp-controller="Home"
+               asp-action="Index"
+               class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+    <main class="main-content">
+        <header class="content-header">
+            <h1>تسجيل الخروج</h1>
+            <div class="header-info">
+            </div>
+        </header>
+
+        <div class="content-body">
+            <div class="logout-container">
+                <div class="logout-message">
+                    <div class="logout-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    
+                    
+                    
+            
+                    
+                    <div class="logout-actions">
+                        <a href="login.html" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i> نعم، تسجيل الخروج
+                        </a>
+                        <a href="success.html" class="btn btn-cancel">
+                            <i class="fas fa-times"></i> إلغاء والعودة
+                        </a>
+                    </div>
+                    
+                 
+                </div>
+            </div>
+        </div>
+    </main>
+
+   
+</body>
+</html>

@@ -1,0 +1,102 @@
+@using SchoolManagementSystem.ViewModel.Student
+@model StudentGradesViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدرجات - @Model.StudentFullName</title>
+    <meta name="description" content="سجل الدرجات - بوابة الطالب الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Student/student_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.FirstLetter</div>
+                    <span>@Model.StudentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Student" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Student" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Student" asp-action="Grades" class="active">الدرجات</a></li>
+                <li><a asp-controller="Student" asp-action="Attendance">الحضور والغياب</a></li>
+                <li><a asp-controller="Student" asp-action="Tests">الاختبارات</a></li>
+                <li><a asp-controller="Student" asp-action="Level">المستوى</a></li>
+                <li><a asp-controller="Student" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Student" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">📝 سجل الدرجات</h1>
+                <p style="color: #64748b; margin-top: 8px;">الصف: @Model.GradeName</p>
+            </div>
+
+            <!-- Grades Table -->
+            <h2 class="section-title">التفاصيل الدراسية للمواد</h2>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المادة</th>
+                            <th>نوع الاختبار</th>
+                            <th>الدرجة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Grades != null && Model.Grades.Any())
+                        {
+                            int i = 0;
+                            foreach (var g in Model.Grades)
+                            {
+                                string cls = "medium";
+                                if (g.TotalDegree > 0)
+                                {
+                                    decimal pct = (g.Degree / g.TotalDegree) * 100;
+                                    if (pct >= 85) cls = "high";
+                                    else if (pct < 60) cls = "low";
+                                }
+
+                                <tr style="animation: fadeInUp 0.4s ease both; animation-delay: @(i * 0.06)s;">
+                                    <td>@g.SubjectName</td>
+                                    <td>@g.ExamName</td>
+                                    <td><span class="grade-score @cls">@g.Score</span></td>
+                                    <td>@g.Date</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding:24px; color:#999;">لا توجد درجات مسجلة لهذا العام</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Student/student_script.js"></script>
+</body>
+
+</html>

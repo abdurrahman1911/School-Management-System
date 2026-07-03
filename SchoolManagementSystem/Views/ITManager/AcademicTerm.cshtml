@@ -1,0 +1,219 @@
+﻿@model SchoolManagementSystem.ViewModel.ITManager.AcademicTearmViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إدارة التيرم الدراسي</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+    <link rel="stylesheet" href="~/css/ITManager/SubjectsTeachersManagement.css" />
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <img src="~/images/users/@Model.NavigationInfo.ProfilePhotoUrl" class="manager-img">
+                <h4>  <span>@Model.NavigationInfo.FullName</span></h4>
+
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li ><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li class="active"><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+
+            <div class="subjects-teachers-container">
+
+                <h1 class="page-title">إدارة التيرم الدراسي</h1>
+
+                <div class="actions-bar">
+                    <a asp-controller="ITManager" asp-action="AddAcademicTerm" class="btn-add">
+                        <i class="fas fa-plus"></i>
+                        اضافة تيرم دراسي جديد
+                    </a>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-wrapper">
+                        <table class="subjects-teachers-table" id="bindingsTable">
+                            <thead>
+                                <tr>
+                                    <th>التيرم</th>
+                                    <th>السنه الدراسية</th>
+                                    <th>تاريخ البداية</th>
+                                    <th>تاريخ النهاية</th>
+                                    <th>الحاله</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.AcademicTermList != null && Model.AcademicTermList.Any())
+                                {
+                                    @foreach (var term in Model.AcademicTermList)
+                                    {
+                                        <tr>
+                                            <td>@term.TermName</td>
+                                            <td>@term.Year</td>
+                                            <td>@term.StartDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@term.EndDate?.ToString("yyyy-MM-dd")</td>
+                                            <td>@term.Status</td>
+                                            <td>
+                                                <a asp-controller="ITManager"
+                                                   asp-action="EditAcademicTerm"
+                                                   asp-route-id="@term.Id"
+                                                   class="action-edit">
+                                                    <i class="fas fa-edit"></i> تعديل
+                                                </a>
+
+                                                <button type="button"
+                                                        class="action-delete"
+                                                        onclick="deleteRow(this, @term.Id)">
+                                                    <i class="fas fa-trash"></i> حذف
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" style="text-align:center; padding: 20px;">لا يوجد تيرم دراسي مضاف حالياً.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+        function deleteRow(btn, termId) {
+            // تشغيل نافذة التأكيد المحترفة المتوافقة مع التصميم المطلق
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لن تتمكن من استعادة هذا التيرم الدراسي وبياناته مجدداً!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545', // أحمر للحذف
+                cancelButtonColor: '#6c757d',  // رمادي للإلغاء
+                confirmButtonText: 'نعم، احذفها!',
+                cancelButtonText: 'إلغاء',
+                rtl: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    // إرسال طلب الحذف إلى السيرفر باستخدام fetch (AJAX)
+                    fetch(`/ITManager/DeleteAcademicTerm/${termId}`, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // حذف السطر الحركي من الجدول أمام المستخدم مباشرة فور النجاح
+                            const row = btn.closest("tr");
+                            row.remove();
+
+                            // رسالة نجاح أنيقة
+                            Swal.fire({
+                                title: 'تم الحذف!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'حسناً',
+                                rtl: true
+                            });
+                        } else {
+                            // رسالة تنبيهية في حال وجود ارتباطات بقاعدة البيانات تمنع الحذف
+                            Swal.fire({
+                                title: 'خطأ!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonText: 'موافق',
+                                rtl: true
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'خطأ في الاتصال',
+                            text: 'حدث خطأ غير متوقع أثناء محاولة الاتصال بالسيرفر.',
+                            icon: 'error',
+                            confirmButtonText: 'موافق',
+                            rtl: true
+                        });
+                    });
+                }
+            });
+        }
+
+        // كود الـ Sidebar وتجاوب القائمة الجانبية
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>

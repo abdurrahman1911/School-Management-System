@@ -1,0 +1,139 @@
+@using SchoolManagementSystem.ViewModel.Parent
+@model ParentScheduleViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الجدول الدراسي - بوابة ولي الأمر</title>
+    <meta name="description" content="الجدول الدراسي للطلاب - بوابة ولي الأمر الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.ParentFirstLetter</div>
+                    <span>@Model.ParentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Parent" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Parent" asp-action="Performance">أداء الطلاب</a></li>
+                <li><a asp-controller="Parent" asp-action="Schedule" class="active">الجدول الدراسي</a></li>
+                <li><a asp-controller="Parent" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Parent" asp-action="Attendance">الحضور</a></li>
+                <li><a asp-controller="Parent" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Parent" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">الجدول الدراسي</h1>
+                <div class="child-selector">
+                    <label class="child-selector-label">اختر الطالب:</label>
+                    <select id="child-select" class="child-selector-dropdown" onchange="changeChild()">
+                        @foreach (var child in Model.Children)
+                        {
+                            <option value="@child.StudentId">@child.FullName - @child.GradeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Weekly Schedule Section -->
+            <section class="schedule-section">
+                <h2 class="schedule-title">الجدول الدراسي :</h2>
+                
+                <div class="schedule-image-container" style="text-align: center; padding: 1rem;" id="schedule-container">
+                    <!-- Schedule image will be loaded here dynamically -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="~/js/Parent/parent_script.js"></script>
+    <script>
+        // Schedule data per child - from database
+        var schedulesByChild = @Html.Raw(Json.Serialize(
+            Model.Children.ToDictionary(
+                c => c.StudentId.ToString(),
+                c => c.SchedulePhotoUrl
+            )
+        ));
+
+        var defaultChildId = '@(Model.Children.FirstOrDefault()?.StudentId)';
+
+        function updateScheduleUI() {
+            var savedChild = localStorage.getItem('selectedChild') || defaultChildId;
+            var childSchedule = schedulesByChild[savedChild] || schedulesByChild[defaultChildId];
+
+            var container = document.getElementById('schedule-container');
+            container.innerHTML = '';
+
+            if (childSchedule && childSchedule.trim() !== '') {
+                var frame = document.createElement('div');
+                frame.className = 'beautiful-schedule-frame';
+                
+                var img = document.createElement('img');
+                img.src = childSchedule;
+                img.alt = 'جدول الحصص';
+                img.className = 'beautiful-schedule-img';
+                img.style.maxWidth = '100%';
+                img.style.borderRadius = '8px';
+                img.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                
+                frame.appendChild(img);
+                container.appendChild(frame);
+            } else {
+                container.innerHTML = `
+                    <div style="padding: 3rem; color: #999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 1rem; opacity: 0.5;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <p>لا يوجد جدول متاح حالياً</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Override changeChild to also update schedule data
+        var originalChangeChild = changeChild;
+        changeChild = function () {
+            if (typeof originalChangeChild === 'function') {
+                originalChangeChild();
+            }
+            updateScheduleUI();
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('selectedChild') && defaultChildId) {
+                localStorage.setItem('selectedChild', defaultChildId);
+            }
+            if (typeof syncUIWithSelection === 'function') {
+                syncUIWithSelection();
+            }
+            updateScheduleUI();
+        });
+    </script>
+</body>
+
+</html>

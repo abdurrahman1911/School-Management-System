@@ -1,0 +1,896 @@
+/* ================= محتوى الصفحة ================= */
+.content {
+    flex: 1;
+    background-color: #eef3f6;
+    padding: 30px;
+    margin-right: 230px;
+    overflow-y: auto;
+}
+
+.student-management-container {
+    max-width: 1300px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* عنوان الصفحة */
+.page-title {
+    color: #1b3a57;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    border-right: 5px solid #1e6d92;
+    padding-right: 15px;
+
+    text-align: right;
+    width: 100%;
+    margin-right: 0;
+    margin-left: auto;
+}
+/* ================= شريط الإضافة والبحث ================= */
+.actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-add {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+    background: #155a7a;
+    transform: translateY(-2px);
+}
+
+/* ================= البحث الفوري ================= */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    padding: 0 5px 0 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e7ed;
+    transition: all 0.3s ease;
+    min-width: 300px;
+}
+
+.search-type {
+    min-width: 160px;
+    padding: 12px;
+    border: 1px solid #dce5eb;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+.search-type:focus {
+    border-color: #1e6d92;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px;
+    background: transparent;
+}
+
+.search-input::placeholder {
+    color: #bbb;
+    font-size: 13px;
+}
+
+.search-clear {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-clear:hover {
+    color: #dc3545;
+    background: #f5f5f5;
+}
+
+/* ================= الجدول ================= */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    overflow-x: auto;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.students-table {
+    width: 100%;
+    min-width: 700px;      /* كان 800 أو أكبر */
+    border-collapse: collapse;
+    table-layout: auto;
+    font-size: 13px;
+}
+
+
+
+.students-table thead {
+    background: #4387AB;
+    color: white;
+}
+
+.students-table th {
+    padding: 4px 6px;      /* كان 18px 14px */
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #367599;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.students-table td {
+     padding: 8px 6px;      /* كان 16px 14px */
+    font-size: 13px;
+    text-align: center;
+    border: 1px solid #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.students-table tbody tr:hover {
+    background: #f5f7fb;
+    transition: 0.3s;
+}
+
+/* ================= Badges ================= */
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.inactive {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* ================= أزرار الإجراءات ================= */
+.actions-cell {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.action-edit {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-edit:hover {
+    background: #155a7a;
+}
+
+.action-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-delete:hover {
+    background: #c82333;
+}
+
+/* ================= Modal ================= */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 24px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eef3f6;
+    background: #f8fbfd;
+    border-radius: 24px 24px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #1b3a57;
+}
+
+.modal-header h2 i {
+    color: #1e6d92;
+    margin-left: 10px;
+}
+
+.close-modal {
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.close-modal:hover {
+    color: #dc3545;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+/* ================= فورم الإضافة ================= */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1b3a57;
+    margin-bottom: 8px;
+}
+
+.form-group label i {
+    margin-left: 8px;
+    color: #1e6d92;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e7ed;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s;
+    background: #f9fcfd;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #1e6d92;
+    box-shadow: 0 0 0 3px rgba(30, 109, 146, 0.1);
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+/* ================= أزرار الإجراءات في الفورم ================= */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eef3f6;
+}
+
+.btn-cancel {
+    background: #f5f5f5;
+    color: #666;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancel:hover {
+    background: #e0e0e0;
+}
+
+.btn-save {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-save:hover {
+    background: #155a7a;
+}
+
+/* ================= Responsive ================= */
+@media screen and (max-width: 768px) {
+    .content {
+        margin-right: 0;
+        padding: 20px;
+    }
+    
+    .actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    .modal-content {
+        max-width: 95%;
+    }
+    
+    .form-actions {
+        justify-content: center;
+    }
+}
+
+/* ================= كلمة المرور ================= */
+.password-group {
+    margin-bottom: 20px;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .form-control {
+    padding-left: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 18px;
+}
+
+.toggle-password:hover {
+    color: #1e6d92;
+}
+
+.password-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.password-hint i {
+    color: #ffc107;
+}
+
+
+/* ===== Table Container ===== */
+.table-container {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+/* ===== Users Table ===== */
+.users-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* ===== Table Header ===== */
+.users-table thead th {
+    background: linear-gradient(135deg, #1e6d92, #155a7a);
+    color: white;
+    padding: 18px 14px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+}
+
+/* Rounded Header */
+.users-table thead th:first-child {
+    border-top-right-radius: 18px;
+}
+
+.users-table thead th:last-child {
+    border-top-left-radius: 18px;
+}
+
+/* ===== Table Body ===== */
+.users-table td {
+    padding: 16px 14px;
+    text-align: center;
+    border-bottom: 1px solid #eef3f6;
+    font-size: 14px;
+    color: #333;
+    background: white;
+}
+
+/* Hover Effect */
+.users-table tbody tr:hover {
+    background: #f9fcfd;
+    transition: 0.2s;
+}
+
+/* ===== Table Container ===== */
+.table-container {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+/* ===== Students Table ===== */
+.students-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* ===== Table Header ===== */
+.students-table thead th {
+       background: #4387AB;
+    color: white;
+    padding: 4px 6px!important;
+    text-align: center;
+    border: 1px solid #367599;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+
+/* ===== Table Body ===== */
+.students-table td {
+    padding: 16px 14px;
+    text-align: center;
+    border-bottom: 1px solid #000000;
+    font-size: 14px;
+    color: #333;
+    background: white;
+}
+
+/* ===== Hover Effect ===== */
+.students-table tbody tr:hover {
+    background: #f9fcfd;
+    transition: 0.2s;
+}
+
+/* ===== Status Badge ===== */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.inactive {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* ===== Actions ===== */
+.actions-cell {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.action-edit {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.action-edit:hover {
+    background: #155a7a;
+}
+
+.action-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.action-delete:hover {
+    background: #b52a37;
+}
+
+
+
+a.btn-add {
+    text-decoration: none;
+}
+
+.action-edit {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+
+
+.search-type {
+  /* Layout & Spacing */
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* Colors */
+  background-color: #f8f9fa;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  
+  /* Shape */
+  border-radius: 8px;
+  cursor: pointer;
+  
+  /* Transition for smooth effects */
+  transition: all 0.3s ease;
+  
+  /* Width - adjust as needed */
+  min-width: 150px;
+  
+  /* Remove default arrow (optional - for custom styling) */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Custom arrow (if removing default) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+/* Hover effect */
+.search-type:hover {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* Focus effect */
+.search-type:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Active/Open state */
+.search-type:active {
+  background-color: #e9ecef;
+}
+
+/* Disabled state (if needed) */
+.search-type:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* For RTL languages (since you have Arabic text) */
+[dir="rtl"] .search-type {
+  background-position: left 12px center;
+  padding: 12px 16px 12px 32px;
+}
+
+/* Optional: Style the dropdown options */
+.search-type option {
+  padding: 10px;
+  background-color: white;
+  color: #333;
+}
+
+/* ================= الصفحة ================= */
+
+.page-container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+
+    height: auto;
+    overflow: visible;
+}
+
+.page-container h1 {
+    color: #1b3a57;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.page-container h2 {
+    color: #1b3a57;
+    margin-bottom: 15px;
+    border-right: 4px solid #1e6d92;
+    padding-right: 10px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 25px 0;
+}
+
+/* ================= البحث ================= */
+
+.search-section {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-section select,
+.search-section input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #d6dce2;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.search-section button {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.search-section button:hover {
+    background: #155a7a;
+}
+
+/* ================= بيانات الطالب ================= */
+
+#studentResult {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #d6dce2;
+    border-radius: 12px;
+    background: #f9fcfd;
+}
+
+.student-info {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.info-box {
+    background: white;
+    border: 1px solid #e4e9ee;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.info-box strong {
+    display: block;
+    color: #1b3a57;
+    margin-bottom: 8px;
+}
+
+/* ================= المواد ================= */
+
+.subjects-title {
+    color: #1b3a57;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.subjects-grid label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #e4e9ee;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.subjects-grid label:hover {
+    background: #f2f8fb;
+    border-color: #1e6d92;
+}
+
+.subjects-grid input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #1e6d92;
+}
+
+/* ================= الأزرار ================= */
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.form-actions a {
+    background: #f1f1f1;
+    color: #444;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.form-actions a:hover {
+    background: #ddd;
+}
+
+.form-actions button {
+    background: #1e6d92;
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.form-actions button:hover {
+    background: #155a7a;
+}
+
+/* ================= Responsive ================= */
+
+@media (max-width: 768px) {
+
+    .student-info {
+        grid-template-columns: 1fr;
+    }
+
+    .subjects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-section {
+        flex-direction: column;
+    }
+
+    .search-section input,
+    .search-section select,
+    .search-section button {
+        width: 100%;
+    }
+}

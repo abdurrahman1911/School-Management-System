@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewData["Title"] = "اضافة مدير";
+}
+
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Admin/add-admin.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>إضافة مدير</title>
+
+    
+
+</head>
+<body>
+  <aside class="sidebar">    
+  <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">ص</div>
+                <span>صالح الشمري</span>  
+            </div>
+        </div>
+        
+        <!-- Navigation links -->
+       <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Addadmin" class="active">اضافة مدير</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+</ul>
+
+<a asp-controller="Home"
+               asp-action="Index"
+               class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h1>إضافة مدير جديد</h1>
+            <div class="header-info">
+                <!-- Header information area -->
+            </div>
+        </header>
+
+        <div class="content-body">
+            <div class="add-admin-form">
+                <form id="adminForm" asp-action="AddAdmin">
+                    <!-- Full name in single field -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="fullName">الاسم الرباعي:</label>
+                            <input type="text" id="fullName" name="fullName" required placeholder="أدخل الاسم الرباعي (الاسم الأول والثاني والثالث والعائلة)">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminEmail">البريد الإلكتروني:</label>
+                            <input type="email" id="adminEmail" name="adminEmail" required placeholder="example@school.edu">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPhone">رقم الهاتف:</label>
+                            <input type="tel" id="adminPhone" name="adminPhone" required placeholder="05XXXXXXXX">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ssn">رقم الهوية/الإقامة:</label>
+                            <input type="text" id="ssn" name="ssn" required placeholder="أدخل رقم الهوية">
+                        </div>
+                        <div class="form-group">
+                            <label for="birthdate">تاريخ الميلاد:</label>
+                            <input type="date" id="birthdate" name="birthdate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gender">الجنس:</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">اختر الجنس</option>
+                                <option value="1">ذكر</option>
+                                <option value="0">أنثى</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nationality">الجنسية:</label>
+                            <input type="text" id="nationality" name="nationality" required placeholder="أدخل الجنسية">
+                        </div>
+                    </div>
+                    
+                    <!-- Address in single field -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="address">العنوان:</label>
+                            <input type="text" id="address" name="address" required placeholder="أدخل العنوان كاملاً (المحافظة، المدينة، المنطقة، الشارع)">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hireDate">تاريخ التعيين:</label>
+                            <input type="date" id="hireDate" name="hireDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminRole">الدور الوظيفي:</label>
+                            <select id="adminRole" name="adminRole" required>
+                                <option value="">اختر الدور الوظيفي</option>
+                                <option value="مدير عام">مدير عام</option>
+                                <option value="مدير شؤون الطلاب">مدير شؤون الطلاب</option>
+                                <option value="مدير شؤون المعلمين">مدير شؤون المعلمين</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button type="submit" class="btn save-btn">إضافة المدير</button>
+                        <button type="reset" class="btn cancel-btn">إعادة تعيين</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

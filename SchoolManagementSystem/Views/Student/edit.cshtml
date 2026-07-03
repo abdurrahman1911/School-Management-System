@@ -1,0 +1,129 @@
+@model SchoolManagementSystem.ViewModel.Student.StudentEditProfileViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل البيانات - @Model.StudentFullName</title>
+    <meta name="description" content="تعديل البيانات الشخصية - بوابة الطالب الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Student/student_styles.css" asp-append-version="true">
+    <style>
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+
+<body style="background-color:  #dce6ec;">
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.FirstLetter</div>
+                    <span>@Model.StudentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Student" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Student" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Student" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Student" asp-action="Attendance">الحضور والغياب</a></li>
+                <li><a asp-controller="Student" asp-action="Tests">الاختبارات</a></li>
+                <li><a asp-controller="Student" asp-action="Level">المستوى</a></li>
+                <li><a asp-controller="Student" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Student" asp-action="Edit" class="active">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content edit-page-bg">
+            <!-- Edit Section -->
+            <section class="edit-section">
+                <!-- Password Change Card -->
+                <div class="edit-card">
+                    <h2 class="edit-card-title">تعديل كلمة المرور</h2>
+
+                    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                    {
+                        <div class="alert alert-success">
+                            @Model.SuccessMessage
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            @Model.ErrorMessage
+                        </div>
+                    }
+
+                    <form asp-action="Edit" method="post" class="password-form show">
+                        <div class="form-group">
+                            <label class="form-label">كلمة المرور الحالية</label>
+                            <div class="input-wrapper">
+                                <input type="password" name="currentPassword" class="form-input" id="currentPassword" placeholder="ادخل كلمة المرور الحالية" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">كلمة المرور الجديدة</label>
+                            <div class="input-wrapper">
+                                <input type="password" name="newPassword" class="form-input" id="newPassword" placeholder="ادخل كلمة المرور الجديدة" required minlength="6">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">تأكيد كلمة المرور</label>
+                            <div class="input-wrapper">
+                                <input type="password" name="confirmPassword" class="form-input" id="confirmPassword" placeholder="اعد تأكيد كلمة المرور الجديدة" required minlength="6">
+                            </div>
+                        </div>
+
+                        <div class="save-btn-wrapper">
+                            <button type="submit" class="save-btn" id="savePassword">حفظ البيانات</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="~/js/Student/student_script.js"></script>
+    <script>
+        // Form validation before submit
+        document.querySelector('.password-form').addEventListener('submit', function (e) {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                alert('كلمة المرور الجديدة وتأكيدها غير متطابقين!');
+            }
+        });
+    </script>
+</body>
+
+</html>

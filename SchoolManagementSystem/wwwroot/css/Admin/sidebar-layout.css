@@ -1,0 +1,240 @@
+﻿/* ========== Reset ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Tahoma, Arial;
+}
+
+html, body {
+    height: 100%;
+    direction: rtl;
+}
+
+body {
+    background: #eef3f6;
+    overflow: hidden;
+}
+
+/* ========== Layout ========== */
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 230px;
+    background: #125174;
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 8px; /* بدل 25px */
+}
+
+.manager-img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.profile h4 a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* ========== Menu ========== */
+.menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+}
+
+    .menu li a {
+        display: block;
+        padding: 12px;
+        background: #2a719d;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        .menu li.active a,
+        .menu li a:hover {
+            background: #0d3f56;
+            font-weight: bold;
+        }
+
+/* ========== Logout ========== */
+.logout {
+    margin-top: auto;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .logout:hover {
+        background: #0d3f56;
+    }
+
+/* ========== Content ========== */
+.content {
+    margin-right: 230px;
+    width: calc(100% - 230px);
+    height: 100vh;
+    overflow-y: auto;
+    padding: 25px;
+}
+
+@media (max-width: 992px) {
+
+    .content {
+        margin-right: 0 !important;
+        width: 100% !important;
+        padding-top: 80px !important;
+    }
+
+    .sidebar {
+        position: fixed !important;
+        right: -250px !important;
+        top: 0 !important;
+        width: 230px !important;
+        height: 100vh !important;
+        transition: right .3s ease !important;
+        z-index: 1001 !important;
+        flex-direction: column !important;
+    }
+
+    .sidebar.active {
+        right: 0 !important;
+    }
+
+    .menu {
+        flex-direction: column !important;
+        overflow: visible !important;
+    }
+
+    .logout {
+        margin-top: auto;
+    }
+}
+
+/* Sidebar */
+.sidebar {
+    width: 230px;
+    background: #125174;
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Profile */
+.profile,
+.admin {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.manager-img,
+.admin img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.profile h4 a,
+.admin h4 a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Menu */
+.menu,
+nav {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.menu li {
+    list-style: none;
+}
+
+.menu li a,
+nav a {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.menu li.active a,
+nav a.active {
+    background: #0d3f56;
+    font-weight: bold;
+}
+
+.menu li a:hover,
+nav a:hover {
+    background: #0d3f56;
+}
+
+/* Logout */
+.logout {
+    margin-top: auto;
+    width: 100%;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff !important;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.logout:hover {
+    background: #0d3f56;
+}
+
+element.style {
+    background-color: #1a365d;
+    width: 260px;
+    color: white;
+}

@@ -1,0 +1,128 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+</head>
+
+<body>
+
+    <div class="page-container">
+
+
+        <form asp-controller="ITManager"
+              asp-action="EditManager"
+              method="post">
+
+            <h1>تعديل بيانات المدير</h1>
+
+            <div class="form-group">
+                <label>الاسم الأول</label>
+                <input type="text"
+                       name="FirstName"
+                       class="form-control"
+                       value="أحمد"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>الاسم الثاني</label>
+                <input type="text"
+                       name="SecondName"
+                       class="form-control"
+                       value="محمد"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>الاسم الأخير</label>
+                <input type="text"
+                       name="LastName"
+                       class="form-control"
+                       value="خالد"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email"
+                       name="Email"
+                       class="form-control"
+                       value="ahmed.mohamed@example.com"
+                       required>
+            </div>
+
+
+            <div class="form-group">
+                <label>رقم الهوية</label>
+                <input type="text"
+                       name="NationalId"
+                       class="form-control"
+                       value="12345678901234"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الهاتف</label>
+                <input type="text"
+                       name="Phone"
+                       value="0589067345"
+                       class="form-control"
+                       required />
+            </div>
+
+         
+
+            <div class="form-group">
+
+                <label>المرحلة</label>
+
+                <select name="Stage"
+                        class="form-control">
+
+                    <option selected>
+                        المرحلة الابتدائية
+                    </option>
+
+                    <option>
+                        المرحلة المتوسطه
+                    </option>
+
+                    <option>
+                        المرحلة الثانوية
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-controller="ITManager"
+                   asp-action="ManagersManagement">
+
+                    إلغاء
+
+                </a>
+
+                <button type="submit">
+
+                    حفظ التغييرات
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+</html>

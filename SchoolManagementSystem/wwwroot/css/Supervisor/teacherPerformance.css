@@ -1,0 +1,145 @@
+﻿ @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #eef2f5;
+}
+
+/* ================= الهيكل ================= */
+.layout {
+    display: flex;
+    flex-direction: row-reverse;
+    min-height: 100vh;
+}
+
+/* ================= المحتوى ================= */
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.box {
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 8px;
+}
+
+/* ================= Select ================= */
+.selectors {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+label {
+    margin-left: 15px;
+    font-weight: bold;
+    padding-top: 8px;
+}
+
+select {
+    width: 300px;
+    height: 42px;
+    padding: 0 15px;
+    border-radius: 12px;
+    background: #e6f0f7;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* ================= العنوان ================= */
+.table-title {
+    text-align: right;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* ================= الأداء (جراف مؤقت) ================= */
+.performance-box {
+    background: #f7fafc;
+    border: 1px solid #d5e2ec;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+/* التقييم العام */
+.overall {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.rate {
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-right: 5px;
+}
+
+    .rate.good {
+        background: #7fa3bf;
+        color: #fff;
+    }
+
+/* الأعمدة */
+.bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 250px;
+    margin-bottom: 15px;
+}
+
+.bar-item {
+    text-align: center;
+    width: 80px;
+}
+
+    .bar-item span {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+/* العمود */
+.bar {
+    height: 200px;
+    background: #e1ecf4;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.fill {
+    width: 100%;
+    background: #9fb7c9;
+    border-radius: 6px 6px 0 0;
+}
+
+
+/* ================= القائمة الجانبية ================= */
+
+
+/* ================= Responsive ================= */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+ 
+    .bars {
+        height: auto;
+    }
+}

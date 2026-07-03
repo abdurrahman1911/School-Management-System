@@ -1,0 +1,349 @@
+@using SchoolManagementSystem.ViewModel.Student
+@model StudentAssignmentsViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الواجبات - @Model.StudentFullName</title>
+    <meta name="description" content="الواجبات المدرسية - بوابة الطالب الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Student/student_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+    <style>
+        .assignments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .hw-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+        .hw-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        .hw-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 6px;
+            height: 100%;
+        }
+        .hw-card.current::before { background: #3b82f6; }
+        .hw-card.completed::before { background: #10b981; }
+        .hw-card.late::before { background: #ef4444; }
+
+        .hw-header {
+            margin-bottom: 16px;
+        }
+        .hw-subject-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .hw-subject {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .hw-title {
+            font-size: 1.2rem;
+            color: #1e293b;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .hw-meta {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .hw-meta-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+        .hw-meta-row svg {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+            margin-left: 8px;
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
+        .hw-action {
+            margin-top: auto;
+        }
+        .hw-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.2s;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+        .hw-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+        .hw-btn.primary:hover { opacity: 0.9; }
+        
+        .hw-btn.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
+        .hw-btn.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+        
+        .upload-section {
+            display: block;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-section:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .upload-text {
+            color: #64748b;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.FirstLetter</div>
+                    <span>@Model.StudentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Student" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Student" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Student" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Student" asp-action="Attendance">الحضور والغياب</a></li>
+                <li><a asp-controller="Student" asp-action="Tests">الاختبارات</a></li>
+                <li><a asp-controller="Student" asp-action="Level">المستوى</a></li>
+                <li><a asp-controller="Student" asp-action="Assignments" class="active">الواجبات</a></li>
+                <li><a asp-controller="Student" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <div class="page-header">
+                <h1 class="page-title">📚 الواجبات المدرسية</h1>
+                <p style="color: #64748b; margin-top: 8px;">تنظيم وإدارة الواجبات والمهام المدرسية</p>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div style="background-color: #ecfdf5; color: #10b981; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; border: 1px solid #a7f3d0;">
+                    ✅ @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div style="background-color: #fef2f2; color: #ef4444; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; border: 1px solid #fecaca;">
+                    ⚠️ @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <!-- KPIs Section -->
+            <div class="hw-stats-row">
+
+                <div class="hw-stat-item" style="animation: fadeInUp 0.5s ease both; animation-delay: 0.15s;">
+                    <div class="hw-stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">📋</div>
+                    <div class="hw-stat-info">
+                        <span class="hw-stat-value numberHighlight" style="color: #3b82f6;">@Model.CurrentCount</span>
+                        <span class="hw-stat-label">الواجبات الحالية</span>
+                    </div>
+                </div>
+
+                <div class="hw-stat-item" style="animation: fadeInUp 0.5s ease both; animation-delay: 0.2s;">
+                    <div class="hw-stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">✅</div>
+                    <div class="hw-stat-info">
+                        <span class="hw-stat-value numberHighlight" style="color: #10b981;">@Model.CompletedCount</span>
+                        <span class="hw-stat-label">المكتملة</span>
+                    </div>
+                </div>
+
+                <div class="hw-stat-item" style="animation: fadeInUp 0.5s ease both; animation-delay: 0.25s;">
+                    <div class="hw-stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">⚠️</div>
+                    <div class="hw-stat-info">
+                        <span class="hw-stat-value numberHighlight" style="color: #ef4444;">@Model.LateCount</span>
+                        <span class="hw-stat-label">المتأخرة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignments Grid -->
+            <h2 class="section-title">قائمة الواجبات</h2>
+            @if (Model.Assignments != null && Model.Assignments.Any())
+            {
+                <div class="assignments-grid">
+                    @{ int delay = 0; }
+                    @foreach (var hw in Model.Assignments)
+                    {
+                        <div class="hw-card @hw.Status" style="animation: fadeInUp 0.4s ease both; animation-delay: @(delay * 0.05)s;">
+                            <div class="hw-header">
+                                <div class="hw-subject-row">
+                                    <span class="hw-subject">@hw.SubjectName</span>
+                                    @if (hw.Status == "current") { <span class="status-badge" style="background:#eff6ff; color:#3b82f6; padding: 2px 10px; font-size: 0.75rem; border-radius: 12px; font-weight: 700;">جاري</span> }
+                                    else if (hw.Status == "completed") { <span class="status-badge" style="background:#ecfdf5; color:#10b981; padding: 2px 10px; font-size: 0.75rem; border-radius: 12px; font-weight: 700;">منجز</span> }
+                                    else if (hw.Status == "late") { <span class="status-badge" style="background:#fef2f2; color:#ef4444; padding: 2px 10px; font-size: 0.75rem; border-radius: 12px; font-weight: 700;">متأخر</span> }
+                                </div>
+                                <h3 class="hw-title">@hw.Title</h3>
+                            </div>
+
+                            <div class="hw-meta">
+                                <div class="hw-meta-row">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    المعلم: @hw.TeacherName
+                                </div>
+                                <div class="hw-meta-row">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    @if (hw.Status == "completed")
+                                    {
+                                        <span style="color:#10b981;">تم التسليم: @hw.SubmissionDate</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@(hw.Status == "late" ? "grade-score low" : "")">تاريخ الانتهاء: @hw.DueDate</span>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(hw.HomeworkLink))
+                                {
+                                    <div class="hw-meta-row" style="margin-top: 12px;">
+                                        <a href="@hw.HomeworkLink" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 0.9em; display:flex; align-items:center;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; color:#3b82f6; margin-left:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                            تحميل المرفق
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="hw-action">
+                                @if (hw.Status == "completed")
+                                {
+                                    <a href="@hw.SubmissionLink" class="hw-btn success" style="display:flex; justify-content:center; align-items:center; cursor:default;" target="_blank">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; margin-left:8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                        عرض الإجابة المرفوعة
+                                    </a>
+                                }
+                                else
+                                {
+                                    <form asp-action="SubmitAssignment" asp-controller="Student" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="homeworkId" value="@hw.Id" />
+                                        <label class="upload-section">
+                                            <input type="file" name="submissionFile" required style="display:none;" onchange="this.nextElementSibling.textContent = this.files[0]?.name || 'اضغط لرفع ملف الإجابة...';" accept=".pdf,.doc,.docx,.jpg,.png">
+                                            <span class="upload-text">اضغط لرفع ملف الإجابة...</span>
+                                        </label>
+                                        <button type="submit" class="hw-btn @(hw.Status == "late" ? "danger" : "primary")">
+                                            @(hw.Status == "late" ? "تسليم متأخر" : "تسليم الواجب")
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                        delay++;
+                    }
+                </div>
+            }
+            else
+            {
+                <div style="background: white; border-radius: 16px; padding: 40px; text-align: center; margin-top: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" style="width: 64px; height: 64px; margin-bottom: 16px;">
+                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+                        <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                        <path d="M9 14l2 2 4-4"></path>
+                    </svg>
+                    <h3 style="color: #64748b; font-family: 'Cairo', sans-serif;">لا توجد واجبات حالياً! 🎉</h3>
+                </div>
+            }
+        </main>
+    </div>
+
+    <script src="~/js/Student/student_script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Animate raw KPI numbers
+            const highlights = document.querySelectorAll('.numberHighlight');
+            highlights.forEach(el => {
+                const target = parseInt(el.innerText, 10) || 0;
+                animateValue(el, 0, target, 1500, false);
+            });
+        });
+
+        function animateValue(obj, start, end, duration, isPercentage) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = start + easeProgress * (end - start);
+                
+                if (isPercentage) obj.innerHTML = current.toFixed(1) + '%';
+                else obj.innerHTML = Math.floor(current);
+                
+                if (progress < 1) window.requestAnimationFrame(step);
+                else {
+                    if (isPercentage) obj.innerHTML = end.toFixed(1) + '%';
+                    else obj.innerHTML = end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+
+</html>

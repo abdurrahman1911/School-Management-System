@@ -1,0 +1,31 @@
+﻿@model IEnumerable<SchoolManagementSystem.ViewModel.Supervisor.AbsenceEntry>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var student in Model)
+    {
+        <tr class="student-row @(student.IsAbsent ? "absent-row-selected" : "")">
+            <td>
+                <input type="hidden" class="user-id" value="@student.UserId" />
+                <strong>@student.UserName</strong>
+            </td>
+            <td style="text-align: center;">
+                <input type="checkbox" class="absent-check"
+                       style="width: 20px; height: 20px; cursor: pointer;"
+                       @(student.IsAbsent ? "checked" : "")>
+            </td>
+            <td>
+                <input type="text" class="reason-input"
+                       placeholder="اكتب سبب الغياب هنا..."
+                       value="@student.Reason"
+                       @(student.IsAbsent ? "" : "disabled=\"disabled\"")>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="3" style="text-align:center;">لا يوجد طلاب مسجلين في هذا الصف.</td>
+    </tr>
+}

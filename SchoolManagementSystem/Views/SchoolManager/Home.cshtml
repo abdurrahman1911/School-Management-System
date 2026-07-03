@@ -1,0 +1,189 @@
+﻿@model SchoolManagementSystem.ViewModel.ProfileViewModel
+@{
+    Layout = null;
+    // استخراج أول حرف من الاسم (وفي حال كان الاسم فارغاً نضع حرفاً افتراضياً)
+    string firstLetter = !string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Trim().Substring(0, 1).ToUpper() : "م";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الملف الشخصي - مدير المدرسة</title>
+
+    <link class="styles" rel="stylesheet" href="@Url.Content("~/css/SchoolManager/sidebar-layout.css")" />
+    <link class="styles" rel="stylesheet" href="@Url.Content("~/css/SchoolManager/schoolManagerProfile.css")" />
+    <link class="styles" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+
+    <style>
+        /* تنسيقات جعل عناصر القائمة في المنتصف تماماً */
+        .menu li a {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* لتوسيط المحتوى في المنتصف أفقياً */
+            gap: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .menu li.active a {
+            background-color: #0f172a; /* اللون الداكن للزر النشط مثل باقي الصفحات */
+            color: white !important;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .logout-item {
+            margin-top: auto;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+            .logout-item a {
+                display: flex;
+                align-items: center;
+                justify-content: center; /* لتوسيط زر تسجيل الخروج أيضاً */
+                gap: 10px;
+            }
+
+        /* ستايل دائرة الحرف البديلة للصورة الشخصية */
+        .avatar-letter-sidebar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #1d4ed8; /* لون خلفية مميز */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 auto;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .avatar-letter-profile {
+            width: 150px; /* نفس حجم الصورة في كارت البروفايل الأصلي */
+            height: 150px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border: 4px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                @if (Model.PhotoUrl == "schoolManagerImage.jpg" || string.IsNullOrEmpty(Model.PhotoUrl))
+                {
+                    <div class="avatar-letter-sidebar">@firstLetter</div>
+                }
+                else
+                {
+                    <img src="@Url.Content("~/images/users/" + Model.PhotoUrl)" class="manager-img" alt="صورة المدير">
+                }
+
+                <h4>
+                    <a asp-controller="SchoolManager" asp-action="SchoolManagerProfile">
+                        @Model.FullName
+                    </a>
+                </h4>
+            </div>
+
+            <ul class="menu" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; height: calc(100% - 140px); align-items: center;">
+                <li class="active" style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Students"> الطلاب</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Teachers"> المعلمين</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Supervisors"> المشرفين</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="SuccessFailure"> النجاح والرسوب</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Attendance"> الغياب والحضور</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="EditProfile"> تعديل البيانات</a></li>
+
+                <li class="logout-item">
+                    <a asp-controller="Account" asp-action="Logout" style="color: white; transition: all 0.2s;">
+                       تسجيل الخروج
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <div class="profile-card">
+
+                <div class="profile-image">
+                    @if (Model.PhotoUrl == "schoolManagerImage.jpg" || string.IsNullOrEmpty(Model.PhotoUrl))
+                    {
+                        <div class="avatar-letter-profile">@firstLetter</div>
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/images/users/" + Model.PhotoUrl)" alt="Manager">
+                    }
+                </div>
+
+                <div class="profile-info">
+                    <div class="name-role">
+                        <h2>@Model.FullName</h2>
+                        <span class="role">مدير المدرسة</span>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span><i class="far fa-envelope"></i> البريد الإلكتروني :</span>
+                            <p>@Model.Email</p>
+                        </div>
+                        <div class="info-item">
+                            <span><i class="fas fa-phone"></i> رقم الهاتف :</span>
+                            <p>@Model.Phone</p>
+                        </div>
+                        <div class="info-item">
+                            <span><i class="fas fa-school"></i> المدرسة :</span>
+                            <p>مدرسة الأوائل الأهلية</p>
+                        </div>
+                        <div class="info-item">
+                            <span><i class="far fa-calendar-alt"></i> تاريخ الانضمام :</span>
+                            <p>@Model.AddedDate.ToString("dd / MM / yyyy")</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+    <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.querySelector(".sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    menuToggle.addEventListener("click", () => {
+    sidebar.classList.add("active");
+    overlay.classList.add("active");
+    menuToggle.classList.add("hidden"); // اخفاء الزر
+    });
+
+    overlay.addEventListener("click", () => {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+    menuToggle.classList.remove("hidden"); // اظهار الزر
+    });
+</script>
+</body>
+</html>

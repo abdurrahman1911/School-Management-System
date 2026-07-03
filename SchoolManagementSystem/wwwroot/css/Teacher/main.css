@@ -1,0 +1,824 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+
+/* ===== ROOT VARIABLES ===== */
+:root {
+    --primary-color: hsl(216, 100%, 79%);
+    --secondary-color: #4a7bc8;
+    --accent-color: #ff9800;
+    --light-color: #f5f7fa;
+    --dark-color: #333;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* ===== BODY STYLES ===== */
+body {
+    background-color: #f0f2f5;
+    color: var(--dark-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    direction: rtl;
+    overflow-x: hidden;
+}
+
+/* ========== Layout ========== */
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 230px;
+    background:  hsl(216, 100%, 79%);
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info {
+        display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+        max-width: 100%;
+
+}
+
+.sidebar .logo {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.user-avatar {
+      width:70px !important;
+    height:70px !important;
+    overflow:hidden !important;
+    flex-shrink:0 !important;
+    border:3px solid rgba(255,255,255,.4) !important;
+    font-size:28px !important;
+    background: rgba(255,255,255,.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.user-avatar img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50%;
+}
+
+.user-info span {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+        max-width: 140px;
+
+}
+
+
+
+.profile {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.manager-img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.profile h4 a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* ========== Menu ========== */
+.nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+  .nav-links li a {
+        display: block;
+        padding: 12px;
+        background: hsla(216, 100%, 50%, 0.158)!important;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+.nav-links a.active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+        .nav-links a:hover {
+            background:  hsla(216, 100%, 50%, 0.493)!important;
+            font-weight: bold;
+        }
+        .nav-link.logout {
+    color: #ffffff;
+    margin-top: 175px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 15px;
+}
+
+/* ========== Logout ========== */
+.logout {
+    padding: 12px;
+    background: hsla(216, 100%, 50%, 0.158);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .logout:hover {
+        background:  hsla(216, 100%, 50%, 0.493);
+        color: #fff;
+    }
+
+
+
+
+
+
+/* ===== زر القائمة للموبايل ===== */
+.menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, hsl(216, 100%, 79%) 0%, var(--secondary-color) 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 1100;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    flex: 1;
+    margin-right: 250px;
+    padding: 20px;
+    transition: var(--transition);
+    background: #f8fafc;
+}
+
+/* ===== HEADER ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+    color: hsl(216, 100%, 79%);
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ===== PAGE STYLES ===== */
+.page {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 30px;
+    margin-bottom: 30px;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Teacher Info Card ===== */
+.teacher-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+    border: 2px solid #e2e8f0;
+}
+
+.card-header {
+    background: linear-gradient(135deg, hsl(216, 100%, 79%), var(--secondary-color));
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.teacher-avatar {
+    margin-bottom: 20px;
+}
+
+.avatar-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-circle span {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: hsl(216, 100%, 79%);
+}
+
+.teacher-title h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.teacher-title .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* ===== Card Contents ===== */
+
+.card-content {
+    padding: 40px 30px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.info-item {
+    background: #f8fafc;
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #e2e8f0;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.info-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: hsl(216, 100%, 79%);
+}
+
+.info-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, hsl(216, 100%, 79%), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.info-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.info-details h3 {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.info-details p {
+    color: #1e293b;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.teacher-id {
+    color: hsl(216, 100%, 79%) !important;
+    font-size: 1.3rem !important;
+}
+
+.email {
+    color: #2196F3 !important;
+    direction: ltr;
+    text-align: right;
+}
+
+.phone {
+    color: #4CAF50 !important;
+}
+
+.join-date {
+    color: #FF9800 !important;
+}
+
+.subject {
+    color: #9C27B0 !important;
+}
+
+/* ===== تذييل البطاقة ===== */
+.card-footer {
+    background: #f1f5f9;
+    padding: 25px 30px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.school-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.school-info i {
+    font-size: 2.5rem;
+    color: hsl(216, 100%, 79%);
+}
+
+.school-info h4 {
+    color: #1e293b;
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.school-info p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.quick-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 2px solid #e2e8f0;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: hsl(216, 100%, 79%);
+}
+
+.summary-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, hsl(216, 100%, 79%), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.summary-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.summary-content h3 {
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.summary-content .count {
+    color: hsl(216, 100%, 79%);
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0 0 5px 0;
+    line-height: 1;
+}
+
+.summary-content .status {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 992px) {
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .sidebar {
+        width: 260px;
+        right: -260px;
+        z-index: 1200;
+        transition: right .3s ease;
+    }
+
+    .sidebar.active {
+        right: 0;
+    }
+
+    .main-content {
+        margin-right: 0 !important;
+        width: 100%;
+        padding: 80px 15px 15px;
+    }
+
+    .page {
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .card-header {
+        padding: 30px 20px;
+    }
+    
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .avatar-circle span {
+        font-size: 2.5rem;
+    }
+    
+    .teacher-title h2 {
+        font-size: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-item {
+        padding: 20px;
+    }
+    
+    .quick-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .page {
+        padding: 20px;
+    }
+    
+    .card-content {
+        padding: 25px 20px;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .school-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .summary-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .summary-content .count {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* ===== ID Card ===== */
+.teacher-card-simple {
+        background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.card-header-simple {
+    background: linear-gradient(135deg, hsl(216, 100%, 79%), var(--secondary-color));
+   padding: 30px;
+    text-align: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.school-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.school-logo i {
+    font-size: 2.5rem;
+    color: hsl(216, 100%, 79%);
+}
+
+.school-title h2 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    font-weight: 800;
+}
+
+.school-title .subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* ===== Simple Card Content ===== */
+.card-content-simple {
+    padding: 40px;
+}
+
+.teacher-info-main {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.teacher-name h3 {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin-bottom: 8px;
+    font-weight: 800;
+}
+
+.teacher-name .position {
+    font-size: 1.2rem;
+    color: hsl(216, 100%, 79%);
+    font-weight: 700;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.teacher-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: var(--transition);
+}
+
+.detail-row:hover {
+    border-color: hsl(216, 100%, 79%);
+    background: #f1f5f9;
+}
+
+.detail-row i {
+    width: 24px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: hsl(216, 100%, 79%);
+    flex-shrink: 0;
+}
+
+.detail-content {
+    flex: 1;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 700;
+    direction: ltr;
+    text-align: left;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.detail-row .detail-value {
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+/* ===== Simple Card Footer ===== */
+.card-footer-simple {
+    background: #f1f5f9;
+    padding: 20px;
+    border-top: 2px solid #e2e8f0;
+    border-radius: 0 0 18px 18px;
+    text-align: center;
+}
+
+.footer-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.footer-note i {
+    color: hsl(216, 100%, 79%);
+}
+
+/* ===== Additions for Response ===== */
+@media (max-width: 768px) {
+    .teacher-card-simple {
+        margin-bottom: 15px;
+    }
+    
+    .card-header-simple {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 20px;
+    }
+    
+    .school-title h2 {
+        font-size: 1.6rem;
+    }
+    
+    .card-content-simple {
+        padding: 25px 20px;
+    }
+    
+    .teacher-name h3 {
+        font-size: 1.5rem;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .detail-content {
+        text-align: center;
+    }
+    
+    .detail-value {
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-header-simple {
+        padding: 20px 15px;
+    }
+    
+    .school-logo {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .school-logo i {
+        font-size: 1.8rem;
+    }
+    
+    .card-content-simple {
+        padding: 20px 15px;
+    }
+    
+    .detail-row {
+        padding: 12px;
+    }
+
+    .header h1 {
+    font-size: 1.2rem;
+}
+
+.school-title h2 {
+    font-size: 1.3rem;
+}
+
+.teacher-name h3 {
+    font-size: 1.2rem;
+}
+
+.user-info span {
+    font-size: 14px;
+}
+}
+
+ol, ul {
+    padding-left:0rem;
+}
+
+

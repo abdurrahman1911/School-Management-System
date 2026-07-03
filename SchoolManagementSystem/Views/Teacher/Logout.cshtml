@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewData["Title"] = "تسجيل الخروج";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+<link rel="stylesheet" href="~/css/Teacher/logout.css"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
+</head>
+<body>
+    <!-- Mobile menu button -->
+    <input type="checkbox" id="mobileMenu" class="mobile-menu-checkbox">
+    <label for="mobileMenu" class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </label>
+
+    <!-- Side navigation bar -->
+    <nav class="sidebar" id="sidebar">
+          <aside class="sidebar">    
+
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">أ</div>
+                <span>المعلم: يوسف</span>     
+            </div>
+        </div>
+        
+        <!-- Navigation links -->
+       <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Teacher" asp-action="Notesstudents"> ملاحظات الطلاب </a></li>
+                <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+
+            <li><a asp-controller="Account" asp-action="Logout" class="active">تسجيل الخروج</a></li>
+        </ul>
+       
+    </nav>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <header class="content-header">
+            <h1>تسجيل الخروج</h1>
+            <div class="header-info">
+                <div class="date" id="currentDate"></div>
+            </div>
+        </header>
+
+        <div class="content-body">
+            <div class="logout-container">
+                <div class="logout-message">
+                    <div class="logout-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    
+                    <!-- All text content remains in Arabic -->
+                    
+                    <div class="logout-actions">
+                        <a href="../login/login.html" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i> نعم، تسجيل الخروج
+                        </a>
+                        <a href="../main/main.html" class="btn btn-cancel">
+                            <i class="fas fa-times"></i> إلغاء والعودة
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+

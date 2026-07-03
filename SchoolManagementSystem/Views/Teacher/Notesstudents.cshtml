@@ -1,0 +1,425 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model NotesPageViewModel
+
+@{
+    ViewData["Title"] = "ملاحظات الطلاب";
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+   
+
+    <style>
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* تحسينات حاوية الفلتر */
+        .filter-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            width: 100%;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+            .filter-group label {
+                font-weight: 600;
+                color: #4a5568;
+                font-size: 14px;
+            }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            outline: none;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+            .filter-select:focus {
+                border-color: #3182ce;
+                background-color: #fff;
+                box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+            }
+
+        /* تجميع الأزرار ومحاذاتها أفقيًا */
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+            .filter-actions .btn {
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                border: none;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+        .btn-filter {
+            background-color: #7fa9fb;
+            color: white
+        }
+
+            .btn-filter:hover {
+                background-color: #2b6cb0;
+            }
+
+        .btn-reset {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0 !important;
+        }
+
+            .btn-reset:hover {
+                background-color: #e2e8f0;
+            }
+
+        /* ------------------ التعديل الجديد لجعل الإجراءات أيقونات على سطر واحد ------------------ */
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            align-items: center;
+            white-space: nowrap; /* يمنع نزول الأيقونات على سطر جديد */
+        }
+
+        .btn-icon-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-size: 1.1rem;
+            text-decoration: none !important;
+            position: relative;
+        }
+
+        /* زر إضافة ملاحظة - باللون الأخضر الهادئ */
+        .btn-icon-add {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+
+            .btn-icon-add:hover {
+                background-color: #137333;
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
+
+        /* زر عرض الملاحظات - باللون الأزرق السماوي */
+        .btn-icon-show {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+        }
+
+            .btn-icon-show:hover {
+                background-color: #1a73e8;
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
+
+        /* إضافة Tooltip تلميحي عند الوقوف على الأيقونة ليعرف المستخدم وظيفتها */
+        .btn-icon-action[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+            font-family: inherit;
+            z-index: 10;
+        }
+
+        .btn-icon-action[data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+       
+    </style>
+    <link rel="stylesheet" href="~/css/Teacher/exams.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/Teacher/AddStudentNote.css" />
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents" class="active">ملاحظات الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="logout">تسجيل الخروج</a>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="main-content" id="mainContent">
+        <div class="page active" id="attendance">
+            <div class="header">
+                <h1>إدارة ملاحظات الطلاب <i class="fas fa-clipboard-check"></i></h1>
+            </div>
+
+            <form asp-controller="Teacher" asp-action="Notesstudents" method="get" class="filter-section">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label><i class="fas fa-graduation-cap"></i> المستوى:</label>
+                        <select name="levelid" id="levelFilter" class="filter-select">
+                            <option value="">جميع المستويات</option>
+                            @foreach (var item in Model.Stages)
+                            {
+                                if (Context.Request.Query["levelid"] == item.Id.ToString())
+                                {
+                                    <option value="@item.Id" selected="selected">@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-users"></i> الصف:</label>
+                        <select name="stageid" id="classFilter" class="filter-select">
+                            <option value="">جميع الصفوف</option>
+                            @foreach (var item in Model.Levels)
+                            {
+                                if (Context.Request.Query["stageid"] == item.Id.ToString())
+                                {
+                                    <option value="@item.Id" selected="selected">@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-user-friends"></i> الفصل:</label>
+                        <select name="classid" id="sectionFilter" class="filter-select">
+                            <option value="">جميع الفصول</option>
+                            @foreach (var item in Model.Classes)
+                            {
+                                if (Context.Request.Query["classid"] == item.Id.ToString())
+                                {
+                                    <option value="@item.Id" selected="selected">@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-filter" id="applyFilterBtn">
+                            <i class="fas fa-filter"></i> تطبيق الفلتر
+                        </button>
+                        <a asp-controller="Teacher" asp-action="Notesstudents" class="btn btn-reset" id="resetFilterBtn">
+                            <i class="fas fa-undo-alt"></i> إعادة تعيين
+                        </a>
+                    </div>
+                </div>
+            </form>
+            <div class="table-scroll-top" id="tableScrollTop">
+                <div></div>
+            </div>
+
+            <div class="table-wrapper" id="tableWrapper">
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الطالب</th>
+                            <th>المستوى</th>
+                            <th>الصف</th>
+                            <th>الفصل</th>
+                            <th>الملاحظات</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        @if (Model.Students != null && Model.Students.Any())
+                        {
+                            foreach (var student in Model.Students)
+                            {
+                                <tr>
+                                    <td>@student.Name</td>
+                                    <td>@student.Level</td>
+                                    <td>@student.Class</td>
+                                    <td>@student.Section</td>
+                                    <td>
+                                        <div class="student-note">
+                                            @student.Note
+                                        </div>
+                                    </td>
+                                    @* تم تحديث هذا الجزء ليصبح أيقونات ذكية على سطر واحد *@
+                                    <td class="actions">
+                                        <a asp-controller="Teacher" asp-action="AddStudentNote" asp-route-id="@student.ID"
+                                           class="btn-icon-action btn-icon-add" data-tooltip="إضافة ملاحظة">
+                                            <i class="fas fa-plus-circle"></i>
+                                        </a>
+
+                                        <button type="button" class="btn-icon-action btn-icon-show"
+                                                onclick="openNotesModal(@student.ID)" data-tooltip="عرض الملاحظات">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="empty-state-container" style="text-align: center; padding: 30px;">
+                                    <i class="fas fa-clipboard-check" style="font-size: 48px; color: #ccc;"></i>
+                                    <h3>لا توجد سجلات طلاب مطابقة</h3>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/Teacher/attendance.js"></script>
+
+    <script>
+        function openNotesModal(studentId) {
+            $.get('/Teacher/GetStudentNotesPartial/' + studentId, function (data) {
+                $('#notesModal .modal-content').html(data);
+                var myModal = new bootstrap.Modal(document.getElementById('notesModal'));
+                myModal.show();
+            }).fail(function() {
+                alert("حدث خطأ أثناء تحميل الملاحظات.");
+            });
+        }
+
+        function deleteNoteFromPartial(noteId) {
+            if (confirm("هل أنت متأكد من حذف هذه الملاحظة نهائياً؟")) {
+                $.post('/Teacher/DeleteNote/' + noteId, function (result) {
+                    if (result.success) {
+                        $('#note-row-' + noteId).fadeOut(300, function() {
+                            $(this).remove();
+
+                            if ($('#notesModal .list-group-item').length === 0) {
+                                $('#notesModal .modal-body').html('<div class="text-center py-4"><p class="text-danger" style="font-size: 1.1rem; font-weight: 500; margin: 0;">لا يوجد ملاحظات مسجلة</p></div>');
+                            }
+                        });
+                    } else {
+                        alert(result.message || "فشل حذف الملاحظة.");
+                    }
+                }).fail(function() {
+                    alert("حدث خطأ في الاتصال بالخادم.");
+                });
+            }
+        }
+
+        function syncTopScrollbar() {
+
+        const top = document.getElementById("tableScrollTop");
+        const wrapper = document.getElementById("tableWrapper");
+
+        if (!top || !wrapper)
+        return;
+
+        top.firstElementChild.style.width =
+        wrapper.querySelector("table").scrollWidth + "px";
+
+        top.onscroll = () => {
+        wrapper.scrollLeft = top.scrollLeft;
+        };
+
+        wrapper.onscroll = () => {
+        top.scrollLeft = wrapper.scrollLeft;
+        };
+        }
+
+        window.addEventListener("load", syncTopScrollbar);
+        window.addEventListener("resize", syncTopScrollbar);
+    </script>
+</body>
+</html>

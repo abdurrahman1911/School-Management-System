@@ -1,0 +1,146 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدارس الأوائل الأهلية - الصفحة الرئيسية</title>
+    <meta name="description"
+        content="مدارس الأوابد الأهلية - روضة، ابتدائي، متوسط، ثانوي - الدبلومة البريطانية - التربية الخاصة">
+        <!-- Fonts used -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="@Url.Content("~/css/Main/index.css")">
+</head>
+
+<body>
+    <div class="hero-container">
+        <div class="hero-background"></div>
+        <div class="hero-overlay"></div>
+
+        <!-- Floating Shapes -->
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <img src="@Url.Content("~/images/logo.png")" alt="School Logo" class="school-logo">
+                    <div class="logo-text">
+                        <span class="logo-title"><img src="@Url.Content("~/images/name.png")"
+                                width="200px"></span>
+                        <span class="logo-subtitle">AL-AWAEL SCHOOLS</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="header-actions">
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/alawelprieschool/" class="social-icon instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/p/%D9%85%D8%AF%D8%A7%D8%B1%D8%B3-%D8%A7%D9%84%D8%A3%D9%88%D8%A7%D8%A6%D9%84-%D8%A7%D9%84%D8%A3%D9%87%D9%84%D9%8A%D8%A9-%D8%A8%D8%AD%D9%81%D8%B1-%D8%A7%D9%84%D8%A8%D8%A7%D8%B7%D9%86-100063673376230/?locale=ar_AR" class="social-icon facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://x.com/alawael20201" class="social-icon twitter" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/alawael.20201?is_from_webapp=1&sender_device=pc" class="social-icon tiktok" title="TikTok">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                    <a asp-controller="Home" asp-action="Login" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        تسجيل الدخول
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <h1 class="main-title">مدارس الأوائل الأهلية الخاصة</h1>
+
+                <div class="levels-container">
+                    <div class="levels-text">
+                        <span class="level-badge">
+                            <i class="fas fa-child"></i>
+                            روضة
+                        </span>
+                        <span class="separator">•</span>
+                        <span class="level-badge">
+                            <i class="fas fa-book-open"></i>
+                            ابتدائي
+                        </span>
+                        <span class="separator">•</span>
+                        <span class="level-badge">
+                            <i class="fas fa-book-reader"></i>
+                            متوسط
+                        </span>
+                        <span class="separator">•</span>
+                        <span class="level-badge">
+                            <i class="fas fa-user-graduate"></i>
+                            ثانوي
+                        </span>
+                    </div>
+
+                    <p class="programs-text">
+                        <i class="fas fa-award"></i>
+                        الدبلومة البريطانية - التربية الخاصة
+                    </p>
+
+                    <div class="gender-container">
+                        <div class="gender-badge">
+                            <i class="fas fa-male"></i>
+                            <span>بنين</span>
+                        </div>
+                        <div class="gender-badge">
+                            <i class="fas fa-female"></i>
+                            <span>بنات</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a asp-controller="Home" asp-action="Login" class="cta-btn primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        تسجيل الدخول
+                    </a>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-logo">
+                    <img src="@Url.Content("~/images/logo.png")" alt="School Logo"
+                        class="footer-emblem">
+                    <span class="footer-text">© 2026 مدارس الأوائل الأهلية - جميع الحقوق محفوظة</span>
+                </div>
+                <div class="footer-contact">
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>0551433649</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>0561160513</span>
+                </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>المملكة العربية السعودية</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>

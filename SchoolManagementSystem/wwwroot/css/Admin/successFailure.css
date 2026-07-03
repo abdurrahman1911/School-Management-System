@@ -1,0 +1,146 @@
+﻿
+/* ================= المحتوى ================= */
+.content {
+    flex: 1;
+    background-color: #eef3f6;
+    padding: 30px;
+    margin-right: 230px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* العنوان + الفلاتر */
+.top-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+    .top-bar h2 {
+        background-color: #9fbad0;
+        padding: 8px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+.filters {
+    display: flex;
+    gap: 10px;
+}
+
+    .filters select {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: none;
+        background-color: #dbe8f1;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+/* ================= الجراف ================= */
+.chart-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    width: 65%;
+    max-width: 650px;
+}
+
+    .chart-card canvas {
+        height: 280px !important;
+    }
+
+/* =================== Responsive لجميع الشاشات =================== */
+@media screen and (max-width: 1200px) {
+    .chart-card {
+        width: 75%;
+        max-width: 600px;
+    }
+
+    .top-bar h2 {
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+    }
+
+    .menu {
+        flex-direction: row;
+        gap: 10px;
+        overflow-x: auto;
+    }
+
+    .logout-container {
+        margin-left: auto;
+        margin-top: 0;
+    }
+
+    .content {
+        margin: 0;
+        padding: 20px;
+        align-items: stretch;
+    }
+
+    .chart-card {
+        width: 90%;
+        max-width: 550px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .chart-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px;
+    }
+
+        .chart-card canvas {
+            height: 220px !important;
+        }
+
+    .top-bar h2 {
+        font-size: 14px;
+        padding: 6px 15px;
+    }
+
+    .filters select {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .chart-card canvas {
+        height: 180px !important;
+    }
+
+    .top-bar h2 {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .filters select {
+            width: 100%;
+        }
+}

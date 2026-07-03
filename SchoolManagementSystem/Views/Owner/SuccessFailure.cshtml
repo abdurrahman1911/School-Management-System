@@ -1,0 +1,230 @@
+﻿@model SchoolManagementSystem.ViewModel.SchoolManager.SuccessFailurePageViewModel
+@{
+    Layout = null;
+    string firstLetter = !string.IsNullOrEmpty(Model.ManagerName) ? Model.ManagerName.Trim().Substring(0, 1).ToUpper() : "م";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>النجاح والرسوب</title>
+
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/sidebar-layout.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/successFailure.css")" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+
+    <style>
+        /* تنسيقات جعل عناصر القائمة في النص (توسيط كامل للسايد بار) */
+        .menu li a {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* لتوسيط المحتوى في المنتصف أفقياً */
+            gap: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .menu li.active a {
+            background-color: #0f172a; /* اللون الداكن للزر النشط */
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .logout-item {
+            margin-top: auto;
+            width: 100%;
+        }
+
+            .logout-item a {
+                display: flex;
+                align-items: center;
+                justify-content: center; /* لتوسيط زر تسجيل الخروج أيضاً */
+                gap: 10px;
+            }
+
+        .avatar-letter-sidebar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 auto;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .manager-avatar-placeholder span {
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="profile">
+                <div class="user-avatar" style="text-align: center; margin-bottom: 10px;">
+                    @if (string.IsNullOrEmpty(Model.ManagerPhotoUrl) || Model.ManagerPhotoUrl == "schoolManagerImage.jpg")
+                    {
+                        <div class="avatar-letter-sidebar">@firstLetter</div>
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/images/users/" + Model.ManagerPhotoUrl)" class="manager-img" alt="صورة المدير">
+                    }
+                </div>
+
+                <h4>
+                    <a asp-controller="SchoolManager" asp-action="SchoolManagerProfile" style="color: white; text-decoration: none;">
+                        @Model.ManagerName
+                    </a>
+                </h4>
+            </div>
+            <ul class="menu">
+                <li><a asp-controller="SchoolManager" asp-action="Home"> الصفحة الرئيسية</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Students"> الطلاب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Teachers"> المعلمين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Supervisors"> المشرفين</a></li>
+                <li class="active"><a asp-controller="SchoolManager" asp-action="SuccessFailure"> النجاح والرسوب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Attendance"> الغياب والحضور</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="EditProfile"> تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+
+        </aside>
+
+        <main class="content">
+
+            <div class="top-bar">
+                <h2>النجاح والرسوب</h2>
+
+                <div class="filters">
+
+                    <select id="stageSelect">
+                        @foreach (var stage in Model.Stages)
+                        {
+                            <option value="@stage.Id">@stage.Name</option>
+                        }
+                    </select>
+
+                    <select id="periodSelect">
+                        <option value="month" selected>هذا الشهر</option>
+                        <option value="year">هذا العام</option>
+                        <option value="all">كل الأوقات</option>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <canvas id="successChart"></canvas>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.getElementById("successChart");
+            const ctx = canvas.getContext("2d");
+            let chart = null;
+
+            function updateChart() {
+                const stageId = document.getElementById("stageSelect").value;
+                const period = document.getElementById("periodSelect").value;
+
+                if(!stageId) return;
+
+                // استدعاء الأكشن لجلب البيانات الحقيقية المحسوبة من الداتابيز
+                fetch(`/SchoolManager/GetSuccessFailureData?stageId=${stageId}&period=${period}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (chart) {
+                            chart.destroy();
+                        }
+
+                        chart = new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: data.labels, // أسماء الصفوف الدراسية ديناميكياً
+                                datasets: [
+                                    {
+                                        label: "نسبة النجاح %",
+                                        data: data.success,
+                                        backgroundColor: "#4CAF50",
+                                        borderRadius: 6
+                                    },
+                                    {
+                                        label: "نسبة الرسوب %",
+                                        data: data.fail,
+                                        backgroundColor: "#e53935",
+                                        borderRadius: 6
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                animation: {
+                                    duration: 800,
+                                    easing: "easeOutQuart"
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        ticks: {
+                                            stepSize: 10,
+                                            callback: function(value) { return value + '%'; }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error("Error fetching chart data:", error));
+            }
+
+            document.getElementById("stageSelect").addEventListener("change", updateChart);
+            document.getElementById("periodSelect").addEventListener("change", updateChart);
+
+            // تشغيل الدالة تلقائياً عند تحميل الصفحة لأول مرة
+            updateChart();
+        });
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

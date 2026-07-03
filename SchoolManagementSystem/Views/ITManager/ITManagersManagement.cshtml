@@ -1,0 +1,285 @@
+﻿@model SchoolManagementSystem.ViewModel.ITManager.ITManagersManagementViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة مديري النظام</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+    <link rel="stylesheet" href="~/css/ITManager/managermanagment.css" />
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+    <style>
+            .user-avatar {
+                width: 90px;
+                height: 90px;
+                overflow: hidden; /* important */
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="profile">
+                <div class="user-info" style="text-align: center;">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo?.ProfilePhotoUrl))
+                        {
+                            <text>@(Model.NavigationInfo?.FullName?.FirstOrDefault())</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" />
+                        }
+                    </div>
+
+                    <h4>  <span>@Model.NavigationInfo?.FullName</span></h4>
+
+                </div>
+            </div>
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li class="active"><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+
+            <div class="manager-management-container">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #155724; background-color: #d4edda; border-color: #c3e6cb;">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb;">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <h1 class="page-title">
+                    إدارة مديري النظام
+                </h1>
+
+                <div class="actions-bar">
+
+                    <a asp-controller="ITManager"
+                       asp-action="AddNewITManager"
+                     
+                       class="btn-add">
+
+                        <i class="fas fa-plus"></i>
+                        إضافة مدير نظام جديد
+
+                    </a>
+
+                    <div class="search-container">
+
+                        <select id="searchType" class="search-type">
+                            <option value="">-- اختر نوع البحث --</option>
+                            <option value="phone">رقم الهاتف</option>
+                            <option value="nationalid">رقم الهوية</option>
+                        </select>
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search search-icon"></i>
+
+                            <input type="text"
+                                   class="search-input"
+                                   placeholder="ابحث..."
+                                   id="searchInput">
+
+                            <button class="search-clear"
+                                    id="clearSearch"
+                                    style="display:none; background:none; border:none; cursor:pointer;">
+                                <i class="fas fa-times"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="table-container">
+                    <div class="table-wrapper">
+
+                        <table class="managers-table" id="managersTable">
+
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>تاريخ الانضمام</th>
+                                    <th>تاريخ ترك العمل</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null && Model.ITManagerInfos != null && Model.ITManagerInfos.Any())
+                                {
+                                    foreach (var manager in Model.ITManagerInfos)
+                                    {
+                                        <tr data-nationalid="@manager.SSN">
+
+                                            <td>@manager.Name</td>
+                                            <td>@manager.PhoneNumber</td>
+                                            <td>@manager.HireDate.ToString("yyyy-MM-dd")</td>
+
+                                            <td>@(manager.ExitDate?.ToString("yyyy-MM-dd") ?? "مستمر بالعمل")</td>
+
+                                            <td class="actions-cell">
+
+                                                <a asp-controller="ITManager"
+                                                   asp-action="EditITManager"
+                                                   asp-route-SSN="@manager.SSN"
+                                                   class="action-edit">
+
+                                                    <i class="fas fa-edit"></i>
+                                                    تعديل
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;">لا يوجد مديري نظام لعرضهم</td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+    <script>
+            function deleteRow(btn) {
+                // Note: In a real app, you should confirm and call a backend endpoint via AJAX to delete the record in the DB before removing the row.
+                if(confirm("هل أنت متأكد من الحذف؟")) {
+                     const row = btn.closest("tr");
+                     row.remove();
+                }
+            }
+
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+
+            function filterTable() {
+
+                const searchValue = searchInput.value.toLowerCase().trim();
+                const searchType = document.getElementById('searchType').value;
+                const rows = document.querySelectorAll('#managersTable tbody tr');
+
+                rows.forEach(row => {
+
+                    // Adjust index if necessary based on your table columns.
+                    // Currently, Phone is column index 1.
+                    const phoneNumber = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                    const nationalId = row.dataset.nationalid?.toLowerCase() || '';
+
+                    let match = false;
+
+                    if (searchType === "phone") {
+                        match = phoneNumber.includes(searchValue);
+                    }
+                    else if (searchType === "nationalid") {
+                        match = nationalId.includes(searchValue);
+                    }
+
+                    row.style.display = (match || searchValue === '') ? '' : 'none';
+
+                });
+
+                clearSearchBtn.style.display = searchValue ? 'inline-block' : 'none';
+            }
+
+            searchInput.addEventListener('keyup', filterTable);
+            document.getElementById('searchType').addEventListener('change', filterTable); // Also filter when type changes
+
+            clearSearchBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                filterTable();
+                searchInput.focus();
+            });
+
+            const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+    </script>
+</body>
+</html>

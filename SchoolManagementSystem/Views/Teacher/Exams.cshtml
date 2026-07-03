@@ -1,0 +1,476 @@
+﻿@model SchoolManagementSystem.ViewModel.Teacher.TeacherExamsDashboardViewModel
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة الاختبارات - نظام إدارة المدرسة</title>
+    <link rel="stylesheet" href="~/css/Teacher/exams.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #eef2f5;
+            border-radius: 15px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: 1;
+            min-width: 220px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            line-height: 1.2;
+            order: 1; /* لجعل الرقم يظهر في الأعلى */
+        }
+
+        .stat-card h3 {
+            font-size: 0.95rem;
+            color: #718096;
+            margin: 5px 0 0 0;
+            font-weight: 500;
+            order: 2; /* لجعل النص يظهر في الأسفل */
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #fff;
+        }
+
+        /* تنسيق ألوان الأيقونات الدائرية */
+        .stat-card.total .stat-icon {
+            background-color: #63b3ed; /* أزرق */
+        }
+
+        .stat-card.ongoing .stat-icon {
+            background-color: #48bb78; /* أخضر */
+        }
+
+        .stat-card.upcoming .stat-icon {
+            background-color: #f56565; /* أحمر */
+        }
+
+        .stat-card.finished .stat-icon {
+            background-color: #a0aec0; /* رمادي مائل للاختبارات المنتهية */
+        }
+    </style>
+</head>
+<body>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+            title: 'تم اضافة الامتحان بنجاح ',
+            // استخدمنا Html.Raw لمنع تشفير الحروف العربية إلى رموز
+            text: '@Html.Raw(TempData["SuccessMessage"])',
+            icon: 'success',
+            confirmButtonText: 'موافق',
+
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: 'غير مسموح بالتعديل!',
+                text: '@Html.Raw(TempData["ErrorMessage"])',
+                icon: 'error',
+                confirmButtonText: 'موافق',
+                confirmButtonColor: '#d33'
+            });
+        </script>
+    }
+
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents"> ملاحظات الطلاب </a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams" class="active">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="logout">تسجيل الخروج</a>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="main-content" id="mainContent">
+        <div class="page active" id="exams">
+            <div class="header">
+                <h1><i class="fas fa-file-alt"></i> إدارة الاختبارات</h1>
+                <div class="header-actions">
+                    <a asp-controller="Teacher" asp-action="AddExam" class="btn add-exam-btn">
+                        <i class="fas fa-plus"></i> إضافة اختبار جديد
+                    </a>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="examLevelFilter"><i class="fas fa-graduation-cap"></i> المستوى:</label>
+                        <select id="examLevelFilter" class="filter-select">
+                            <option value="all">جميع المستويات</option>
+
+                            @foreach (var stage in Model.Stages)
+                            {
+                                <option value="@stage.Id">@stage.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="examClassFilter"><i class="fas fa-users"></i> الصف:</label>
+                        <select id="examClassFilter" class="filter-select">
+                            <option value="all">جميع الصفوف</option>
+
+                            @foreach (var cls in Model.Levels)
+                            {
+                                <option value="@cls.Id">@cls.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="examSectionFilter"><i class="fas fa-users"></i> الفصل:</label>
+                        <select id="examSectionFilter" class="filter-select">
+                            <option value="all">جميع الفصول</option>
+
+                            @foreach (var level in Model.Classes)
+                            {
+                                <option value="@level.Id">@level.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="examSubjectFilter"><i class="fas fa-book"></i> المادة:</label>
+                        <select id="examSubjectFilter" class="filter-select">
+                            <option value="all">جميع المواد</option>
+
+                            @foreach (var subject in Model.Subjects)
+                            {
+                                <option value="@subject.Id">@subject.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="examTypeFilter"><i class="fas fa-filter"></i> نوع الاختبار:</label>
+                        <select id="examTypeFilter" class="filter-select">
+                            <option value="all">جميع الأنواع</option>
+                            <option value="quiz">اختبار قصير</option>
+                            <option value="midterm">منتصف الفصل</option>
+                            <option value="final">نهائي</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="examStatusFilter"><i class="fas fa-info-circle"></i> الحالة:</label>
+                        <select id="examStatusFilter" class="filter-select">
+                            <option value="all">جميع الحالات</option>
+                            <option value="upcoming">قادم</option>
+                            <option value="ongoing">جاري</option>
+                            <option value="completed">منتهي</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn" id="applyExamFilter"><i class="fas fa-filter"></i> تطبيق الفلتر</button>
+                        <button class="btn btn-cancel" id="clearExamFilter"><i class="fas fa-times"></i> إعادة تعيين</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card total">
+                    <div class="stat-info">
+                        <p class="stat-number">@Model.totalExams</p>
+                        <h3>إجمالي الاختبارات</h3>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-list-ul"></i></div>
+                </div>
+
+                <div class="stat-card ongoing">
+                    <div class="stat-info">
+                        <p class="stat-number">@Model.ongoingExams</p>
+                        <h3>اختبارات جارية</h3>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-check"></i></div>
+                </div>
+
+                <div class="stat-card upcoming">
+                    <div class="stat-info">
+                        <p class="stat-number">@Model.upcomingExams</p>
+                        <h3>اختبارات قادمة</h3>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                </div>
+
+                <div class="stat-card finished">
+                    <div class="stat-info">
+                        <p class="stat-number">@Model.finishedExams</p>
+                        <h3>اختبارات منتهية</h3>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-spinner fa-spin"></i></div>
+                </div>
+            </div>
+            <div class="table-wrapper">
+
+                <table class="data-table exams-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الاختبار</th>
+                            <th>المادة</th>
+                            <th>نوع الاختبار</th>
+                            <th>التاريخ</th>
+                            <th>الوقت</th>
+                            <th>المدة</th>
+                            <th>الأسئلة</th>
+                            <th>الدرجة</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var exam in Model.Exams)
+                        {
+                            <tr>
+                                <td>@exam.ExamName</td>
+                                <td>@exam.Subject</td>
+                                <td>@exam.ExamType</td>
+                                <td>@exam.ExamDate</td>
+                                <td>@exam.ExamTime</td>
+                                <td>@exam.Duration</td>
+                                <td>@exam.QuestionsCount</td>
+                                <td>@exam.TotalScore</td>
+                                <td>@exam.Status</td>
+
+                                <td class="actions">
+
+                                    <a asp-controller="Teacher"
+                                       asp-action="examdetails"
+                                       asp-route-id="@exam.Id"
+                                       class="btn btn-small">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a asp-controller="Teacher"
+                                       asp-action="EditExam"
+                                       asp-route-id="@exam.Id"
+                                       class="btn btn-small">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <a asp-controller="Teacher"
+                                       asp-action="ExamGrades"
+                                       asp-route-id="@exam.Id"
+                                       class="btn btn-small">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </a>
+
+                                    <button class="btn btn-small btn-danger delete-exam-btn" data-id="@exam.Id">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+
+            <template id="examRowTemplate">
+                <tr>
+                    <td class="exam-name"></td>
+                    <td class="exam-subject"></td>
+                    <td class="exam-type"></td>
+                    <td class="exam-date"></td>
+                    <td class="exam-time"></td>
+                    <td class="exam-duration"></td>
+                    <td class="exam-questions-count"></td>
+                    <td class="exam-total-marks"></td>
+                    <td class="exam-status"></td>
+                    <td class="actions">
+                        <button class="btn btn-small view-exam-btn"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-small edit-exam-btn"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-small view-exam-grades-btn"><i class="fas fa-chart-bar"></i></button>
+                        <button class="btn btn-small btn-danger delete-exam-btn"><i class="fas fa-trash"></i></button>
+
+                    </td>
+                </tr>
+            </template>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                const levelFilter = document.getElementById("examLevelFilter");
+                const classFilter = document.getElementById("examClassFilter");
+                const sectionFilter = document.getElementById("examSectionFilter");
+                const subjectFilter = document.getElementById("examSubjectFilter");
+                const typeFilter = document.getElementById("examTypeFilter");
+                const statusFilter = document.getElementById("examStatusFilter");
+
+                const applyBtn = document.getElementById("applyExamFilter");
+                const clearBtn = document.getElementById("clearExamFilter");
+
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('levelid')) levelFilter.value = urlParams.get('levelid');
+                if (urlParams.has('stageid')) levelFilter.value = urlParams.get('stageid');
+                if (urlParams.has('classid')) sectionFilter.value = urlParams.get('classid');
+                if (urlParams.has('levelid_filter')) classFilter.value = urlParams.get('levelid_filter');
+                if (urlParams.has('subjectid')) subjectFilter.value = urlParams.get('subjectid');
+                if (urlParams.has('type')) typeFilter.value = urlParams.get('type');
+                if (urlParams.has('status')) statusFilter.value = urlParams.get('status');
+
+                applyBtn.addEventListener("click", function () {
+                const queryParams = new URLSearchParams();
+
+                if (levelFilter.value !== "all") queryParams.append("stageid", levelFilter.value);
+                if (classFilter.value !== "all") queryParams.append("levelid", classFilter.value);
+                if (sectionFilter.value !== "all") queryParams.append("classid", sectionFilter.value);
+                if (subjectFilter.value !== "all") queryParams.append("subjectid", subjectFilter.value);
+                if (typeFilter.value !== "all") queryParams.append("type", typeFilter.value);
+                if (statusFilter.value !== "all") queryParams.append("status", statusFilter.value);
+
+                window.location.href = `${window.location.pathname}?${queryParams.toString()}`;
+                });
+
+                clearBtn.addEventListener("click", function () {
+                window.location.href = window.location.pathname;
+                });
+
+                const examsTable = document.querySelector(".exams-table");
+                if (examsTable) {
+                examsTable.addEventListener("click", function (event) {
+                const deleteButton = event.target.closest(".delete-exam-btn");
+
+                if (deleteButton) {
+                event.preventDefault();
+
+                const examId = deleteButton.getAttribute("data-id");
+                const row = deleteButton.closest("tr");
+
+                Swal.fire({
+                title: 'هل أنت متأكد من الحذف؟',
+                text: "ستقوم بحذف جميع الامتحانات المحلولة لهذا الاختبار ولن تتمكن من استعادة هذه البيانات مجدداً !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، احذفه!',
+                cancelButtonText: 'إلغاء'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                fetch(`/Teacher/DeleteExam/${examId}`, {
+                method: 'POST',
+                headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+                }
+                })
+                .then(response => response.json())
+                .then(data => {
+                if (data.success) {
+                Swal.fire({
+                title: 'تم الحذف!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonText: 'موافق'
+                });
+                row.remove();
+                } else {
+                Swal.fire({
+                title: 'فشل الحذف',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'موافق'
+                });
+                }
+                })
+                .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                title: 'خطأ في النظام',
+                text: 'حدث خطأ أثناء الاتصال بالسيرفر، يرجى المحاولة لاحقاً.',
+                icon: 'error',
+                confirmButtonText: 'موافق'
+                });
+                });
+                }
+                });
+                }
+                });
+                }
+                });
+                document.addEventListener("DOMContentLoaded", function () {
+                const menuToggle = document.getElementById("menuToggle");
+                const sidebar = document.getElementById("sidebar");
+
+                menuToggle.addEventListener("click", function () {
+                sidebar.classList.toggle("active");
+                });
+
+                // اختياري: قفل السايد بار لما تدوس بره
+                document.addEventListener("click", function (e) {
+                const isClickInsideSidebar = sidebar.contains(e.target);
+                const isClickOnToggle = menuToggle.contains(e.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains("active")) {
+                sidebar.classList.remove("active");
+                }
+                });
+                });
+            </script>
+        </div>
+    </div>
+</body>
+</html>

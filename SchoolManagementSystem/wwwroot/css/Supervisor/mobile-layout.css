@@ -1,0 +1,49 @@
+@media (max-width: 992px) {
+
+    /* المحتوى الرئيسي */
+    .content,
+    .main-content {
+        width: 100% !important;
+        margin-right: 0 !important;
+        padding: 70px 10px 15px !important;
+        display: block !important;
+    }
+
+    /* أي Box أو Card */
+    .box,
+    .card,
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 auto !important;
+        padding: 15px !important;
+        border-radius: 10px;
+    }
+
+    /* الفورمات */
+    .selectors {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .selectors > div {
+        width: 100% !important;
+    }
+
+    /* الجداول */
+    .table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    table {
+        width: 100% !important;
+    }
+
+    /* الأزرار */
+    .btn,
+    button {
+        min-height: 42px;
+    }
+}

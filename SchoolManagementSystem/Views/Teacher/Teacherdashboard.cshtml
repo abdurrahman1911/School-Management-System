@@ -1,0 +1,169 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "معلومات المعلم";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="~/css/Teacher/teacher-dashboard.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+
+            <ul class="nav-links">
+                <li><a asp-controller="Teacher" asp-action="Teacherdashboard" class="active">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+                <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+                <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Teacher" asp-action="Notesstudents">ملاحظات الطلاب </a></li>
+                <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+                <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Home" asp-action="Index" class="logout">
+                تسجيل الخروج
+            </a>
+
+        </aside>
+    </nav>
+
+    <!-- Mobile button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
+
+        <div class="page active" id="home">
+            <div class="header">
+                <h1><i class="fas fa-home"></i> الصفحة الرئيسية</h1>
+            </div>
+
+            <!-- Teacher Card -->
+            <div class="teacher-card-simple">
+
+                <div class="card-header-simple">
+                    <div class="school-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="school-title">
+                        <h2>مدرسة الأوائل</h2>
+                    </div>
+                </div>
+
+                <div class="card-content-simple">
+
+                    <div class="teacher-info-main">
+
+                        <div class="teacher-name">
+                            <h3>@Model?.FullName</h3>
+                        </div>
+
+                        <div class="teacher-details">
+
+                            <div class="detail-row">
+                                <i class="fas fa-envelope"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">البريد الإلكتروني:</span>
+                                    <span class="detail-value">@Model?.Email</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <i class="fas fa-phone"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">رقم الهاتف:</span>
+                                    <span class="detail-value">@Model?.Phone</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <i class="fas fa-school"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">المدرسة:</span>
+                                    <span class="detail-value">مدرسة الأوائل الأهلية</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <i class="fas fa-calendar-alt"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">تاريخ الانضمام:</span>
+                                    <span class="detail-value">
+                                        @(Model?.HireDate.ToString("dd/MM/yyyy") ?? "غير متاح")
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <i class="fas fa-book"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">المواد الدراسية:</span>
+                                    <span class="detail-value">
+                                        @(Model?.Subjects != null && Model.Subjects.Any()
+                                                                                ? string.Join(" - ", Model.Subjects)
+                                                                                : "لا توجد مواد")
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+<script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.getElementById("sidebar");
+
+        menuToggle.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+        });
+
+        document.addEventListener("click", function (e) {
+            if (
+                window.innerWidth <= 992 &&
+                !sidebar.contains(e.target) &&
+                !menuToggle.contains(e.target)
+            ) {
+                sidebar.classList.remove("active");
+            }
+        });
+</script>
+</body>
+</html>

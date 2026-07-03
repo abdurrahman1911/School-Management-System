@@ -1,0 +1,110 @@
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Cairo', sans-serif;
+      }
+
+      body {
+          background: #f4f6f9;
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 30px;
+      }
+
+      .form-container {
+          width: 100%;
+          max-width: 600px;
+          background: #fff;
+          padding: 30px;
+          border-radius: 15px;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      }
+
+          .form-container h2 {
+              text-align: center;
+              margin-bottom: 25px;
+              color: #333;
+          }
+
+      .form-group {
+          margin-bottom: 20px;
+      }
+
+          .form-group label {
+              display: block;
+              margin-bottom: 8px;
+              font-weight: 600;
+              color: #444;
+          }
+
+      .form-control {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid #ddd;
+          border-radius: 10px;
+          font-size: 15px;
+      }
+
+          .form-control:focus {
+              outline: none;
+              border-color: #4a90e2;
+          }
+
+  .btn {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+
+    background: #2ecc71;  
+    color: white;
+
+    border: none;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    transition: all 0.3s ease;
+
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.25);
+}
+
+       .btn:hover {
+    background: #27ae60;
+}
+
+      .btn-cancel {
+          background: #e74c3c;
+              text-decoration: none !important;
+
+      }
+.btn-cancel:hover {
+    background: #c0392b;
+}
+
+      .form-actions {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          margin-top: 15px;
+      }
+
+
+      
+body .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+
+.nav-links {
+    gap: 5px;
+    
+}

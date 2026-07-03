@@ -1,0 +1,251 @@
+﻿@{
+    ViewData["Title"] = "قائمة المعلمين";
+}
+@using SchoolManagementSystem.ViewModel.Owner
+@model OwnerTeachersViewModel
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+      
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>قائمة المعلمين</title>
+    <link rel="stylesheet" href="~/css/Admin/teachers.css" />
+    <link rel="stylesheet" href="~/css/Admin/res.css" />
+
+    <style>
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .sidebar .logo {
+                padding: 25px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .user-info span {
+                font-size: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+    </style>
+    
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- ======================== SIDEBAR ======================== -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="user-info">
+    <div class="user-avatar">
+        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+        {
+            <text>@Model.NavigationInfo.FullName[0]</text>
+        }
+        else
+        {
+           <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+        }
+    </div>
+    <span>@Model.NavigationInfo.FullName</span>
+</div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+                        <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Notifications">الإشعارات</a></li>
+
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers" class="active">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+    </aside>
+
+    <!-- ======================== MAIN CONTENT ======================== -->
+    <main class="main-content">
+        <header class="content-header">
+            <h1><i class="fas fa-chalkboard-user"></i> قائمة المعلمين</h1>
+        </header>
+
+        <div class="content-body">
+            <!-- Teachers Table -->
+            <div class="table-section">
+                 @if (Model.TeachersInfo.Count == 0)
+                {
+
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <h2>لا يوجد معلمين لعرضهم</h2>
+                        
+                    </div>
+
+                }
+                else
+                {
+                <table id="teachersTable">
+                    <thead>
+                        <tr>
+                            <th>اسم المعلم/ة</th>
+                            <th>ايام الغياب</th>
+                            <th>تاريخ التعيين</th>
+                            <th>تاريخ ترك العمل</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teachersTableBody">
+                            @foreach (var teacher in Model.TeachersInfo)
+                            {
+                            <tr>
+                                <td>@teacher.FullName</td>
+                                <td><span class="absence-count">@teacher.AbcenseDaysCount</span></td>
+                                <td>@teacher.JoinDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(teacher.ExitDate?.ToString("yyyy-MM-dd") ?? "مستمر بالعمل")</td>
+                                <td class="actions">
+                                  
+                                        <a asp-controller="Owner" asp-action="UserDetails" asp-route-UserID="@teacher.UserID" class=" btn btn-primary">البيانات</a>
+                                        <a asp-controller="Owner" asp-action="UserAbcense" asp-route-UserID="@teacher.UserID" class=" btn btn-danger">الغياب</a>
+                                        <a asp-controller="Owner" asp-action="TeacherSubjects" asp-route-TeacherID="@teacher.TeacherID" class=" btn btn-success">المواد</a>
+                                   
+
+                                </td>
+                            </tr>
+                            }
+
+
+
+                       
+                       
+                    </tbody>
+                </table>
+                }
+            </div>
+
+            <!-- Teacher Notes Section -->
+          
+        </div>
+    </main>
+
+    <!-- ========================عرض بيانات المعلم ======================== -->
+    <div class="modal" id="viewTeacherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-graduate"></i> بيانات المعلم</h2>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> اسم المعلم</label>
+                        <input type="text" id="viewTeacherName" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> الرقم الهوية</label>
+                        <input type="text" id="viewTeacherNumber" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> رقم الهاتف</label>
+                        <input type="text" id="viewTeacherPhone" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-book"></i> التخصص</label>
+                        <input type="text" id="viewTeacherSpecialization" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-chart-line"></i> التقييم السنوي</label>
+                        <input type="text" id="viewTeacherEvaluation" class="form-control" readonly>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary" id="closeViewBtn">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================  الحضور ======================== -->
+    <div class="modal" id="attendanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-check"></i> سجل الحضور</h2>
+            </div>
+            <div class="modal-body">
+                <h4 id="attendanceTeacherName" style="text-align: center; color: #4387AB; margin-bottom: 20px;"></h4>
+                <div class="attendance-days" id="attendanceDays"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="closeAttendanceBtn">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="subjectsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-book"></i> المواد التي يدرسها</h2>
+            </div>
+            <div class="modal-body">
+                <h4 id="subjectsTeacherName" style="text-align: center; color: #4387AB; margin-bottom: 20px;"></h4>
+                <div class="subjects-list" id="subjectsList"></div>
+                <div class="form-actions" style="margin-top: 25px;">
+                    <button type="button" class="btn btn-primary" id="closeSubjectsBtn">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+                 const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden"); // اخفاء الزر
+            });
+
+            overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden"); // اظهار الزر
+            });
+    </script>
+    <script src="~/js/Admin/teachers.js"></script>
+
+</body>
+</html>

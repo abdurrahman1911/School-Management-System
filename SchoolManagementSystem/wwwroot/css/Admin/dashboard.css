@@ -1,0 +1,404 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    display: flex;
+    background-color: #f5f5f5;
+    color: #333;
+    direction: rtl;
+    min-height: 100vh;
+}
+
+/* ========== Layout ========== */
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 230px;
+    background: #4387AB;
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.sidebar .logo {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.user-avatar {
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.manager-img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.profile h4 a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* ========== Menu ========== */
+.nav-links {
+    list-style: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    flex: 1 !important;
+}
+.nav-links li a {
+        display: block;
+        padding: 12px;
+        background: #2a719d;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+.nav-links li a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+        .nav-links a:hover {
+            background: #0d3f56 !important;
+            font-weight: bold !important;
+        }
+        .nav-link.logout {
+    color: #ffffff !important;
+    margin-top: 175px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    padding-top: 15px !important;
+}
+
+/* ========== Logout ========== */
+.logout {
+    margin-top: auto;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .logout:hover {
+        background: #0d3f56;
+        color: #fff;
+    }
+
+
+/* Main content area */
+.main-content {
+    flex: 1;
+    margin-right: 250px;
+    padding: 20px;
+    background: #f8fafc;
+}
+
+.content-header {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #4387AB;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.content-header h1 {
+    color: #4387AB;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.date {
+    background: #edf7fc;
+    color: #4387AB;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Teacher card styles */
+.teacher-card-simple {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+
+ .card-header-simple{
+    background: #4387AB;
+    padding: 30px;
+    text-align: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+}
+
+.school-logo {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4387AB;
+    font-size: 28px;
+}
+
+.school-title h2 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+}
+
+.card-content-simple {
+    padding-right: 430px;
+    padding-left: 30px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+}
+
+.teacher-info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.teacher-name h3 {
+    color: #4387AB;
+    font-size: 22px;
+    border-bottom: 2px solid #edf7fc;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+}
+
+.teacher-details {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f8ff;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-row i {
+    color: #4387AB;
+    font-size: 18px;
+    margin-top: 3px;
+    width: 25px;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.detail-label {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.detail-value {
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Responsive design for small screens */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+    
+    .main-content {
+        margin-right: 220px;
+        padding: 15px;
+    }
+    
+    .content-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .content-header h1 {
+        font-size: 22px;
+    }
+    
+    .card-header-simple {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 20px;
+    }
+    
+    .card-content-simple {
+        padding: 20px;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .detail-content {
+        width: 100%;
+    }
+}
+/* ================= Mobile Sidebar ================= */
+.menu-toggle {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 992px) {
+
+    .menu-toggle {
+        display: flex;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        border: none;
+        border-radius: 50%;
+        background: #4387AB;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 2001;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        right: -230px; /* مخفي */
+        width: 230px;
+        height: 100vh;
+        z-index: 2000;
+        transition: .3s;
+    }
+
+    .sidebar.active {
+        right: 0;
+    }
+
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.4);
+        opacity: 0;
+        visibility: hidden;
+        transition: .3s;
+        z-index: 1999;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .main-content {
+        margin-right: 0;
+        width: 100%;
+        padding-top: 80px;
+    }
+}
+.nav-link.logout {
+    color: #ffffff;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 15px;
+}
+
+
+ol,
+ul {
+  padding-left: 0rem !important;
+}

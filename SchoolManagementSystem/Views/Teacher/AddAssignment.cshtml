@@ -1,0 +1,121 @@
+﻿@model SchoolManagementSystem.ViewModel.Teacher.AddAssignmentViewModel
+
+@{
+    ViewData["Title"] = "إضافة واجب جديد";
+}
+
+<link rel="stylesheet" href="~/css/Teacher/AddAssignment.css" />
+
+<div class="page-container">
+    <div class="header-section">
+        <a asp-action="Assignments" class="btn btn-back">
+            <i class="fas fa-arrow-right"></i> العودة إلى الواجبات
+        </a>
+        <h1>إضافة واجب جديد <i class="fas fa-plus-circle"></i></h1>
+    </div>
+
+    <div class="form-card">
+        <form method="post" asp-controller="Teacher" asp-action="AddAssignment" enctype="multipart/form-data">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Name"><i class="fas fa-tag"></i> اسم الواجب:</label>
+                <input asp-for="Name" class="form-control" placeholder="أدخل اسم الواجب هنا..." />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="SubjectId"><i class="fas fa-book"></i> المادة:</label>
+                    <select asp-for="SubjectId" class="form-control"
+                            asp-items="@(new SelectList(Model.Subjects, "Id", "Name"))">
+                        <option value="">-- اختر المادة --</option>
+                    </select>
+                    <span asp-validation-for="SubjectId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ClassId"><i class="fas fa-graduation-cap"></i> الفصل:</label>
+                    <select asp-for="ClassId" class="form-control"
+                            asp-items="@(new SelectList(Model.Classes, "Id", "Name"))">
+                        <option value="">-- اختر الفصل --</option>
+                    </select>
+                    <span asp-validation-for="ClassId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="startDate"><i class="fas fa-calendar-alt"></i> تاريخ البدء:</label>
+                    <input asp-for="startDate" type="date" class="form-control" />
+                    <span asp-validation-for="startDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="endDate"><i class="fas fa-calendar-check"></i> تاريخ الاستحقاق:</label>
+                    <input asp-for="endDate" type="date" class="form-control" />
+                    <span asp-validation-for="endDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="file"><i class="fas fa-paperclip"></i> ملف الواجب (PDF أو DOCX):</label>
+                <input asp-for="file" type="file" class="form-control" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                <span asp-validation-for="file" class="text-danger"></span>
+                <small class="form-hint">الصيغ المتاحة: PDF, DOCX (الحد الأقصى لحجم الملف: 10 ميجابايت)</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">
+                    <i class="fas fa-save"></i> حفظ الواجب
+                </button>
+                <a asp-action="Assignments" class="btn btn-cancel">
+                    إلغاء <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('input[type="file"]').change(function (e) {
+                if (e.target.files.length > 0) {
+                    var fileName = e.target.files[0].name;
+                    var fileSize = e.target.files[0].size; 
+                    var extension = fileName.split('.').pop().toLowerCase();
+
+                    if (extension !== 'pdf' && extension !== 'docx') {
+                        Swal.fire({
+                            title: 'صيغة ملف غير مدعومة!',
+                            text: 'عفواً، يجب رفع ملف بصيغة PDF أو DOCX فقط.',
+                            icon: 'error',
+                            confirmButtonText: 'موافق',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        $(this).val(''); 
+                        return;
+                    }
+
+
+                    var maxSizeInBytes = 10 * 1024 * 1024;
+                    if (fileSize > maxSizeInBytes) {
+                        Swal.fire({
+                            title: 'حجم الملف كبير جداً!',
+                            text: 'عفواً، الحد الأقصى لحجم الملف المسموح به هو 10 ميجابايت.',
+                            icon: 'warning',
+                            confirmButtonText: 'موافق',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        $(this).val('');
+                    }
+                }
+            });
+        });
+    </script>
+}

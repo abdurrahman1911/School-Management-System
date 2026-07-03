@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f4f7fb;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center; /* بيوسطن الفورم أفقياً */
+    align-items: center;     /* بيوسطن الفورم رأسياً */
+    font-family: "Segoe UI", sans-serif;
+    direction: rtl;          /* ضفناها هنا عشان لو المحتوى عربي التنسيق ما يضربش */
+}
+
+.form-container {
+    width: 100%;
+    max-width: 700px;
+    padding: 20px;
+    margin: auto;            /* أمان إضافي عشان يضمن التوسط في كل الشاشات */
+}
+
+.form-card {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+}
+
+.form-card h2 {
+    margin-bottom: 25px;
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    resize: vertical;
+    font-size: 15px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: hsl(216,100%,79%);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-save {
+    background: hsl(216,100%,79%);
+    color: white;
+}
+
+.btn-cancel {
+    background: #eee;
+    color: #333;
+}
+
+
+
+@media (max-width: 768px) {
+
+    .data-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    .data-table th,
+    .data-table td {
+        white-space: nowrap;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    /* نخلي آخر عمود (الإجراءات) مايكبرش الجدول */
+    .data-table th:last-child,
+    .data-table td:last-child {
+        width: 1%;
+    }
+}
+
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+.table-scroll-top {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 18px;
+    margin-bottom: 8px;
+}
+
+.table-scroll-top div {
+    height: 1px;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-wrapper table {
+    min-width: 1000px; /* عدلها حسب عرض الجدول */
+}
+
+
+.student-note {
+    max-width: 250px;
+    line-height: 1.5;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    white-space: normal;
+}

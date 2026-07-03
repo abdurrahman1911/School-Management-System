@@ -1,0 +1,99 @@
+@using SchoolManagementSystem.ViewModel.Student
+@model StudentIndexViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الطالب - @Model.StudentFullName</title>
+    <meta name="description" content="بوابة الطالب الإلكترونية - نظام إدارة الطلاب">
+    <!-- Used fonts and icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Student/student_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.FirstLetter</div>
+                    <span>@Model.StudentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Student" asp-action="Index" class="active">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Student" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Student" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Student" asp-action="Attendance">الحضور والغياب</a></li>
+                <li><a asp-controller="Student" asp-action="Tests">الاختبارات</a></li>
+                <li><a asp-controller="Student" asp-action="Level">المستوى</a></li>
+                <li><a asp-controller="Student" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Student" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <div class="welcome-wrapper">
+                <section class="premium-profile-card">
+                    <div class="profile-banner"></div>
+                    <div class="profile-body">
+                        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                        {
+                            <img src="@Model.PhotoUrl" alt="صورة الطالب" class="premium-profile-img">
+                        }
+                        else if (Model.Gender)
+                        {
+                            <img src="~/images/avatar-boy.jpg" alt="صورة الطالب" class="premium-profile-img">
+                        }
+                        else
+                        {
+                            <img src="~/images/avatar-girl.jpg" alt="صورة الطالب" class="premium-profile-img">
+                        }
+
+                        <span class="welcome-text">مرحباً بك في بوابة الطالب</span>
+                        <h1 class="premium-student-name">@Model.StudentFullName</h1>
+
+                        <div class="info-cards-grid">
+                            <div class="info-card">
+                                <div class="info-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                </div>
+                                <span class="info-card-label">الصف الدراسي</span>
+                                <span class="info-card-value">@Model.GradeName - @Model.ClassName</span>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                </div>
+                                <span class="info-card-label">رقم الجلوس</span>
+                                <span class="info-card-value">@Model.SeatNumber</span>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                </div>
+                                <span class="info-card-label">رقم الهاتف</span>
+                                <span class="info-card-value">@Model.Phone</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Student/student_script.js"></script>
+</body>
+
+</html>

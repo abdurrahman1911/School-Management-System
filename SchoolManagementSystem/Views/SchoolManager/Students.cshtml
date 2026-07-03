@@ -1,0 +1,416 @@
+﻿@model SchoolManagement.Models.ViewModels.StudentsPageViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>بيانات الطالب</title>
+
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/sidebar-layout.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/students.css")" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+
+    <style>
+        /* تنسيقات جعل عناصر القائمة في النص (توسيط كامل للسايد بار) */
+        .menu li a {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* لتوسيط المحتوى في المنتصف أفقياً */
+            gap: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .menu li.active a {
+            background-color: #0f172a; /* اللون الداكن للزر النشط */
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .logout-item {
+            margin-top: auto;
+            width: 100%;
+        }
+
+            .logout-item a {
+                display: flex;
+                align-items: center;
+                justify-content: center; /* لتوسيط زر تسجيل الخروج أيضاً */
+                gap: 10px;
+            }
+
+        /* تنسيق الأفاتار الدائري البديل في حال عدم وجود صورة */
+            .manager-avatar-placeholder {
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                background-color: #1d4ed8;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                font-weight: bold;
+                border: 2px solid #fff;
+                margin: 0 auto;
+            }
+
+            .manager-avatar-placeholder span {
+                color: #ffffff;
+                font-size: 32px;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                @if (string.IsNullOrEmpty(Model.ManagerPhotoUrl))
+                {
+                    <div class="manager-avatar-placeholder">
+                        <span>@(string.IsNullOrEmpty(Model.ManagerName) ? "م" : Model.ManagerName[0].ToString())</span>
+                    </div>
+                }
+                else
+                {
+                    <img src="@Url.Content("~/images/users/" + Model.ManagerPhotoUrl)" class="manager-img" alt="مدير المدرسة">
+                }
+
+                <h4>
+                    <a asp-controller="SchoolManager" asp-action="SchoolManagerProfile">
+                        @Model.ManagerName
+                    </a>
+                </h4>
+            </div>
+
+            <ul class="menu" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; height: calc(100% - 140px); align-items: center;">
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Home"> الصفحة الرئيسية</a></li>
+                <li class="active" style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Students"> الطلاب</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Teachers"> المعلمين</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Supervisors"> المشرفين</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="SuccessFailure"> النجاح والرسوب</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="Attendance"  > الغياب والحضور</a></li>
+                <li style="width: 100%;"><a asp-controller="SchoolManager" asp-action="EditProfile"> تعديل البيانات</a></li>
+
+                <li class="logout-item">
+                    <a asp-controller="Account" asp-action="Logout" class="logout">
+                         تسجيل الخروج
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <div class="profile-card">
+
+                <section class="box filters-bar">
+                    <div class="filter-group">
+                        <label><i class="fas fa-school"></i> المرحلة:</label>
+                        <select id="stageFilter" onchange="updateLevelsDropdown()">
+                            <option value="">كل المراحل</option>
+                            @foreach (var stage in Model.Stages)
+                            {
+                                <option value="@stage.Id">@stage.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-users"></i> الصف:</label>
+                        <select id="gradeFilter" onchange="updateClassesDropdown()">
+                            <option value="">كل الصفوف</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-door-open"></i> الفصل:</label>
+                        <select id="classFilter" onchange="resetOrApplyFilter()">
+                            <option value="">كل الفصول</option>
+                        </select>
+                    </div>
+                </section>
+
+                <div class="two-columns">
+                    <section class="box students-box">
+                        <h2 class="section-title"><i class="fas fa-user-graduate"></i> قائمة الطلاب (<span id="studentCount">@Model.AllStudents.Count</span>)</h2>
+                        <ul class="students-list" id="studentsList">
+                            @foreach (var student in Model.AllStudents)
+                            {
+                                <li><i class="fas fa-user"></i> @student.Name</li>
+                            }
+                        </ul>
+                    </section>
+
+                    <section class="box schedule-box">
+                        <h2 class="section-title"><i class="fas fa-calendar-alt"></i> الجدول الدراسي</h2>
+                        <div class="schedule-image">
+                            <img id="scheduleImage" src="" alt="الجدial الدراسي" style="display: none; max-width: 100%; border-radius: 8px;">
+                            <p class="no-schedule" id="noScheduleMsg">يرجى تحديد "فصل" معين لعرض الجدول الدراسي الخاص به</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h2 class="grades-title"><i class="fas fa-chart-line"></i> درجات الطلاب</h2>
+
+                <section class="box filters-bar grades-filters">
+                    <div class="filter-group">
+                        <label><i class="fas fa-user"></i> الطالب:</label>
+                        <select id="studentGradeFilter" onchange="applyGradesFilter()">
+                            <option value="">كل الطلاب</option>
+                            @foreach (var student in Model.AllStudents)
+                            {
+                                <option value="@student.Id">@student.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-book"></i> المادة:</label>
+                        <select id="subjectFilter" onchange="applyGradesFilter()">
+                            <option value="">كل المواد</option>
+                            @foreach (var subject in Model.AllSubjects)
+                            {
+                                <option value="@subject.Id">@subject.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-file-alt"></i> الاختبار:</label>
+                        <select id="examFilter" onchange="applyGradesFilter()">
+                            <option value="">كل الاختبارات</option>
+                            @foreach (var exam in Model.AllExams)
+                            {
+                                <option value="@exam.Id">@exam.Name</option>
+                            }
+                        </select>
+                    </div>
+                </section>
+
+                <section class="box">
+                    <div class="table-container">
+                        <table class="grades-table" id="gradesTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>اسم الطالب</th>
+                                    <th>الاختبار</th>
+                                    <th>الدرجة</th>
+                                    <th>الدرجة الكلية</th>
+                                    <th>النسبة المئوية</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody">
+                                @foreach (var grade in Model.InitialGrades)
+                                {
+                                    <tr>
+                                        <td>@grade.Index</td>
+                                        <td>@grade.StudentName</td>
+                                        <td>@grade.ExamName</td>
+                                        <td><b style="color:#2a9d8f;">@grade.Degree</b></td>
+                                        <td>@grade.TotalDegree</td>
+                                        <td>@grade.Percentage.ToString("F1")%</td>
+                                        <td><span class="status-badge @(grade.Status == "ناجح" ? "pass" : "fail")">@grade.Status</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="box">
+                    <h2 class="section-title"><i class="fas fa-chart-pie"></i> نسبة الحضور والغياب</h2>
+                    <div style="max-width: 300px; margin: 0 auto;">
+                        <canvas id="attendanceChart"></canvas>
+                        <p id="chartNotice" style="text-align: center; color: #888; font-size: 13px; margin-top: 10px;">اختر طالباً محدداً من قائمة الفلترة لعرض إحصائيات الغياب الخاصة به</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const stagesData = @Html.Raw(Json.Serialize(Model.Stages));
+        let attendanceChartInstance = null;
+
+        const originalStudentsHtml = document.getElementById("studentsList").innerHTML;
+        const originalStudentCount = "@Model.AllStudents.Count";
+        const originalGradesHtml = document.getElementById("gradesTableBody").innerHTML;
+
+        function updateLevelsDropdown() {
+            const stageId = document.getElementById("stageFilter").value;
+            const gradeSelect = document.getElementById("gradeFilter");
+            const classSelect = document.getElementById("classFilter");
+
+            gradeSelect.innerHTML = '<option value="">كل الصفوف</option>';
+            classSelect.innerHTML = '<option value="">كل الفصول</option>';
+
+            const selectedStage = stagesData.find(s => s.id == stageId);
+            if (selectedStage && selectedStage.levels) {
+                selectedStage.levels.forEach(level => {
+                    gradeSelect.innerHTML += `<option value="${level.id}">${level.name}</option>`;
+                });
+            }
+
+            resetOrApplyFilter();
+        }
+
+        function updateClassesDropdown() {
+            const stageId = document.getElementById("stageFilter").value;
+            const levelId = document.getElementById("gradeFilter").value;
+            const classSelect = document.getElementById("classFilter");
+
+            classSelect.innerHTML = '<option value="">كل الفصول</option>';
+
+            const selectedStage = stagesData.find(s => s.id == stageId);
+            if (selectedStage && selectedStage.levels) {
+                const selectedLevel = selectedStage.levels.find(l => l.id == levelId);
+                if (selectedLevel && selectedLevel.classes) {
+                    selectedLevel.classes.forEach(cls => {
+                        classSelect.innerHTML += `<option value="${cls.id}">${cls.name}</option>`;
+                    });
+                }
+            }
+            resetOrApplyFilter();
+        }
+
+        function resetOrApplyFilter() {
+            const classId = document.getElementById("classFilter").value;
+            if (!classId) {
+                document.getElementById("studentsList").innerHTML = originalStudentsHtml;
+                document.getElementById("studentCount").innerText = originalStudentCount;
+                document.getElementById("scheduleImage").style.display = "none";
+                document.getElementById("noScheduleMsg").style.display = "block";
+
+                applyGradesFilter();
+            } else {
+                applyClassFilter();
+            }
+        }
+
+        function applyClassFilter() {
+            const classId = document.getElementById("classFilter").value;
+            if (!classId) return;
+
+            fetch(`/SchoolManager/GetClassDetails?classId=${classId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById("studentsList");
+                    list.innerHTML = "";
+                    document.getElementById("studentCount").innerText = data.students.length;
+
+                    if(data.students.length === 0) {
+                        list.innerHTML = "<li>لا يوجد طلاب مسجلين في هذا الفصل</li>";
+                    } else {
+                        data.students.forEach(student => {
+                            list.innerHTML += `<li><i class="fas fa-user"></i> ${student.name}</li>`;
+                        });
+                    }
+
+                    const img = document.getElementById("scheduleImage");
+                    const msg = document.getElementById("noScheduleMsg");
+                    if (data.scheduleUrl) {
+                        img.src = data.scheduleUrl;
+                        img.style.display = "block";
+                        msg.style.display = "none";
+                    } else {
+                        img.style.display = "none";
+                        msg.style.display = "block";
+                    }
+                });
+
+            applyGradesFilter();
+        }
+
+        function applyGradesFilter() {
+            const studentId = document.getElementById("studentGradeFilter").value;
+            const examId = document.getElementById("examFilter").value;
+            const classId = document.getElementById("classFilter").value;
+
+            fetch(`/SchoolManager/GetFilteredGrades?studentId=${studentId}&examId=${examId}&classId=${classId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById("gradesTableBody");
+                    tbody.innerHTML = "";
+
+                    if(data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999;">لا توجد نتائج مطابقة للبحث الحالي</td></tr>`;
+                    } else {
+                        data.forEach(g => {
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${g.index}</td>
+                                    <td>${g.studentName}</td>
+                                    <td>${g.examName}</td>
+                                    <td><b style="color:#2a9d8f;">${g.degree}</b></td>
+                                    <td>${g.totalDegree}</td>
+                                    <td>${g.percentage.toFixed(1)}%</td>
+                                    <td><span class="status-badge ${g.status === 'ناجح' ? 'pass' : 'fail'}">${g.status}</span></td>
+                                </tr>`;
+                        });
+                    }
+                });
+
+            if (studentId) {
+                document.getElementById("chartNotice").style.display = "none";
+                fetch(`/SchoolManager/GetAttendanceData?studentId=${studentId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const ctx = document.getElementById('attendanceChart').getContext('2d');
+                        if (attendanceChartInstance) { attendanceChartInstance.destroy(); }
+
+                        attendanceChartInstance = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['الحضور', 'الغياب'],
+                                datasets: [{
+                                    data: [data.attendance, data.absence],
+                                    backgroundColor: ['#2a9d8f', '#e76f51'],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: { responsive: true }
+                        });
+                    });
+            } else {
+                if (attendanceChartInstance) { attendanceChartInstance.destroy(); }
+                document.getElementById("chartNotice").style.display = "block";
+            }
+        }
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

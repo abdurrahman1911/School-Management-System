@@ -1,0 +1,134 @@
+﻿@model SchoolManagementSystem.ViewModel.Teacher.TeacherTimeTableViewModel
+@{
+    ViewData["Title"] = "الجدول الدراسي";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Teacher/schedule.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* تنسيقات لتوسيط الجدول في المنتصف تماماً */
+        .schedule-image-container {
+            display: flex;
+            justify-content: center; /* توسيط أفقي */
+            align-items: center; /* توسيط عمودي */
+            width: 100%;
+            padding: 20px 0;
+        }
+
+        .image-wrapper {
+            max-width: 90%; /* عدم السماح بالخروج عن حدود الشاشة */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+            .image-wrapper:hover {
+                transform: scale(1.01); /* تأثير خفيف عند المرور بالماوس */
+            }
+
+        .schedule-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* ظل خفيف لإبراز الصورة */
+        }
+
+    </style>
+</head>
+<body>
+    <input type="checkbox" id="menuToggle" class="menu-toggle-checkbox">
+
+    <label for="menuToggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </label>
+    <label for="menuToggle" class="sidebar-overlay"></label>
+
+    <nav class="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @* استخدام ميزة الأمان ?. تمنع حدوث خطأ NullReferenceException نهائياً *@
+                    @if (Model?.NavigationInfo == null || string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@(Model?.NavigationInfo?.FullName != null && Model.NavigationInfo.FullName.Length > 0 ? Model.NavigationInfo.FullName[0].ToString() : "م")</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@(Model?.NavigationInfo?.FullName ?? "المدرس")</span>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule" class="active">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents">ملاحظات الطلاب </a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="logout">
+            تسجيل الخروج
+        </a>
+    </nav>
+
+    <div class="main-content">
+        <div class="page">
+            <div class="header">
+                <h1><i class="fas fa-calendar-day"></i> الجدول الدراسي الأسبوعي</h1>
+            </div>
+
+            <div class="schedule-image-container">
+                <div class="image-wrapper">
+                    @if (Model != null && !string.IsNullOrEmpty(Model.PhotoLink))
+                    {
+                        <img src="@Model.PhotoLink" alt="الجدول الدراسي" class="schedule-image" />
+                    }
+                    else
+                    {
+                        <div class="no-schedule-box">
+                            <i class="fas fa-calendar-times no-schedule-icon"></i>
+                            <p class="no-schedule-text">لا يوجد جدول دراسي مرفوع حالياً</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageWrapper = document.querySelector('.image-wrapper');
+        const scheduleImg = document.querySelector('.schedule-image');
+
+        if (scheduleImg && imageWrapper) {
+            imageWrapper.addEventListener('click', function() {
+                window.open(scheduleImg.src, '_blank');
+            });
+        }
+    });
+
+    document.querySelectorAll('.sidebar a').forEach(link => {
+        link.addEventListener('click', () => {
+            const toggle = document.getElementById('menuToggle');
+            if(toggle) toggle.checked = false;
+        });
+    });
+</script>

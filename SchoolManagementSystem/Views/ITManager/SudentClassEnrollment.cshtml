@@ -1,0 +1,311 @@
+﻿@model SchoolManagementSystem.ViewModel.ITManager.StudentClassEnrollmentPageViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تسجيل الطلاب في الفصول</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+    <link rel="stylesheet" href="~/css/ITManager/studentClassEnrollment.css" />
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+    <style>
+        .action-submit {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s;
+        }
+              .action-edit {
+    background: #1e6d92;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+        </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <img src="~/images/users/@Model.NavigationInfo.ProfilePhotoUrl" class="manager-img">
+                <h4>  <span>@Model.NavigationInfo.FullName</span></h4>
+
+            </div>
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li class="active"><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+
+            <div class="subjects-teachers-container">
+
+                <h1 class="page-title">تسجيل الطلاب في الفصول</h1>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div style="background: #d4edda; color: #155724; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div style="background: #f8d7da; color: #721c24; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <!-- Actions -->
+                <div class="actions-bar">
+
+                    <a asp-controller="ITManager"
+                       asp-action="Addsudentclass"
+                       class="btn-add">
+                        <i class="fas fa-plus"></i>
+                        تسجيل طالب في فصل
+                    </a>
+
+                  
+                    <div class="search-container">
+
+                        <select id="searchType" class="search-type">
+                            <option value="">-- اختر نوع البحث --</option>
+
+                            <option value="phone">رقم الهاتف</option>
+                            <option value="nationalid">رقم الهوية</option>
+                        </select>
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search search-icon"></i>
+
+                            <input type="text"
+                                   class="search-input"
+                                   placeholder="ابحث..."
+                                   id="searchInput">
+
+                            <button class="search-clear"
+                                    id="clearSearch"
+                                    style="display:none; background:none; border:none; cursor:pointer;">
+                                <i class="fas fa-times"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <div class="table-wrapper">
+
+                    <table class="students-table"
+                           id="studentsTable">
+
+
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>المرحلة</th>
+                                <th>الصف</th>
+                                <th>الفصل</th>
+                                <th>السنه الدراسيه</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model.Enrollments != null && Model.Enrollments.Any())
+                            {
+                                @foreach (var item in Model.Enrollments)
+                                {
+                                    <tr data-nationalid="@item.SSN" data-phone="@item.Phone">
+                                        <td>@item.StudentName</td>
+                                        <td>@item.StageName</td>
+                                        <td>@item.LevelName</td>
+                                        <td>@item.ClassName</td>
+                                        <td>@item.AcademicTermName</td>
+
+                                            <td class="actions-cell">
+                                                <div class="actions-wrapper">
+
+                                                    <a asp-controller="ITManager"
+                                                       asp-action="EditSudentclass"
+                                                       asp-route-id="@item.EnrollmentID"
+                                                       class="action-edit">
+
+                                                        <i class="fas fa-edit"></i>
+                                                        تعديل
+
+                                                    </a>
+
+                                                    <form asp-controller="ITManager"
+                                                          asp-action="DeleteStudentClassEnrollment"
+                                                          asp-route-id="@item.EnrollmentID"
+                                                          method="post"
+                                                          style="display:inline;"
+                                                          onsubmit="return confirm('هل أنت متأكد من حذف هذا التسجيل؟');">
+
+                                                        <button type="submit" class="action-delete">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                            حذف
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+                                            </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align:center; padding: 20px;">لا توجد تسجيلات حالياً</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+
+           const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+
+                       function filterTable() {
+
+                const searchValue =
+                    searchInput.value.toLowerCase().trim();
+
+                const searchType =
+                    document.getElementById('searchType').value;
+
+                const rows =
+                    document.querySelectorAll('#studentsTable tbody tr');
+
+                rows.forEach(row => {
+
+                    const phone =
+                        row.dataset.phone?.toLowerCase() || '';
+
+                    const nationalId =
+                        row.dataset.nationalid?.toLowerCase() || '';
+
+                    let match = false;
+
+                    if (searchType === "phone") {
+
+                        match =
+                            phone.includes(searchValue);
+
+                    }
+                    else if (searchType === "nationalid") {
+
+                        match =
+                            nationalId.includes(searchValue);
+
+                    }
+
+                    row.style.display =
+                        (match || searchValue === '')
+                            ? ''
+                            : 'none';
+
+                });
+
+                clearSearchBtn.style.display =
+                    searchValue ? 'inline-block' : 'none';
+            }
+            searchInput.addEventListener('keyup', filterTable);
+
+            clearSearchBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                filterTable();
+                searchInput.focus();
+            });
+
+                 const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden");
+            });
+    </script>
+
+</body>
+</html>

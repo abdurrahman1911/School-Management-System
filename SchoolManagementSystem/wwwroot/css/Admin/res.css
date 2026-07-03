@@ -1,0 +1,140 @@
+/* الزر يختفي في الشاشات الكبيرة ويظهر كـ Flex في الشاشات الصغيرة */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: #4387AB;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002; /* أعلى من السايد بار والأوفرلاي */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* توحيد نقطة التحول للشاشات الصغيرة عند 992px */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: flex; /* إظهار الزر */
+    }
+
+    /* عندما يفتح السايد بار، يمكننا إخفاء الزر إذا كنت تفضل ذلك */
+    .sidebar.active ~ .menu-toggle {
+        display: none; 
+    }
+
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        right: -250px !important; /* إخفاء السايد بار تماماً خارج الشاشة يميناً */
+        width: 230px !important;
+        height: 100% !important;
+        z-index: 1001 !important;
+        transition: right 0.3s ease !important; /* إضافة أنيميشن سلس أثناء الدخول والخروج */
+    }
+
+    .sidebar.active {
+        right: 0 !important; /* إظهار السايد بار عند إضافة كلاس active */
+    }
+
+    .main-content {
+        margin-right: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+    }
+
+    /* لمنع التداخل مع الجدول */
+    .students-table table {
+        min-width: 900px;
+    }
+}
+
+
+
+.menu-toggle {
+    display: none;
+}
+
+/* يظهر في الموبايل فقط */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .menu-toggle.hidden {
+        display: none;
+    }
+}
+
+.menu-toggle.hidden {
+    display: none;
+}
+
+/* Mobile Sidebar */
+@media (max-width: 768px) {
+
+    .sidebar {
+        position: fixed;
+        right: -250px;
+        top: 0;
+        width: 230px;
+        height: 100%;
+        z-index: 1000;
+        transition: 0.3s;
+        display: flex !important;
+    }
+
+    .sidebar.active {
+        right: 0;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.4);
+        opacity: 0;
+        visibility: hidden;
+        transition: .3s;
+        z-index: 999;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.students-table {
+    overflow-x: auto;
+}
+
+.students-table table {
+    width: 100%;
+    min-width: 700px;
+}
+
+.main-content{
+    box-sizing:border-box;
+}

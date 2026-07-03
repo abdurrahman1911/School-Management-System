@@ -1,0 +1,355 @@
+﻿@{
+
+    Layout = null;
+
+}
+
+
+
+@using SchoolManagementSystem.ViewModel.ITManager;
+
+@model ITManagerHomeViewModel;
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+
+
+<style>
+
+    .user-avatar {
+        width: 90px;
+        height: 90px;
+        overflow: hidden; /* important */
+
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+</style>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["الصفحة الرئيسية"]</title>
+
+
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+
+
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+
+
+
+    <link rel="stylesheet" href="~/css/ITManager/Home.css" />
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+</head>
+<body>
+
+    <button class="menu-toggle" id="menuToggle">
+
+        ☰
+
+    </button>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+
+    <div class="layout">
+
+
+
+        <aside class="sidebar">
+
+            <div class="profile">
+
+                <div class="user-info">
+
+                    <div class="user-avatar">
+
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+
+                        {
+
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+
+                        }
+
+                        else
+
+                        {
+
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+
+                        }
+
+                    </div>
+
+                    <h4> <span>@Model.NavigationInfo.FullName</span></h4>
+
+                </div>
+
+            </div>
+
+
+
+            <ul class="menu">
+
+                <li class="active"><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+
+
+
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+
+            </ul>
+
+
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+
+        </aside>
+
+        <main class="content">
+
+            <div class="dashboard-container">
+
+                @if (TempData["SuccessMessage"] != null)
+
+                {
+
+                    <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #155724; background-color: #d4edda; border-color: #c3e6cb;">
+
+                        @TempData["SuccessMessage"]
+
+                    </div>
+
+                }
+
+
+
+                @if (TempData["ErrorMessage"] != null)
+
+                {
+
+                    <div class="alert alert-danger" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb;">
+
+                        @TempData["ErrorMessage"]
+
+                    </div>
+
+                }
+
+
+                <div class="profile-card-modern">
+
+                    <h2 class="profile-name">@Model.NavigationInfo.FullName</h2>
+
+                    <span class="profile-role">مدير المعلومات</span>
+
+
+
+                    <div class="profile-details">
+
+                        <div class="detail-item">
+
+                            <span class="detail-label">البريد الإلكتروني :</span>
+
+                            <p class="detail-value">@Model.LoginITManagerInfo.Email</p>
+
+                        </div>
+
+
+
+                        <div class="detail-item">
+
+                            <span class="detail-label">رقم الهاتف :</span>
+
+                            <p class="detail-value">@Model.LoginITManagerInfo.Phone</p>
+
+                        </div>
+
+
+
+                        <div class="detail-item">
+
+                            <span class="detail-label">المدرسة :</span>
+
+                            <p class="detail-value">مدرسة الأوائل</p>
+
+                        </div>
+
+
+
+                        <div class="detail-item">
+
+                            <span class="detail-label">تاريخ الانضمام :</span>
+
+                            <p class="detail-value">@Model.LoginITManagerInfo.JoinDate.ToString("yyyy/MM/dd")</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- الإحصائيات -->
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <i class="fas fa-users stat-icon"></i>
+
+                        <h3>عدد الطلاب</h3>
+
+                        <p class="stat-number" id="studentsCount">@Model.someSchoolInfo.StudentsNum</p>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <i class="fas fa-chalkboard-user stat-icon"></i>
+
+                        <h3>عدد المدرسين</h3>
+
+                        <p class="stat-number" id="teachersCount">@Model.someSchoolInfo.TeachersNum</p>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <i class="fas fa-door-open stat-icon"></i>
+
+                        <h3>عدد الفصول</h3>
+
+                        <p class="stat-number" id="classesCount">@Model.someSchoolInfo.ClassesNum</p>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <i class="fas fa-book stat-icon"></i>
+
+                        <h3>عدد المواد</h3>
+
+                        <p class="stat-number" id="subjectsCount">@Model.someSchoolInfo.SubjectsNum</p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- آخر التحديثات -->
+
+
+
+
+            </div>
+
+        </main>
+
+
+
+    </div>
+
+    <script>
+
+            const menuToggle = document.getElementById("menuToggle");
+
+            const sidebar = document.querySelector(".sidebar");
+
+            const overlay = document.getElementById("sidebarOverlay");
+
+
+
+            menuToggle.addEventListener("click", () => {
+
+            sidebar.classList.add("active");
+
+            overlay.classList.add("active");
+
+            menuToggle.classList.add("hidden"); // اخفاء الزر
+
+            });
+
+
+
+            overlay.addEventListener("click", () => {
+
+            sidebar.classList.remove("active");
+
+            overlay.classList.remove("active");
+
+            menuToggle.classList.remove("hidden"); // اظهار الزر
+
+            });
+
+    </script>
+
+</body>
+
+</html>

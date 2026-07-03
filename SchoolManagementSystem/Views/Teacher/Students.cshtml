@@ -1,0 +1,536 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model TeacherStudentsPageViewModel
+@{
+    ViewData["Title"] = "الطلاب";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Teacher/students.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* التنسيق الجديد للهيدر ليطابق تماماً صورة image_1746dc.jpg */
+        .content-header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start; /* محاذاة لجهة اليمين */
+            margin-bottom: 30px;
+            padding: 10px 10px 10px 10px;
+        }
+
+            .content-header h1 {
+                font-size: 2.2rem; /* حجم خط متناسق وكبير */
+                color: #5ca1f5; /* نفس اللون السماوي المميز في الصورة */
+                display: inline-flex;
+                align-items: center;
+                gap: 12px; /* المسافة بين النص والأيقونة */
+                margin: 10px;
+                font-weight: bold;
+            }
+
+                .content-header h1 i {
+                    color: #5ca1f5; /* نفس لون الأيقونة السماوي */
+                    font-size: 2.2rem;
+                }
+
+        .filters-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+            .filter-group label {
+                font-weight: 600;
+                color: #4a5568;
+                font-size: 0.9rem;
+            }
+
+            .filter-group select {
+                height: 42px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                padding: 0 10px;
+                font-size: 0.95rem;
+                outline: none;
+                background-color: #fff;
+            }
+
+        .filter-actions-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+            .filter-actions-container button,
+            .filter-actions-container a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                height: 42px;
+                padding: 0 20px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none !important;
+                white-space: nowrap;
+                box-sizing: border-box;
+            }
+
+        .btn-filter {
+            background-color: #7fa9fb;
+            color: white;
+        }
+
+            .btn-filter:hover {
+                background-color: #6392e8;
+                transform: translateY(-1px);
+            }
+
+        .btn-reset {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6 !important;
+        }
+
+            .btn-reset:hover {
+                background-color: #e2e6ea;
+                color: #495057;
+                transform: translateY(-1px);
+            }
+
+        .students-count-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #e8f0fe;
+            color: #1967d2;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            border: 1px solid #d2e3fc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+            .students-count-badge i {
+                font-size: 1.1rem;
+            }
+
+            .students-count-badge strong {
+                background-color: #1967d2;
+                color: white;
+                padding: 2px 10px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+            }
+
+        .empty-state-container {
+            padding: 60px 20px;
+            text-align: center;
+            color: #a0aec0;
+        }
+
+            .empty-state-container i {
+                font-size: 5.5rem;
+                margin-bottom: 20px;
+                display: block;
+                opacity: 0.7;
+            }
+
+            .empty-state-container h5 {
+                font-size: 1.4rem;
+                font-weight: 500;
+                color: #718096;
+                margin: 0;
+            }
+
+        /* تنسيق المحتوى الرئيسي */
+        .main-content {
+            margin-right: 300px;
+            margin-left: 60px;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* تنسيق حاوية صفحة الواجبات لتبدو متناسقة وفي المنتصف */
+        .page#students {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* تحسين مرونة كروت الإحصائيات وجدول البيانات ليأخذوا العرض بالكامل المتاح لهم */
+        .filter-section,
+        .attendance-stats,
+        .table-container {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        @@media (max-width: 768px) {
+            .main-content {
+                margin-right: 15px;
+                margin-left: 15px;
+                padding-top: 70px;
+            }
+
+            .content-header {
+                justify-content: center; /* يتوسط العنوان في الشاشات الصغيرة للمظهر الجمالي */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard"> الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes"> الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students" class="active"> الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule"> الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades"> الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents"> ملاحظات الطلاب </a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments"> الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams"> الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting"> تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="logout"> تسجيل الخروج</a>
+    </nav>
+
+    <main class="main-content">
+        @* تعديل الترتيب ليصبح النص أولاً ثم الأيقونة على يساره *@
+        <header class="content-header">
+            <h1> <i class="fas fa-user-graduate"></i> قائمة الطلاب  </h1>
+        </header>
+
+        <div class="content-body" style="width: 100%;">
+            <form id="filterForm" method="get" asp-controller="Teacher" asp-action="Students">
+                <div class="filters-section">
+
+                    <div class="filter-group">
+                        <label for="stageSelect"><i class="fas fa-cubes"></i> اختيار المرحلة:</label>
+                        <select id="stageSelect" name="stageId" asp-items="@(new SelectList(Model.Stages, "Id", "Name", Model.SelectedStageId))">
+                            <option value="">كل المراحل</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="levelSelect"><i class="fas fa-graduation-cap"></i> اختيار المستوى:</label>
+                        <select id="levelSelect" name="levelId" asp-items="@(new SelectList(Model.Levels, "Id", "Name", Model.SelectedLevelsId))">
+                            <option value="">كل المستويات</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="classSelect"><i class="fas fa-users"></i> اختيار الصف:</label>
+                        <select id="classSelect" name="classId" asp-items="@(new SelectList(Model.Classes, "Id", "Name", Model.SelectedClassId))">
+                            <option value="">كل الصفوف</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-actions-container">
+                        <button type="submit" class="btn-filter">
+                            <i class="fas fa-filter"></i> تطبيق الفلتر
+                        </button>
+                        <a href="@Url.Action("Students", "Teacher")" class="btn-reset" id="resetFilterBtn">
+                            <i class="fas fa-undo-alt"></i> إعادة تعيين
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="students-count-badge">
+                <i class="fas fa-user-graduate"></i>
+                <span>إجمالي عدد الطلاب:</span>
+                <strong id="studentsCount">@(Model.Students != null ? Model.Students.Count : 0)</strong>
+            </div>
+            <div id="topScrollbar" class="top-scrollbar">
+                <div></div>
+            </div>
+            <div class="students-table" id="tableWrapper">
+                <table id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>اسم الطالب/ة</th>
+                            <th>ايام الغياب</th>
+                            <th>الأداء</th>
+                            <th>الدرجات</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        @if (Model.Students != null && Model.Students.Any())
+                        {
+                            foreach (var student in Model.Students)
+                            {
+                                <tr>
+                                    <td>@student.FullName</td>
+                                    <td>@student.AbsencesCount</td>
+                                    <td><span class="performance-badge">@student.Performance</span></td>
+                                    <td><span class="grade-box">@student.ExamPercentage</span></td>
+                                    <td>
+                                        <button class="btn-info show-details"
+                                                data-name="@student.FullName"
+                                                data-phone="@student.StudentPhone"
+                                                data-parent="@student.ParentPhone"
+                                                data-attendance="@student.AbsencesCount"
+                                                data-grade="@student.ExamPercentage">
+                                            عرض البيانات
+                                        </button>
+                                        <button class="btn-success get-absence-btn"
+                                                data-id="@student.StudentId"
+                                                data-name="@student.FullName">
+                                            ايام الغياب
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state-container">
+                                        @if (Model.SelectedLevelsId > 0 || Model.SelectedClassId > 0 || Model.SelectedStageId > 0)
+                                        {
+                                            <i class="fas fa-search"></i>
+                                            <h5>لا توجد نتائج مطابقة للبحث</h5>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-folder-open"></i>
+                                            <h5>لا يوجد طلاب مسجلين في النظام حالياً.</h5>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="studentDetailsForm" class="form-popup" style="display: none;">
+        <div class="form-content">
+            <h3>بيانات الطالب</h3>
+            <div class="form-group"><label>اسم الطالب:</label><input type="text" id="detailName" readonly></div>
+            <div class="form-group"><label>رقم الطالب:</label><input type="text" id="detailNumber" readonly></div>
+            <div class="form-group"><label>رقم ولي الأمر:</label><input type="text" id="detailFatherNumber" readonly></div>
+            <div class="form-group"><label>ايام الغياب:</label><input type="text" id="detailAttendance" readonly></div>
+            <div class="form-group"><label>الدرجة:</label><input type="text" id="detailGrade" readonly></div>
+            <div class="form-buttons">
+                <button type="button" class="btn cancel-btn close-popup-btn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="absenceDatesModal" class="absence-modal" style="display: none;">
+        <div class="absence-content">
+            <h3>تواريخ غياب: <span id="absenceStudentName"></span></h3>
+            <hr>
+            <ul id="absenceDatesList" class="absence-list"></ul>
+            <div class="form-buttons" style="margin-top: 20px;">
+                <button type="button" class="btn cancel-btn" id="closeAbsenceBtn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+          document.addEventListener('DOMContentLoaded', function () {
+
+            // 1. تعريف العناصر الأساسية
+            const studentDetailsModal = document.getElementById('studentDetailsForm');
+            const absenceModal = document.getElementById('absenceDatesModal');
+            const absenceList = document.getElementById('absenceDatesList');
+            const absenceStudentNameDisplay = document.getElementById('absenceStudentName');
+
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+
+            // ==========================
+            // Sidebar
+            // ==========================
+            if (menuToggle && sidebar) {
+
+                menuToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('active');
+                });
+
+                sidebar.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+
+                document.addEventListener('click', function () {
+                    if (window.innerWidth <= 992) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+            }
+
+            // ==========================
+            // التعامل مع ضغطات الأزرار
+            // ==========================
+            document.addEventListener('click', function (event) {
+
+                // زر عرض البيانات
+                if (event.target.classList.contains('show-details')) {
+
+                    const btn = event.target;
+
+                    document.getElementById('detailName').value = btn.getAttribute('data-name') || '';
+                    document.getElementById('detailNumber').value = btn.getAttribute('data-phone') || '';
+                    document.getElementById('detailFatherNumber').value = btn.getAttribute('data-parent') || '';
+                    document.getElementById('detailAttendance').value = btn.getAttribute('data-attendance') || '0';
+
+                    const rawGrade = btn.getAttribute('data-grade');
+                    document.getElementById('detailGrade').value =
+                        (rawGrade === "null" || !rawGrade)
+                            ? "لا يوجد امتحانات"
+                            : rawGrade;
+
+                    studentDetailsModal.style.display = 'flex';
+                }
+
+                // إغلاق موديل البيانات
+                if (
+                    event.target.classList.contains('close-popup-btn') ||
+                    event.target === studentDetailsModal
+                ) {
+                    studentDetailsModal.style.display = 'none';
+                }
+
+                // زر الغياب
+                if (event.target.classList.contains('get-absence-btn')) {
+
+                    const studentId = event.target.getAttribute('data-id');
+                    const studentName = event.target.getAttribute('data-name');
+
+                    absenceStudentNameDisplay.textContent = studentName;
+                    absenceList.innerHTML = '<li>جاري التحميل...</li>';
+                    absenceModal.style.display = 'flex';
+
+                    fetch(`/Teacher/GetAbsenceDates?studentId=${studentId}`)
+                        .then(response => response.json())
+                        .then(data => {
+
+                            absenceList.innerHTML = '';
+
+                            if (!data || data.length === 0) {
+
+                                absenceList.innerHTML = '<li>لا يوجد أيام غياب مسجلة</li>';
+
+                            } else {
+
+                                data.forEach(date => {
+
+                                    const li = document.createElement('li');
+
+                                    li.innerHTML = `
+                                        <span>${date}</span>
+                                        <i class="fas fa-calendar-times"></i>
+                                    `;
+
+                                    absenceList.appendChild(li);
+
+                                });
+
+                            }
+
+                        })
+                        .catch(() => {
+                            absenceList.innerHTML = '<li>حدث خطأ في جلب البيانات</li>';
+                        });
+                }
+
+                // إغلاق موديل الغياب
+                if (
+                    event.target.id === 'closeAbsenceBtn' ||
+                    event.target === absenceModal
+                ) {
+                    absenceModal.style.display = 'none';
+                }
+
+            });
+
+            // ==========================
+            // السكرول الأفقي
+            // ==========================
+            const tableWrapper = document.getElementById("tableWrapper");
+            const topScrollbar = document.getElementById("topScrollbar");
+
+            if (tableWrapper && topScrollbar) {
+
+                const topContent = topScrollbar.firstElementChild;
+
+                function syncWidth() {
+                    topContent.style.width = tableWrapper.scrollWidth + "px";
+                }
+
+                syncWidth();
+
+                window.addEventListener("resize", syncWidth);
+
+                topScrollbar.addEventListener("scroll", () => {
+                    tableWrapper.scrollLeft = topScrollbar.scrollLeft;
+                });
+
+                tableWrapper.addEventListener("scroll", () => {
+                    topScrollbar.scrollLeft = tableWrapper.scrollLeft;
+                });
+
+            }
+
+        });
+
+    </script>
+</body>
+</html>

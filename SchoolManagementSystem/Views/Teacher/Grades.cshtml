@@ -1,0 +1,397 @@
+﻿@model SchoolManagementSystem.ViewModel.Teacher.GradesViewModel
+@{
+    ViewData["Title"] = "الدرجات";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Teacher/grades.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- تنسيقات إضافية لضبط الفلتر بشكل احترافي -->
+    <style>
+        .filter-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            width: 100%;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+            .filter-group label {
+                font-weight: 600;
+                color: #4a5568;
+                font-size: 14px;
+            }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            outline: none;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+            .filter-select:focus {
+                border-color: #3182ce;
+                background-color: #fff;
+                box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+            }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+            .filter-actions .btn {
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                border: none;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+        .btn-submit {
+
+              background-color: #7fa9fb;
+    color: white
+        }
+
+            .btn-submit:hover {
+                background-color: #2b6cb0;
+            }
+
+        .btn-reset {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0 !important;
+        }
+
+            .btn-reset:hover {
+                background-color: #e2e8f0;
+            }
+
+        body {
+            background-color: #f7fafc; /* لون خلفية مريح للعين */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* تنسيق المحتوى الرئيسي */
+        .main-content {
+            /* تجعل المحتوى يأخذ مرونة العرض المتبقي */
+            margin-right: 300px; /* القيمة هنا يجب أن تكون أكبر من عرض السايد بار الخاص بك (افترضنا هنا أنه 250px فزدنا عليها 20px مسافة) */
+            margin-left: 60px; /* مسافة من جهة اليسار لمنع الالتصاق بحافة الشاشة */
+            padding-top: 30px; /* مسافة من الأعلى */
+            padding-bottom: 30px; /* مسافة من الأسفل */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* لتوسيط العناصر داخلياً */
+        }
+
+        /* تنسيق حاوية صفحة الواجبات لتبدو متناسقة وفي المنتصف */
+        .page#grades {
+            width: 100%;
+            max-width: 1200px; /* يمنع الصفحة من التمدد بشكل مفرط في الشاشات الكبيرة جداً ويحافظ عليها في المنتصف */
+            margin: 0 auto; /* لتوسيط الحاوية تماماً في المساحة المتاحة */
+        }
+
+        /* تحسين مرونة كروت الإحصائيات وجدول البيانات ليأخذوا العرض بالكامل المتاح لهم */
+        .filter-section,
+        .attendance-stats,
+        .table-container {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        margin-right: 30px; /* تقليل الهامش ليتناسب مع الشاشات الصغيرة عند اختفاء السايد بار */
+        margin-left: 30px;
+        padding-top: 70px; /* مسافة إضافية من الأعلى لزر القائمة المنسدلة toggle */
+        }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades" class="active">الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents"> ملاحظات الطلاب </a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="logout">تسجيل الخروج</a>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="main-content" id="mainContent">
+        <div class="page active" id="grades">
+            <div class="header">
+                <h1><i class="fas fa-chart-bar"></i> إدارة الدرجات</h1>
+            </div>
+
+            <div class="filter-section">
+                <form asp-controller="Teacher" asp-action="Grades" method="get" class="filter-row">
+
+                    <div class="filter-group">
+                        <label for="gradeSubjectFilter"><i class="fas fa-book"></i> المادة:</label>
+                        <select id="gradeSubjectFilter" name="subjectid" class="filter-select">
+                            <option value="">جميع المواد</option>
+                            @foreach (var item in Model.Subjects)
+                            {
+                                bool isSelected = Context.Request.Query["subjectid"] == item.Id.ToString();
+                                <!option value="@item.Id" @(isSelected ? "selected" : "")>@item.Name</!option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="gradeStageFilter"><i class="fas fa-school"></i> المستوى:</label>
+                        <select id="gradeStageFilter" name="stageid" class="filter-select">
+                            <option value="">جميع المستويات</option>
+                            @foreach (var item in Model.Stages)
+                            {
+                                bool isSelected = Context.Request.Query["stageid"] == item.Id.ToString();
+                                <!option value="@item.Id" @(isSelected ? "selected" : "")>@item.Name</!option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="gradeLevelFilter"><i class="fas fa-graduation-cap"></i> الصف:</label>
+                        <select id="gradeLevelFilter" name="levelid" class="filter-select">
+                            <option value="">جميع الصفوف</option>
+                            @foreach (var item in Model.Levels)
+                            {
+                                bool isSelected = Context.Request.Query["levelid"] == item.Id.ToString();
+                                <!option value="@item.Id" @(isSelected ? "selected" : "")>@item.Name</!option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="gradeClassFilter"><i class="fas fa-users"></i> الفصل:</label>
+                        <select id="gradeClassFilter" name="classid" class="filter-select">
+                            <option value="">جميع الفصول</option>
+                            @foreach (var item in Model.Classes)
+                            {
+                                bool isSelected = Context.Request.Query["classid"] == item.Id.ToString();
+                                <!option value="@item.Id" @(isSelected ? "selected" : "")>@item.Name</!option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-submit" id="applyGradeFilter">
+                            <i class="fas fa-filter"></i> تطبيق الفلتر
+                        </button>
+                        <a asp-controller="Teacher" asp-action="Grades" class="btn btn-reset" id="clearGradeFilter">
+                            <i class="fas fa-times"></i> إعادة التعيين
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="grade-stats" id="gradeStatsSection">
+                <div class="grade-stat-card">
+                    <div class="stat-icon students">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="gradeStudentCount">@Model.studentCount</h3>
+                        <p>عدد الطلاب</p>
+                    </div>
+                </div>
+
+                <div class="grade-stat-card">
+                    <div class="stat-icon average">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="gradeAverage">@Model.AverageGrade.ToString("0.0")</h3>
+                        <p>متوسط الدرجات</p>
+                    </div>
+                </div>
+
+                <div class="grade-stat-card">
+                    <div class="stat-icon highest">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="gradeHighest">@Model.maxDegree.ToString("0.0")</h3>
+                        <p>أعلى درجة</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="topScrollbar" class="top-scrollbar">
+                <div></div>
+            </div>
+            <div class="table-container">
+                <h2 id="gradesTitle">درجات الطلاب</h2>
+
+                <table class="data-table grades-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الطالب</th>
+                            <th>المادة</th>
+                            <th>الدرجة</th>
+                            <th>التقييم</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gradesTableBody">
+                        @if (Model.StudentGrades != null && Model.StudentGrades.Any())
+                        {
+                            foreach (var grade in Model.StudentGrades)
+                            {
+                                string progressClass = "excellent";
+                                string performanceText = "ممتاز";
+
+                                if (grade.ExamPercentage < 50) { progressClass = "fail"; performanceText = "ضعيف"; }
+                                else if (grade.ExamPercentage < 65) { progressClass = "pass"; performanceText = "مقبول"; }
+                                else if (grade.ExamPercentage < 75) { progressClass = "good"; performanceText = "جيد"; }
+                                else if (grade.ExamPercentage < 85) { progressClass = "very-good"; performanceText = "جيد جداً"; }
+
+                                <tr>
+                                    <td>@grade.fullName</td>
+                                    <td>@grade.Subject</td>
+                                    <td>
+                                        <span class="grade-score @progressClass">@grade.Grade.ToString("0")</span>
+                                        <div class="grade-progress">
+                                            <div class="grade-progress-bar @progressClass" style="width:@(grade.ExamPercentage)%"></div>
+                                        </div>
+                                    </td>
+                                    <td>@performanceText</td>
+                                    <td>@grade.Data.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px; color: #888;">
+                                    لا توجد درجات مسجلة تفي بشروط البحث الحالية.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById("sidebar");
+            const menuBtn = document.getElementById("menuToggle");
+
+            if (!sidebar || !menuBtn) return;
+
+            menuBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                sidebar.classList.toggle("active");
+            });
+
+            document.addEventListener("click", function (e) {
+                const isClickInsideSidebar = sidebar.contains(e.target);
+                const isClickOnButton = menuBtn.contains(e.target);
+
+                if (!isClickInsideSidebar && !isClickOnButton) {
+                    sidebar.classList.remove("active");
+                }
+            });
+
+            document.querySelectorAll(".sidebar a").forEach(link => {
+                link.addEventListener("click", function () {
+                    sidebar.classList.remove("active");
+                });
+            });
+        });
+
+                    // =======================
+            // Top Horizontal Scroll
+            // =======================
+
+            const tableContainer = document.querySelector(".table-container");
+            const topScrollbar = document.getElementById("topScrollbar");
+
+            if (tableContainer && topScrollbar) {
+
+                const topContent = topScrollbar.firstElementChild;
+
+                function updateScrollWidth() {
+                    topContent.style.width =
+                        tableContainer.querySelector("table").scrollWidth + "px";
+                }
+
+                updateScrollWidth();
+
+                window.addEventListener("resize", updateScrollWidth);
+
+                topScrollbar.addEventListener("scroll", function () {
+                    tableContainer.scrollLeft = topScrollbar.scrollLeft;
+                });
+
+                tableContainer.addEventListener("scroll", function () {
+                    topScrollbar.scrollLeft = tableContainer.scrollLeft;
+                });
+            }
+    </script>
+</body>
+</html>

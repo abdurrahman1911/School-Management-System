@@ -1,0 +1,129 @@
+﻿
+
+/* ========== Content ================= */
+.content {
+    flex: 1;
+    background-color: #eef3f6;
+    padding: 30px;
+    margin-right: 230px; /* عشان sidebar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+}
+
+/* صندوق تعديل البيانات */
+.box {
+    background: #fff;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.title {
+    margin-bottom: 25px;
+    color: #125174;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* الفورم */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    text-align: right;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        color: #125174;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+    }
+
+        .form-group input:focus {
+            border-color: #7a97ad;
+            box-shadow: 0 0 5px rgba(122,151,173,0.4);
+        }
+
+/* حقل كلمة المرور مع أيقونة العين */
+.password-field {
+    position: relative;
+}
+
+    .password-field .toggle {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+        .password-field .toggle i {
+            color: #555;
+        }
+
+            .password-field .toggle i:hover {
+                color: #1b3a57;
+            }
+
+/* زر الحفظ */
+.save-btn {
+    padding: 14px;
+    background: #125174;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+    .save-btn:hover {
+        background: #305073;
+    }
+
+/* ========== Responsive ================= */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .menu {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .content {
+        margin-right: 0;
+        width: 100%;
+        padding: 20px;
+        align-items: flex-start; /* عشان يكون فوق في الموبايل */
+    }
+}
+

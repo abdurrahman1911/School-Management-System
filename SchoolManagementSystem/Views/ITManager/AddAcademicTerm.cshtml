@@ -1,0 +1,88 @@
+﻿@model SchoolManagementSystem.ViewModel.AddOrUpdateAcademicTermViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل تيرم</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+    <style>
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .form-control.input-validation-error {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <form asp-controller="ITManager"
+              asp-action="AddAcademicTerm"
+              method="post">
+
+            <h1>اضافه تيرم</h1>
+
+
+            <div class="form-group">
+                <label asp-for="TermNumber">الفصل الدراسي</label>
+                <select asp-for="TermNumber" class="form-control">
+                    <option value="">-- اختر الفصل الدراسي --</option>
+                    <option value="1">الفصل الدراسي الأول</option>
+                    <option value="2">الفصل الدراسي الثاني</option>
+                    <option value="3">الفصل الدراسي الصيفي</option>
+
+                </select>
+                <span asp-validation-for="TermNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SelectedAcademicYearId"></label>
+                <select asp-for="SelectedAcademicYearId"
+                        asp-items="@(new SelectList(Model.AcademicYears, "Id", "Name"))"
+                        class="form-control">
+                    <option value="">-- اختر العام الدراسي --</option>
+                </select>
+                <span asp-validation-for="SelectedAcademicYearId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StartDate"></label>
+                <input type="date" asp-for="StartDate" class="form-control">
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EndDate"></label>
+                <input type="date" asp-for="EndDate" class="form-control">
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-actions">
+                <a asp-controller="ITManager" asp-action="AcademicTerm">إلغاء</a>
+                <button type="submit">حفظ</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+</body>
+</html>

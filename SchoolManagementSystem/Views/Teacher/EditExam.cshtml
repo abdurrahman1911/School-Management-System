@@ -1,0 +1,383 @@
+﻿@model SchoolManagementSystem.ViewModel.Teacher.EditExamViewModel
+
+@{
+    ViewData["Title"] = "تعديل الاختبار";
+}
+
+<style>
+    body {
+        background-color: #f4f6f9;
+        direction: rtl;
+        text-align: right;
+    }
+
+    .main-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        background-color: #ffffff;
+    }
+
+    .card-header-custom {
+        background-color: #7fb3ff;
+        color: white;
+        border-top-left-radius: 15px !important;
+        border-top-right-radius: 15px !important;
+        font-weight: bold;
+    }
+
+    .btn-custom-primary {
+        background-color: #7fb3ff;
+        border-color: #7fb3ff;
+        color: white;
+        border-radius: 8px;
+        padding: 8px 20px;
+    }
+
+        .btn-custom-primary:hover {
+            background-color: #669ee6;
+            color: white;
+        }
+
+    .btn-custom-secondary {
+        background-color: #e9ecef;
+        color: #495057;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+    }
+
+    .question-box {
+        background-color: #f8f9fa;
+        border-right: 4px solid #7fb3ff;
+        border-radius: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #7fb3ff;
+            box-shadow: 0 0 0 0.2rem rgba(127, 179, 255, 0.25);
+        }
+
+    .text-danger {
+        font-size: 0.85rem;
+        display: block;
+        margin-top: 5px;
+    }
+
+    .rtl-input-group {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+        .rtl-input-group .btn-danger {
+            border-top-right-radius: 8px !important;
+            border-bottom-right-radius: 8px !important;
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+        }
+
+        .rtl-input-group .form-control {
+            border-radius: 0 !important;
+        }
+
+        .rtl-input-group .input-group-text {
+            border-top-left-radius: 8px !important;
+            border-bottom-left-radius: 8px !important;
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+</style>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12 col-lg-9 mx-auto">
+
+            <div class="card main-card">
+                <div class="card-header card-header-custom py-3">
+                    <h4 class="mb-0"><i class="fas fa-pencil-alt me-2"></i> تعديل الاختبار</h4>
+                </div>
+                <div class="card-body p-4">
+
+                    <form asp-action="EditExam" method="post" id="editExamForm" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+
+                        <h5 class="text-secondary border-bottom pb-2 mb-3"><i class="fas fa-info-circle"></i> بيانات الاختبار الأساسية</h5>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label fw-bold"></label>
+                                <input asp-for="Name" class="form-control" placeholder="اسم الاختبار" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label asp-for="Type" class="form-label fw-bold"></label>
+                                <select asp-for="Type" class="form-select">
+                                    <option value="Quiz">Quiz</option>
+                                    <option value="Final">Final</option>
+                                    <option value="Midterm">Midterm</option>
+                                </select>
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label asp-for="Duration" class="form-label fw-bold"></label>
+                                <div class="input-group">
+                                    <input asp-for="Duration" class="form-control" />
+                                    <span class="input-group-text">دقيقة</span>
+                                </div>
+                                <span asp-validation-for="Duration" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="SelectedSubjectId" class="form-label fw-bold"></label>
+                                <select asp-for="SelectedSubjectId" class="form-select" asp-items="@(new SelectList(Model.Subjects, "Id", "Name"))"></select>
+                                <span asp-validation-for="SelectedSubjectId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="SelectedClassId" class="form-label fw-bold"></label>
+                                <select asp-for="SelectedClassId" class="form-select" asp-items="@(new SelectList(Model.Classes, "Id", "Name"))"></select>
+                                <span asp-validation-for="SelectedClassId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="Date" class="form-label fw-bold">تاريخ ووقت الاختبار</label>
+                                <input asp-for="Date" type="datetime-local" class="form-control" value="@Model.Date.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                       
+
+                        <div id="questionsContainer">
+                            @if (Model.Questions != null && Model.Questions.Count > 0)
+                            {
+                                for (int i = 0; i < Model.Questions.Count; i++)
+                                {
+                                    <div class="question-box position-relative p-4 border rounded mb-4 bg-light shadow-sm question-card" data-index="@i">
+                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-3 remove-question-btn" style="border-radius: 8px;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-9">
+                                                <label class="form-label fw-bold q-number-label">نص السؤال @(i + 1)</label>
+                                                <input name="Questions[@i].Text" value="@Model.Questions[i].Text" class="form-control question-text" required />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label fw-bold">درجة السؤال</label>
+                                                <input type="text" inputmode="decimal" name="Questions[@i].Mark" value="@Model.Questions[i].Mark" class="form-control question-mark" required />
+                                            </div>
+                                        </div>
+
+                                        <div class="options-container mt-4 bg-white p-3 rounded border">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <label class="fw-bold text-muted"><i class="fas fa-check-double text-success me-1"></i> خيارات الإجابة (حدد الدائرة للإجابة الصحيحة):</label>
+                                                <button type="button" class="btn btn-outline-primary btn-sm btn-add-option" style="border-radius: 8px;"><i class="fas fa-plus"></i> إضافة خيار</button>
+                                            </div>
+                                            <div class="options-list">
+                                                @if (Model.Questions[i].Choices != null)
+                                                {
+                                                    for (int j = 0; j < Model.Questions[i].Choices.Count; j++)
+                                                    {
+                                                        var isCorrect = Model.Questions[i].Choices[j].IsCorrect;
+                                                        <div class="input-group mb-2 option-item rtl-input-group">
+                                                            <div class="input-group-text">
+                                                                <input type="radio" name="Questions[@i].CorrectRadio" class="correct-radio-trigger" @(isCorrect ? "checked" : "") required />
+                                                                <input type="hidden" name="Questions[@i].Choices[@j].IsCorrect" class="is-correct-hidden-input" value="@(isCorrect ? "true" : "false")" />
+                                                            </div>
+                                                            <input type="text" name="Questions[@i].Choices[@j].ChoiceText" value="@Model.Questions[i].Choices[j].ChoiceText" class="form-control option-text" placeholder="الخيار رقم @(j + 1)" required />
+                                                            <button type="button" class="btn btn-danger btn-remove-option"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                            <h5 class="text-secondary mb-0"><i class="fas fa-question-circle"></i> أسئلة الاختبار</h5>
+                            <button type="button" class="btn btn-custom-primary btn-sm" id="addQuestionBtn">
+                                <i class="fas fa-plus"></i> إضافة سؤال جديد
+                            </button>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                            <a href="@Url.Action("ExamDetails", new { id = Model.Id })" class="btn btn-custom-secondary px-4 py-2">إلغاء</a>
+                            <button type="submit" class="btn btn-custom-primary px-5 py-2">حفظ التعديلات</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            if ($("#questionsContainer .question-card").length === 0) {
+                addNewQuestion();
+            }
+
+            $("#addQuestionBtn").click(function () {
+                addNewQuestion();
+            });
+
+            $(document).on("click", ".remove-question-btn", function () {
+                if ($("#questionsContainer .question-card").length > 1) {
+                    $(this).closest(".question-card").remove();
+                    reIndexQuestions();
+                } else {
+                    alert("عذراً، يجب أن يحتوي الاختبار على سؤال واحد على الأقل.");
+                }
+            });
+
+            $(document).on("click", ".btn-add-option", function () {
+                var optionsList = $(this).closest(".options-container").find(".options-list");
+                var questionIndex = $(this).closest(".question-card").attr("data-index");
+                addOption(optionsList, questionIndex);
+            });
+
+            $(document).on("click", ".btn-remove-option", function () {
+                var optionsList = $(this).closest(".options-list");
+                if (optionsList.find(".option-item").length > 2) {
+                    var wasChecked = $(this).closest('.option-item').find('.correct-radio-trigger').is(':checked');
+                    $(this).closest(".option-item").remove();
+
+                    var questionIndex = $(this).closest(".question-card").attr("data-index");
+                    reIndexOptions(optionsList, questionIndex);
+
+                    if (wasChecked) {
+                        var firstItem = optionsList.find('.option-item').first();
+                        firstItem.find('.correct-radio-trigger').prop('checked', true);
+                        firstItem.find('.is-correct-hidden-input').val('true');
+                    }
+                } else {
+                    alert("عذراً، يجب إضافة خيارين على الأقل لكل سؤال.");
+                }
+            });
+
+            $(document).on('change', '.correct-radio-trigger', function () {
+                var $optionsList = $(this).closest('.options-list');
+                $optionsList.find('.is-correct-hidden-input').val('false');
+                if ($(this).is(':checked')) {
+                    $(this).siblings('.is-correct-hidden-input').val('true');
+                }
+            });
+
+            $("#editExamForm").on("submit", function (e) {
+                refreshFormValidation();
+                if (!$(this).valid()) {
+                    e.preventDefault();
+                }
+            });
+
+            function addNewQuestion() {
+                var qIndex = $("#questionsContainer .question-card").length;
+
+                var questionHtml = `
+                <div class="question-box position-relative p-4 border rounded mb-4 bg-light shadow-sm question-card" data-index="${qIndex}">
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-3 remove-question-btn" style="border-radius: 8px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-9">
+                            <label class="form-label fw-bold q-number-label">نص السؤال ${qIndex + 1}</label>
+                            <input name="Questions[${qIndex}].Text" class="form-control question-text" placeholder="اكتب نص السؤال هنا..." required />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">درجة السؤال</label>
+                            <input type="text" inputmode="decimal" name="Questions[${qIndex}].Mark" class="form-control question-mark" value="1" required />
+                        </div>
+                    </div>
+
+                    <div class="options-container mt-4 bg-white p-3 rounded border">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="fw-bold text-muted"><i class="fas fa-check-double text-success me-1"></i> خيارات الإجابة (حدد الدائرة للإجابة الصحيحة):</label>
+                            <button type="button" class="btn btn-outline-primary btn-sm btn-add-option" style="border-radius: 8px;"><i class="fas fa-plus"></i> إضافة خيار</button>
+                        </div>
+                        <div class="options-list"></div>
+                    </div>
+                </div>`;
+
+                var $question = $(questionHtml);
+                $("#questionsContainer").append($question);
+
+                var $optionsList = $question.find(".options-list");
+
+                for (var j = 0; j < 2; j++) {
+                    addOption($optionsList, qIndex);
+                }
+
+                $optionsList.find(".correct-radio-trigger").first().prop("checked", true);
+                $optionsList.find(".is-correct-hidden-input").first().val("true");
+
+                refreshFormValidation();
+            }
+
+            function addOption(optionsList, qIndex) {
+                var oIndex = optionsList.find(".option-item").length;
+
+                var optionHtml = `
+                <div class="input-group mb-2 option-item rtl-input-group">
+                    <div class="input-group-text">
+                        <input type="radio" name="Questions[${qIndex}].CorrectRadio" class="correct-radio-trigger" required />
+                        <input type="hidden" name="Questions[${qIndex}].Choices[${oIndex}].IsCorrect" class="is-correct-hidden-input" value="false" />
+                    </div>
+                    <input type="text" name="Questions[${qIndex}].Choices[${oIndex}].ChoiceText" class="form-control option-text" placeholder="الخيار رقم ${oIndex + 1}" required />
+                    <button type="button" class="btn btn-danger btn-remove-option">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>`;
+
+                optionsList.append(optionHtml);
+                refreshFormValidation();
+            }
+
+            function reIndexQuestions() {
+                $("#questionsContainer .question-card").each(function (qIdx, qBox) {
+                    $(qBox).attr("data-index", qIdx);
+                    $(qBox).find(".q-number-label").text("نص السؤال " + (qIdx + 1));
+
+                    $(qBox).find(".question-text").attr("name", `Questions[${qIdx}].Text`);
+                    $(qBox).find(".question-mark").attr("name", `Questions[${qIdx}].Mark`);
+
+                    var $optionsList = $(qBox).find(".options-list");
+                    reIndexOptions($optionsList, qIdx);
+                });
+                refreshFormValidation();
+            }
+
+            function reIndexOptions(optionsList, qIdx) {
+                optionsList.find(".option-item").each(function (oIdx, oItem) {
+                    $(oItem).find(".correct-radio-trigger").attr("name", `Questions[${qIdx}].CorrectRadio`);
+                    $(oItem).find(".is-correct-hidden-input").attr("name", `Questions[${qIdx}].Choices[${oIdx}].IsCorrect`);
+                    $(oItem).find(".option-text").attr("name", `Questions[${qIdx}].Choices[${oIdx}].ChoiceText`).attr("placeholder", "الخيار رقم " + (oIdx + 1));
+                });
+            }
+
+            function refreshFormValidation() {
+                var form = $("#editExamForm");
+                form.removeData("validator").removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            }
+        });
+    </script>
+}

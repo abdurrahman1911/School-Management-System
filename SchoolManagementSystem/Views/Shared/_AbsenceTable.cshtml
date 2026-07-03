@@ -1,0 +1,47 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<SchoolManagementSystem.Models.Absence>
+
+@if (Model != null && Model.Any())
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>اليوم</th>
+                <th>التاريخ</th>
+                <th>السبب</th>
+                <th>الحالة</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.AbsenceDate.ToString("dddd", new System.Globalization.CultureInfo("ar-EG"))</td>
+
+                    <td>@item.AbsenceDate.ToString("dd-MM-yyyy")</td>
+
+                    <td>@(string.IsNullOrWhiteSpace(item.Reason) ? "بدون عذر" : item.Reason)</td>
+
+                    <td class="status-cell">
+                        <span class="status-icon absent" title="غياب">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="empty-state" style="text-align: center; padding: 2rem; background: #fff; border-radius: 8px;">
+        <h3 style="color: #28a745;">ممتاز!</h3>
+        <p>لا توجد أي سجلات غياب مسجلة.</p>
+    </div>
+}

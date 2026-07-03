@@ -1,0 +1,170 @@
+﻿@{
+    ViewData["Title"] = "البيانات";
+}
+@using SchoolManagementSystem.ViewModel.Owner
+@model UserViewModel
+
+<style>
+
+    h5 {
+        color: black;
+    }
+
+    .sidebar {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+    }
+
+    .main-content {
+        margin-right: 250px; /* same width as sidebar */
+        padding: 20px;
+    }
+
+   
+    
+</style>
+
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>قائمة الطلاب</title>
+    <link rel="stylesheet" href="~/css/Admin/Userdetails.css" />
+    <link rel="stylesheet" href="~/css/Admin/res.css" />
+
+    <style>
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .sidebar .logo {
+                padding: 25px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .user-info span {
+                font-size: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+    </style>
+
+</head>
+<body>
+    <!-- sidebar-->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationViewModel.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationViewModel.FullName[0]</text>
+                    }
+                    else
+                    {
+                         <img src="/images/users/@Model.NavigationViewModel.ProfilePhotoUrl" alt="Profile Photo" />
+                
+                        
+                    }
+                </div>
+                <span>@Model.NavigationViewModel.FullName</span>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Notifications">الإشعارات</a></li>
+
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+    </aside>
+
+    <h1 class="page-title">   بيانات :   @Model.UserDataInfo.FullName     </h1>
+    <div class="details-container">
+        <div class="card user-card">
+            <div class="card" style="width: 18rem;">
+    <ul class="list-group list-group-flush">
+        
+        <div class="card" style="width: 18rem;">
+            <img src="@(!string.IsNullOrEmpty(Model.UserDataInfo.ProfilPhotoURL)?                
+                 $"/images/users/{Model.UserDataInfo.ProfilPhotoURL}":"/images/users/default.png")"
+                 class="card-img-top"
+                 style="height:250px; object-fit:cover;" />
+
+            <div class="card-body">
+                            <h5 class="card-title ">@Model.UserDataInfo.FullName</h5>
+            </div>
+        </div>
+                    <li class="list-group-item  no-wrap "><h5>@Html.DisplayNameFor(s => s.UserDataInfo.FullName): </h5>@Model.UserDataInfo.FullName</li>
+        <li class="list-group-item"><h5>@Html.DisplayNameFor(s => s.UserDataInfo.Phone): </h5>@Model.UserDataInfo.Phone</li>
+            <li class="list-group-item ">
+                <h5>@Html.DisplayNameFor(s => s.UserDataInfo.Email): </h5>
+                @(Model.UserDataInfo.Email == null ? "لا يوجد" : Model.UserDataInfo.Email)
+            </li>
+        <li class="list-group-item"><h5>@Html.DisplayNameFor(s => s.UserDataInfo.BirthDate): </h5>@Model.UserDataInfo.BirthDate.ToString("yyyy-MM-dd")</li>
+        <li class="list-group-item">
+            <h5>العمر: </h5>@(DateTime.Today.Year - Model.UserDataInfo.BirthDate.Year -
+                  (Model.UserDataInfo.BirthDate.Date > DateTime.Today.AddYears(-(DateTime.Today.Year - Model.UserDataInfo.BirthDate.Year)) ? 1 : 0))
+        </li>
+        <li class="list-group-item">
+            <h5>@Html.DisplayNameFor(s => s.UserDataInfo.Gender): </h5>
+            @(Model.UserDataInfo.Gender == true? "ذكر" : "أنثى")</li>
+        <li class="list-group-item"><h5>@Html.DisplayNameFor(s => s.UserDataInfo.Nationality): </h5>@Model.UserDataInfo.Nationality</li>
+        <li class="list-group-item"><h5>@Html.DisplayNameFor(s => s.UserDataInfo.Governorate): </h5>@Model.UserDataInfo.Governorate</li>
+        <li class="list-group-item"><h5>@Html.DisplayNameFor(s => s.UserDataInfo.City): </h5>@Model.UserDataInfo.City</li>
+        <li class="list-group-item">
+            <h5>@Html.DisplayNameFor(s => s.UserDataInfo.Area): </h5> 
+            @(Model.UserDataInfo.Area == null? "لا يوجد" : Model.UserDataInfo.Area)
+        </li>
+        <li class="list-group-item">
+            <h5>@Html.DisplayNameFor(s => s.UserDataInfo.Street): </h5>
+            @(Model.UserDataInfo.Street==null?  "لا يوجد" : Model.UserDataInfo.Street)
+        </li>
+                    <li class="list-group-item no-wrap"><h5>@Html.DisplayNameFor(s => s.UserDataInfo.AddedDate): </h5>@Model.UserDataInfo.AddedDate.ToString("yyyy-MM-dd")</li>
+
+    </ul>
+</div>
+</div>
+    </div>
+
+</body>
+</html>

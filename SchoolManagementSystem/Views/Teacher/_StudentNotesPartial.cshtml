@@ -1,0 +1,42 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model AllNotesForStudent
+
+<div class="modal-header d-flex justify-content-between align-items-center" style="direction: rtl;">
+    <h5 class="modal-title" style="font-weight: bold; color: #333;">
+        ملاحظات الطالب: @Model.StudentName
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 22px; margin: 0; padding: 0;">&times;</button>
+</div>
+
+<div class="modal-body" style="direction: rtl; text-align: right;">
+    @if (Model.Notes != null && Model.Notes.Any())
+    {
+        <ul class="list-group list-group-flush p-0" style="list-style: none;">
+            @foreach (var noteItem in Model.Notes)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center border-bottom py-3" id="note-row-@noteItem.Id">
+                    <span style="font-size: 1rem; color: #444; word-break: break-word; padding-left: 15px;">
+                        @noteItem.Note
+                    </span>
+
+                    <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1" onclick="deleteNoteFromPartial(@noteItem.Id)" style="border-radius: 6px; white-space: nowrap;">
+                        <i class="fas fa-trash-alt"></i> حذف
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <div class="text-center py-4">
+            <p class="text-danger" style="font-size: 1.1rem; font-weight: 500; margin: 0;">لا يوجد ملاحظات مسجلة</p>
+        </div>
+    }
+</div>
+
+<div class="modal-footer justify-content-center border-top-0" style="padding-top: 10px;">
+    <button type="button" class="btn w-100 py-2" data-bs-dismiss="modal"
+            style="background-color: #f1f3f5; color: #333; font-weight: bold; border: 1px solid #ced4da; border-radius: 8px; transition: all 0.2s;">
+        إغلاق
+    </button>
+</div>

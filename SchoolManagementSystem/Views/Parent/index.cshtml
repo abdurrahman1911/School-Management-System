@@ -1,0 +1,169 @@
+@using SchoolManagementSystem.ViewModel
+@using SchoolManagementSystem.ViewModel.Parent
+@model ParentIndexViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة ولي الأمر - @Model.ParentFullName</title>
+    <meta name="description" content="بوابة ولي الأمر الإلكترونية - نظام إدارة المدرسة">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.ParentFirstLetter</div>
+                    <span>@Model.ParentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Parent" asp-action="Index" class="active">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Parent" asp-action="Performance">أداء الطلاب</a></li>
+                <li><a asp-controller="Parent" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Parent" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Parent" asp-action="Attendance">الحضور</a></li>
+                <li><a asp-controller="Parent" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Parent" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Parent Header -->
+            <div class="parent-header">
+                <h1 class="parent-title">ولي الأمر الأستاذ : <span class="parent-name">@Model.ParentFullName</span></h1>
+            </div>
+
+            <!-- Children Cards Section -->
+            <section class="children-section">
+                <div class="children-grid">
+                    @foreach (var child in Model.Children)
+                    {
+                        <div class="child-card" data-child-id="@child.StudentId" onclick="selectChildLocal('@child.StudentId')">
+                            <div class="child-image">
+                                @if (!string.IsNullOrEmpty(child.PhotoUrl))
+                                {
+                                    <img src="@child.PhotoUrl" alt="@child.FullName">
+                                }
+                                else if (child.Gender)
+                                {
+                                    <img src="~/images/avatar-boy.jpg" alt="@child.FullName">
+                                }
+                                else
+                                {
+                                    <img src="~/images/avatar-girl.jpg" alt="@child.FullName">
+                                }
+                            </div>
+                            <div class="child-info">
+                                <h3 class="child-name">@child.FullName</h3>
+                                <p class="child-grade">@child.GradeName</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <!-- Contact Bar -->
+            <div class="contact-bar">
+                <div class="contact-info">
+                    <span class="contact-label">للتواصل مع المعلم :</span>
+                    <div class="student-select-wrapper">
+                        <select id="teacher-select" class="student-select" onchange="updateTeacherPhone()">
+                            <option value="">-- اختر معلم --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="phone-info">
+                    <span class="phone-label">رقم الهاتف :</span>
+                    <span class="phone-number" id="teacher-phone">-</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Parent/parent_script.js"></script>
+    <script>
+        // Teachers data per child - from database
+        var teachersByChild = @Html.Raw(Json.Serialize(
+            Model.Children.ToDictionary(
+                c => c.StudentId.ToString(),
+                c => c.Teachers.Select(t => new { name = t.TeacherName, subject = t.SubjectName, phone = t.Phone })
+            )
+        ));
+
+        // Get first child ID as default
+        var defaultChildId = '@(Model.Children.FirstOrDefault()?.StudentId)';
+
+        // Update teacher dropdown based on selected child
+        function updateTeachersList() {
+            var savedChild = localStorage.getItem('selectedChild') || defaultChildId;
+            var teachers = teachersByChild[savedChild] || teachersByChild[defaultChildId] || [];
+            var select = document.getElementById('teacher-select');
+            var phoneSpan = document.getElementById('teacher-phone');
+
+            if (!select || !phoneSpan) return;
+
+            // Clear and repopulate
+            select.innerHTML = '';
+            if (teachers.length === 0) {
+                var emptyOpt = document.createElement('option');
+                emptyOpt.value = '';
+                emptyOpt.textContent = '-- لا يوجد معلمين --';
+                select.appendChild(emptyOpt);
+                phoneSpan.textContent = '-';
+                return;
+            }
+
+            teachers.forEach(function (t) {
+                var opt = document.createElement('option');
+                opt.value = t.phone;
+                opt.textContent = t.name + ' - ' + t.subject;
+                select.appendChild(opt);
+            });
+
+            // Set phone to first teacher
+            phoneSpan.textContent = teachers[0].phone;
+        }
+
+        // Update phone number when teacher is selected
+        function updateTeacherPhone() {
+            var select = document.getElementById('teacher-select');
+            var phoneSpan = document.getElementById('teacher-phone');
+            phoneSpan.textContent = select.value || '-';
+        }
+
+        // Override for Index page card logic
+        function selectChildLocal(childId) {
+            localStorage.setItem('selectedChild', childId.toString());
+            syncUIWithSelection();
+            updateTeachersList();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set default child if none saved
+            if (!localStorage.getItem('selectedChild') && defaultChildId) {
+                localStorage.setItem('selectedChild', defaultChildId);
+            }
+            syncUIWithSelection();
+            updateTeachersList();
+        });
+
+        // <h1>@ViewBag.UserID</h1>
+    </script>
+</body>
+
+</html>

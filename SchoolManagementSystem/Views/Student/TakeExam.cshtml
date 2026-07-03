@@ -1,0 +1,400 @@
+@using SchoolManagementSystem.ViewModel.Student
+@model TakeExamViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.ExamName - اختبار</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden; /* Allow vertical scroll */
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .exam-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exam-info-section { display: flex; align-items: center; gap: 12px; }
+        .subject-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex; align-items: center; justify-content: center; font-size: 18px;
+        }
+        .exam-title-group h1 { font-size: 16px; font-weight: 800; color: #f1f5f9; }
+        .exam-title-group span { font-size: 12px; color: #94a3b8; }
+
+        .timer-display {
+            font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800;
+            color: #10b981; letter-spacing: 1px; min-width: 90px; text-align: center;
+        }
+        .timer-display.danger { color: #ef4444; animation: timerPulse 1s infinite; }
+
+        @@keyframes timerPulse { 50% { opacity: 0.7; transform: scale(1.05); } }
+
+        /* Navigation Dots Area */
+        .dots-container {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .q-dot {
+            width: 34px; height: 34px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+            color: #64748b; cursor: pointer; transition: all 0.3s ease;
+        }
+        .q-dot.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        .q-dot.answered {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #10b981;
+        }
+
+        /* Main Wizard Layout */
+        .wizard-container {
+            max-width: 800px;
+            margin: 40px auto;
+            position: relative;
+            z-index: 1;
+            padding: 0 20px 40px;
+            min-height: calc(100vh - 250px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-card {
+            display: none; /* Hidden by default */
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            flex: 1;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: slideIn 0.4s ease-out;
+        }
+        .question-card.active { display: block; }
+
+        @@keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .q-num-label {
+            font-size: 14px; font-weight: 700; color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1); padding: 4px 12px; border-radius: 8px;
+        }
+        .q-degree-label { font-size: 13px; color: #f59e0b; font-weight: 600; }
+
+        .question-text {
+            font-size: 20px; font-weight: 700; color: #f8fafc;
+            line-height: 1.6; margin-bottom: 30px;
+        }
+
+        .options-grid { display: flex; flex-direction: column; gap: 14px; }
+        
+        .option-item { position: relative; }
+        .option-item input { position: absolute; opacity: 0; }
+        .option-label {
+            display: flex; align-items: center; gap: 16px; padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px; cursor: pointer; transition: all 0.2s ease;
+            font-size: 16px; color: #cbd5e1;
+        }
+        .option-label:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.1); }
+        .option-item input:checked + .option-label {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            color: #f1f5f9;
+        }
+
+        .radio-box {
+            width: 20px; height: 20px; border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .option-item input:checked + .option-label .radio-box {
+            border-color: #3b82f6; background: #3b82f6;
+        }
+        .option-item input:checked + .option-label .radio-box::after {
+            content: '✓'; color: white; font-size: 12px; font-weight: bold;
+        }
+
+        /* Footer Navigation */
+        .wizard-footer {
+            margin-top: 24px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .nav-btn {
+            padding: 12px 30px; border-radius: 14px; border: none;
+            font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-prev { background: rgba(255, 255, 255, 0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-prev:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .btn-prev:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-next { background: #3b82f6; color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); }
+
+        .btn-finish { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); display: none; }
+        .btn-finish:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+
+        /* Confirm Modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 200;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: #1e293b; border-radius: 28px; padding: 40px;
+            max-width: 450px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .modal-btn { padding: 12px 32px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; }
+        .modal-btn.confirm { background: #10b981; color: white; }
+        .modal-btn.cancel { background: rgba(255,255,255,0.05); color: #94a3b8; margin-right: 10px; }
+        
+        .progress-indicator { font-size: 14px; color: #94a3b8; font-weight: 600; }
+        .progress-indicator strong { color: #3b82f6; font-family: 'Inter'; }
+
+        /* Responsive */
+        @@media (max-width: 600px) {
+            .wizard-container { margin: 20px auto; }
+            .question-card { padding: 20px; }
+            .question-text { font-size: 17px; }
+            .nav-btn { padding: 10px 20px; font-size: 14px; }
+        }
+    </style>
+</head>
+
+<body>
+    <form id="examForm" method="post" asp-controller="Student" asp-action="SubmitExam">
+        <input type="hidden" name="examId" value="@Model.ExamId" />
+
+        <!-- Top Bar -->
+        <div class="exam-topbar">
+            <div class="exam-info-section">
+                <div class="subject-icon">📝</div>
+                <div class="exam-title-group">
+                    <h1>@Model.ExamName</h1>
+                    <span>@Model.SubjectName • @Model.TotalDegree درجة</span>
+                </div>
+            </div>
+
+            <div class="timer-display" id="timerDisplay">@Model.DurationInMinutes:00</div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="dots-container" id="dotsNav">
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                <div class="q-dot" data-idx="@i" onclick="goToQuestion(@i)">@(i + 1)</div>
+            }
+        </div>
+
+        <!-- Wizard Content -->
+        <div class="wizard-container">
+            @{ string[] letters = { "أ", "ب", "ج", "د", "هـ" }; }
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var q = Model.Questions[i];
+                <div class="question-card @(i == 0 ? "active" : "")" id="q-card-@i">
+                    <div class="question-meta">
+                        <span class="q-num-label">السؤال @(i + 1) من @Model.QuestionCount</span>
+                        <span class="q-degree-label">@q.Degree درجات</span>
+                    </div>
+                    
+                    <p class="question-text">@q.Title</p>
+
+                    <div class="options-grid">
+                        @for (int j = 0; j < q.Answers.Count; j++)
+                        {
+                            var ans = q.Answers[j];
+                            <div class="option-item">
+                                <input type="radio" name="answer_@q.QuestionId" value="@ans.AnswerId" 
+                                       id="opt_@ans.AnswerId" onchange="markAsAnswered(@i)" />
+                                <label class="option-label" for="opt_@ans.AnswerId">
+                                    <span class="radio-box"></span>
+                                    <span>@ans.AnswerText</span>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Navigation Footer -->
+            <div class="wizard-footer">
+                <button type="button" class="nav-btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled>
+                    <span>→</span> السابق
+                </button>
+
+                <div class="progress-indicator">
+                    تمت الإجابة على <strong id="ansCount">0</strong> من <strong>@Model.QuestionCount</strong>
+                </div>
+
+                <button type="button" class="nav-btn btn-next" id="btnNext" onclick="nextQuestion()">
+                    التالي <span>←</span>
+                </button>
+                <button type="button" class="nav-btn btn-finish" id="btnFinish" onclick="showConfirm()">
+                    تسليم الاختبار ✨
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <h3 style="color:white; margin-bottom:15px">تأكيد تسليم الاختبار</h3>
+            <p style="color:#94a3b8; margin-bottom:25px" id="confirmText"></p>
+            <div style="display:flex; justify-content:center">
+                <button type="button" class="modal-btn cancel" onclick="hideConfirm()">رجوع</button>
+                <button type="button" class="modal-btn confirm" onclick="finishExam()">تأكيد التسليم</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIdx = 0;
+        const totalQs = @Model.QuestionCount;
+        let isSubmitting = false;
+
+        // Timer Logic
+        let totalSeconds = @Model.DurationInMinutes * 60;
+        const timerInt = setInterval(() => {
+            if (totalSeconds <= 0) {
+                clearInterval(timerInt);
+                finishExam();
+                return;
+            }
+            totalSeconds--;
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            const display = document.getElementById('timerDisplay');
+            display.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+            if (totalSeconds <= 60) display.classList.add('danger');
+        }, 1000);
+
+        function updateUI() {
+            // Update Cards
+            document.querySelectorAll('.question-card').forEach((c, i) => {
+                c.classList.toggle('active', i === currentIdx);
+            });
+            // Update Dots
+            document.querySelectorAll('.q-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === currentIdx);
+            });
+            // Update Buttons
+            document.getElementById('btnPrev').disabled = (currentIdx === 0);
+            if (currentIdx === totalQs - 1) {
+                document.getElementById('btnNext').style.display = 'none';
+                document.getElementById('btnFinish').style.display = 'flex';
+            } else {
+                document.getElementById('btnNext').style.display = 'flex';
+                document.getElementById('btnFinish').style.display = 'none';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIdx < totalQs - 1) { currentIdx++; updateUI(); }
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) { currentIdx--; updateUI(); }
+        }
+
+        function goToQuestion(idx) {
+            currentIdx = idx; updateUI();
+        }
+
+        function markAsAnswered(idx) {
+            document.querySelectorAll('.q-dot')[idx].classList.add('answered');
+            const answered = document.querySelectorAll('.q-dot.answered').length;
+            document.getElementById('ansCount').textContent = answered;
+        }
+
+        function showConfirm() {
+            const answered = document.querySelectorAll('.q-dot.answered').length;
+            const remaining = totalQs - answered;
+            const text = remaining > 0 
+                ? `تنبيه: لم تقم بالإجابة على ${remaining} أسئلة. هل تريد التسليم على أي حال؟`
+                : "هل أنت متأكد من رغبتك في تسليم الاختبار الآن؟";
+            document.getElementById('confirmText').textContent = text;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function hideConfirm() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        function finishExam() {
+            isSubmitting = true;
+            document.getElementById('examForm').submit();
+        }
+
+        window.addEventListener('beforeunload', (e) => {
+            if (isSubmitting) return;
+            e.preventDefault();
+            e.returnValue = 'سيتم فقدان إجاباتك!';
+        });
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>

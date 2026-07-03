@@ -1,0 +1,316 @@
+﻿@model SchoolManagementSystem.ViewModel.ITManager.RegisterSubjectsForClassViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحديد المواد للمعلمين</title>
+
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+    <style>
+            /* Avatar & Layout Styles */
+            .user-avatar {
+                width: 90px;
+                height: 90px;
+                overflow: hidden;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .enrollment-container {
+                padding: 20px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .custom-card {
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                border: 1px solid #eef2f5;
+                overflow: hidden;
+            }
+
+            .custom-card-header {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                padding: 20px 25px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+                .custom-card-header h4 {
+                    margin: 0;
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                }
+
+            .custom-card-body {
+                padding: 30px;
+            }
+
+            /* Form & Table Styles */
+            .btn-submit {
+                background: #10b981;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: background 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+                .btn-submit:hover {
+                    background: #059669;
+                }
+
+            .custom-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            }
+
+                .custom-table th, .custom-table td {
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 1px solid #eee;
+                    vertical-align: middle;
+                }
+
+                .custom-table thead {
+                    background-color: #f8fafc;
+                    color: #334155;
+                    border-bottom: 2px solid #cbd5e1;
+                }
+
+            .form-select {
+                padding: 8px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                width: 100%;
+            }
+
+            .form-check-input {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+            }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+                    </div>
+                    <h4><span>@Model.NavigationInfo.FullName</span></h4>
+                </div>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+
+                <li class="active"><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+            <div class="enrollment-container">
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; border-radius: 4px; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb;">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger" style="padding: 15px; margin-bottom: 20px; border-radius: 4px; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb;">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <div class="custom-card">
+                    <div class="custom-card-header">
+                        <i class="fas fa-book-open fa-lg"></i>
+                        <h4>تحديد المواد الدراسية وتعيين المعلمين للفصل</h4>
+                    </div>
+                    <div class="custom-card-body">
+
+                        <form asp-action="SelectRegisteredClassSubjects" asp-controller="ITManager" method="post">
+
+                            <input type="hidden" asp-for="ClassID" />
+                            <input type="hidden" asp-for="LevelID" />
+                            <input type="hidden" asp-for="StageID" />
+                            <input type="hidden" asp-for="TargetTermID" />
+
+                            <div class="table-responsive">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 10%;">تحديد</th>
+                                            <th style="width: 40%;">اسم المادة</th>
+                                            <th style="width: 50%;">معلم المادة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Subjects != null && Model.Subjects.Any())
+                                        {
+                                            for (int i = 0; i < Model.Subjects.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="hidden" asp-for="Subjects[i].SubjectID" />
+                                                        <input type="hidden" asp-for="Subjects[i].SubjectName" />
+
+                                                        <input type="checkbox" asp-for="Subjects[i].isSelected" class="form-check-input subject-checkbox" />
+                                                    </td>
+                                                    <td class="fw-bold text-primary">
+                                                        @Model.Subjects[i].SubjectName
+                                                    </td>
+                                                    <td>
+                                                        <select asp-for="Subjects[i].selectedTeacherID" class="form-select teacher-select">
+                                                            <option value="0">-- اختر المعلم --</option>
+                                                            @if (Model.Subjects[i].SubjectTeachers != null)
+                                                            {
+                                                                foreach (var teacher in Model.Subjects[i].SubjectTeachers)
+                                                                {
+                                                                    <option value="@teacher.TeacherID">@teacher.TeacherName</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-muted">لا توجد مواد مسجلة لعرضها.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="text-align: left; margin-top: 30px;">
+                                <button type="submit" class="btn-submit">
+                                    حفظ وتأكيد البيانات <i class="fas fa-save"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+            // Sidebar Toggle Logic
+            const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+
+            // Form Validation Logic
+            document.querySelector('form').addEventListener('submit', function (e) {
+                let isValid = true;
+                const rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const checkbox = row.querySelector('.subject-checkbox');
+                    const select = row.querySelector('.teacher-select');
+
+                    if (checkbox && select) {
+                        // If subject is selected but no teacher is chosen
+                        if (checkbox.checked && select.value === "0") {
+                            isValid = false;
+                            select.style.borderColor = "red"; // Highlight error
+                        } else {
+                            select.style.borderColor = "#cbd5e1"; // Reset
+                        }
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('يرجى اختيار معلم لكل مادة تم تحديدها.');
+                }
+            });
+    </script>
+</body>
+</html>

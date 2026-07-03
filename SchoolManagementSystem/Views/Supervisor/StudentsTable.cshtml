@@ -1,0 +1,273 @@
+﻿@using SchoolManagementSystem.ViewModel.Supervisor
+@model StudentTableViewModel
+
+@{
+    ViewData["Title"] = "جدول الطلاب";
+    Layout = null; // Assuming independent layout or handled by the controller
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Supervisor/studentsTable.css" />
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+
+
+    <style>
+
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+        /* Specific Styles for Table Upload UI */
+        .upload-area {
+            border: 2px dashed #3498db;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            background: #f9f9f9;
+            transition: 0.3s;
+        }
+
+            .upload-area:hover {
+                background: #f1f7ff;
+                border-color: #2980b9;
+            }
+
+        .btn-save {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cancel {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+                .user-avatar {
+                    width: 80px;
+                    height: 80px;
+                    background-color: #ffff;
+                    color: black;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    font-size: 32px;
+                    font-weight: bold;
+                    margin: 0 auto 10px auto;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .password-field {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                }
+
+                    .password-field .toggle {
+                        position: absolute;
+                        left: 10px;
+                        cursor: pointer;
+                        color: #777;
+                    }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+    <div class="layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="admin">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+
+                    </div>
+
+                    <h4>
+                        <a asp-controller="Supervisor" asp-action="SupervisorProfile">
+                            @(Model.NavigationInfo?.FullName ?? "مشرف")
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+                <a asp-controller="Supervisor" asp-action="StudentPage">
+                    الطلاب
+                </a>
+                <!-- Active Link for Teachers Page -->
+                <a asp-controller="Supervisor" asp-action="TeachersPage" >
+                    المعلمون
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable" class="active">
+                   جدول الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable">
+                    جدول المعلمين
+                </a>
+                
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence">
+                    غياب المعلمين
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence">
+                    غياب الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="Notes">
+                    الملاحظات
+                </a>
+                <a asp-controller="Supervisor" asp-action="EditProfile">
+                    تعديل البيانات
+                </a>
+            </nav>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+
+        <main class="content">
+            <div class="box">
+                <h2 class="page-title">إدارة جدول الطلاب</h2>
+
+                <!-- Class Selection Dropdown -->
+                <div class="selectors">
+                    <div class="select-group" style="width: 100%; max-width: 400px; margin: 0 auto;">
+                        <label><i class="fas fa-users"></i> اختر الصف الدراسي :</label>
+                        <select id="gradeSelect" onchange="loadTable()" class="form-control">
+                            <option value="">-- اختر الصف الدراسي --</option>
+                            @foreach (var cls in Model.Classes)
+                            {
+                                <option value="@cls.Id">@cls.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;" />
+
+                <!--
+                    Table Display Container:
+                    Shows current table image or "No Table Found" message via AJAX
+                -->
+                <div id="tableContainer" style="display: block; text-align: center;">
+                    <div class="no-table" style="padding: 40px; color: #7f8c8d;">
+                        <i class="fas fa-info-circle" style="font-size: 40px; margin-bottom: 10px;"></i>
+                        <p>برجاء اختيار الصف الدراسي أولاً</p>
+                    </div>
+                </div>
+
+                <!--
+                    Upload Module:
+                    Hidden by default, triggered when a grade is selected
+                -->
+                <div id="mainUploadSection" style="display: none; margin-top: 20px;">
+                    <h3 id="uploadTitle" style="text-align: center; margin-bottom: 15px; color: #2c3e50;">إضافة جدول جديد</h3>
+
+                    <div class="upload-area" onclick="handleAreaClick(event)" style="cursor: pointer;">
+                        <!-- Image Preview Logic -->
+                        <div id="previewContainer" style="display:none; width: 100%;">
+                            <img id="imagePreview" src="#" alt="المعاينة" style="max-width: 100%; max-height: 400px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd;" />
+                            <p id="fileNameDisplay" style="font-weight: bold; color: #2c3e50;"></p>
+                        </div>
+
+                        <div id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 50px; color: #3498db; margin-bottom: 10px;"></i>
+                            <p>اضغط هنا لاختيار صورة الجدول</p>
+                        </div>
+
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(this)">
+                    </div>
+
+                    <!-- Save/Cancel Actions -->
+                    <div id="saveAction" style="display: none; margin-top: 15px; text-align: center;">
+                        <button type="button" onclick="uploadTable()" class="btn-save">حفظ الجدول</button>
+                        <button type="button" onclick="cancelUpload()" class="btn-cancel">إلغاء</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts for Dynamic UI updates and File handling -->
+    <script src="~/js/Supervisor/studentsTable.js" asp-append-version="true"></script>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

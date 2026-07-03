@@ -1,0 +1,240 @@
+﻿@using SchoolManagementSystem.ViewModel
+@model ProfileViewModel
+@{
+    Layout = null;
+    // Set the page title for the browser tab
+    ViewData["Title"] = "بيانات المشرف";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <!-- Specific styles for the profile card and layout -->
+    <link rel="stylesheet" href="~/css/Supervisor/supervisorProfile.css" />
+    <!-- Icons: FontAwesome for sidebar and info icons -->
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+    <style>
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+        /* كلاس إضافي لضبط حجم الحرف داخل السايدبار ليكون متناسقاً */
+        .sidebar-avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            margin: 0 auto 10px auto;
+            background-color: #ffff;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .password-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+            .password-field .toggle {
+                position: absolute;
+                left: 10px;
+                cursor: pointer;
+                color: #777;
+            }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <!-- Main Content: Displays Supervisor personal information -->
+        <main class="content">
+            <div class="profile-card">
+
+                <!-- Avatar Section -->
+                <div class="profile-image">
+                    @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                    {
+                        <img src="~/images/users/@Model.PhotoUrl" alt="Supervisor Avatar">
+                    }
+                    else
+                    {
+                        <div class="user-avatar">
+                            @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0, 1).ToUpper() : "م")
+                        </div>
+                    }
+                </div>
+
+                <!-- Detailed Info Section -->
+                <div class="profile-info">
+                    <div class="name-role">
+                        <h2> @Model.FullName</h2>
+                        <span class="role">مشرف إداري</span>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span><i class="fas fa-envelope"></i> البريد الإلكتروني:</span>
+                            <p>@Model.Email</p>
+                        </div>
+
+                        <div class="info-item">
+                            <span><i class="fas fa-phone"></i> رقم الهاتف:</span>
+                            <p>@Model.Phone</p>
+                        </div>
+
+                        <div class="info-item">
+                            <span><i class="fas fa-school"></i> المدرسة:</span>
+                            <p>مدرسة الأوائل</p>
+                        </div>
+
+                        <div class="info-item">
+                            <span><i class="fas fa-calendar-alt"></i> تاريخ الانضمام:</span>
+                            <p>@(Model.AddedDate.ToString("dd/MM/yyyy") ?? "غير متاح")</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Sidebar: Main Navigation for the Supervisor Dashboard -->
+        <aside class="sidebar">
+            <div class="admin">
+                @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                {
+                    <img src="~/images/users/@Model.PhotoUrl" alt="Supervisor" />
+                }
+                else
+                {
+                    <div class="sidebar-avatar">
+                        @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0, 1).ToUpper() : "م")
+                    </div>
+                }
+                <h4>
+                    <!-- Active class applied here to highlight the current profile view -->
+                    <a asp-controller="Supervisor" asp-action="SupervisorProfile" class="active">
+                        @{
+                            if (!string.IsNullOrEmpty(Model.FullName))
+                            {
+                                var names = Model.FullName.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (names.Length > 1)
+                                {
+                                    // يطبع الاسم الأول + مسافة + الاسم الأخير
+                                    @($"{names[0]} {names[names.Length - 1]}")
+                                }
+                                else
+                                {
+                                    // إذا كان الاسم يتكون من كلمة واحدة فقط يعرضها كما هي
+                                    @names[0]
+                                }
+                            }
+                           
+                        }
+                    </a>
+                </h4>
+            </div>
+
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+                <a asp-controller="Supervisor" asp-action="StudentPage">
+                    الطلاب
+                </a>
+                <!-- Active Link for Teachers Page -->
+                <a asp-controller="Supervisor" asp-action="TeachersPage">
+                    المعلمون
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable">
+                    جدول الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable">
+                    جدول المعلمين
+                </a>
+               
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence">
+                    غياب المعلمين
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence">
+                    غياب الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="Notes">
+                    الملاحظات
+                </a>
+                <a asp-controller="Supervisor" asp-action="EditProfile">
+                    تعديل البيانات
+                </a>
+            </nav>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+
+    </div>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+@using SchoolManagementSystem.ViewModel.Student
+@model StudentLevelViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المستوى - @Model.StudentFullName</title>
+    <meta name="description" content="مستوى الطالب الأكاديمي - بوابة الطالب الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Student/student_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .level-page-container {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .level-stat-card {
+            flex: 1;
+            min-width: 250px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease both;
+        }
+
+        .level-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 100%;
+        }
+
+        .stat-card-blue::before { background: #3b82f6; }
+        .stat-card-green::before { background: #10b981; }
+
+        .stat-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .stat-card-blue .stat-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .stat-card-green .stat-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .stat-value.number {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Chart Section */
+        .radar-section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            animation: fadeInUp 0.5s ease 0.2s both;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .radar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .radar-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .radar-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .radar-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .period-selector {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 12px center;
+            background-size: 16px;
+            padding-left: 40px;
+        }
+
+        .period-selector:hover, .period-selector:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 550px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container level-page-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.FirstLetter</div>
+                    <span>@Model.StudentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Student" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Student" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Student" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Student" asp-action="Attendance">الحضور والغياب</a></li>
+                <li><a asp-controller="Student" asp-action="Tests">الاختبارات</a></li>
+                <li><a asp-controller="Student" asp-action="Level" class="active">المستوى</a></li>
+                <li><a asp-controller="Student" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Student" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <div class="page-header">
+                <h1 class="page-title">المستوى الأكاديمي</h1>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="stats-row">
+                <div class="level-stat-card stat-card-blue">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <span class="stat-label">المتوسط العام</span>
+                        <div style="display: flex; align-items: baseline; gap: 4px;">
+                            <span id="overallAverageVal" class="stat-value number">@Model.OverallAverage</span>
+                            <span style="font-weight: 700; color: #94a3b8; font-size: 18px;">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="level-stat-card stat-card-green">
+                    <div class="stat-icon">🌟</div>
+                    <div class="stat-info">
+                        <span class="stat-label">أفضل مادة</span>
+                        <span id="topSubjectVal" class="stat-value" style="color: #10b981; font-size: 26px;">@Model.TopSubject</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <section class="radar-section">
+                <div class="radar-header">
+                    <div class="radar-title-wrapper">
+                        <h2 class="radar-title">مستوى الأداء في المواد</h2>
+                    </div>
+                    
+                    <select id="periodSelector" class="period-selector">
+                        <option value="this-month" selected>الشهر الحالي</option>
+                        <option value="last-month">الشهر الماضي</option>
+                        <option value="semester">الفصل الدراسي</option>
+                        <option value="year">السنوي</option>
+                    </select>
+                </div>
+
+                <div class="chart-container" style="height:400px;">
+                    <canvas id="levelBarChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="~/js/Student/student_script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const highlights = document.querySelectorAll('.numberHighlight');
+            highlights.forEach(el => {
+                const target = parseFloat(el.innerText) || 0;
+                animateValue(el, 0, target, 1500, true);
+            });
+
+            Chart.defaults.font.family = "'Cairo', 'Inter', sans-serif";
+
+            const chartData = {
+                'this-month': @Html.Raw(Json.Serialize(Model.ThisMonthAverages)),
+                'last-month': @Html.Raw(Json.Serialize(Model.LastMonthAverages)),
+                'semester': @Html.Raw(Json.Serialize(Model.SemesterAverages)),
+                'year': @Html.Raw(Json.Serialize(Model.YearAverages))
+            };
+            const subjects = @Html.Raw(Json.Serialize(Model.Subjects));
+            const themeColor = '#4387AB';
+
+            const ctx = document.getElementById('levelBarChart').getContext('2d');
+
+            // Simple value label on top of each bar
+            const valueLabelsPlugin = {
+                id: 'valueLabels',
+                afterDatasetsDraw(chart) {
+                    const c = chart.ctx;
+                    const meta = chart.getDatasetMeta(0);
+                    c.save();
+                    c.font = "600 12px 'Inter', sans-serif";
+                    c.textAlign = 'center';
+                    meta.data.forEach((bar, i) => {
+                        const val = chart.data.datasets[0].data[i];
+                        c.fillStyle = val < 50 ? '#ef4444' : '#334155';
+                        c.fillText(val + '%', bar.x, bar.y - 8);
+                    });
+                    c.restore();
+                }
+            };
+
+            const config = {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: [{
+                        label: 'الدرجة',
+                        data: chartData['this-month'],
+                        backgroundColor: function(context) {
+                            const val = context.raw;
+                            return val < 50 ? '#ef4444' : '#4387AB';
+                        },
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barPercentage: 0.55,
+                        categoryPercentage: 0.7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 25 } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleFont: { size: 14, weight: '600', family: 'Cairo' },
+                            bodyFont: { size: 15, weight: '700', family: 'Inter' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: ctx => ctx.parsed.y + '%'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 13, family: 'Cairo', weight: '600' },
+                                color: '#334155'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: { size: 11, family: 'Inter', weight: '500' },
+                                color: '#94a3b8',
+                                callback: v => v + '%'
+                            },
+                            grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }
+                        }
+                    },
+                    animation: { duration: 800, easing: 'easeOutQuart' }
+                },
+                plugins: [valueLabelsPlugin]
+            };
+
+            let levelChart = new Chart(ctx, config);
+            let currentOverallAvg = @Model.OverallAverage;
+
+            function updateKPIs(period) {
+                const data = chartData[period];
+                
+                // Calculate Overall Average (average of non-zero subjects)
+                const nonZeroData = data.filter(val => val > 0);
+                let newAvg = 0;
+                if (nonZeroData.length > 0) {
+                    const sum = nonZeroData.reduce((a, b) => a + b, 0);
+                    newAvg = parseFloat((sum / nonZeroData.length).toFixed(1));
+                }
+                
+                const avgEl = document.getElementById('overallAverageVal');
+                animateValue(avgEl, currentOverallAvg, newAvg, 500, true);
+                currentOverallAvg = newAvg;
+
+                // Find Top Subject
+                let maxVal = -1;
+                let topSubIndex = -1;
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i] > maxVal) {
+                        maxVal = data[i];
+                        topSubIndex = i;
+                    }
+                }
+                
+                const topSubEl = document.getElementById('topSubjectVal');
+                if (maxVal > 0 && topSubIndex !== -1) {
+                    topSubEl.innerText = subjects[topSubIndex];
+                } else {
+                    topSubEl.innerText = 'غير محدد';
+                }
+            }
+
+            // Set initial state matching the selected option
+            updateKPIs('this-month');
+
+            document.getElementById('periodSelector').addEventListener('change', function () {
+                levelChart.data.datasets[0].data = chartData[this.value];
+                levelChart.update();
+                updateKPIs(this.value);
+            });
+        });
+
+        function animateValue(obj, start, end, duration, isDecimal) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 4);
+                const current = start + easeProgress * (end - start);
+                if (isDecimal) {
+                    obj.innerHTML = current.toFixed(1);
+                } else {
+                    obj.innerHTML = Math.floor(current);
+                }
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerHTML = isDecimal ? end.toFixed(1) : end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+
+</html>

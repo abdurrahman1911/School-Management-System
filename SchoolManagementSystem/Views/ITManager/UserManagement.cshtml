@@ -1,0 +1,314 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إدارة المستخدمين</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+
+    <link rel="stylesheet" href="~/css/ITManager/Usermanagment.css" />
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <!-- ================= Sidebar ================= -->
+        <aside class="sidebar">
+            <div class="profile">
+                <img src="~/images/ITManagerImage.jpg" class="manager-img">
+                <h4>
+                    <a asp-controller="ITManager" asp-action="ITManagerProfile">
+                        أحمد علي
+                    </a>
+                </h4>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- ================= Content ================= -->
+        <main class="content">
+
+            <div class="user-management-container">
+
+                <h1 class="page-title">إدارة المستخدمين</h1>
+
+                <!-- ================= Actions Bar ================= -->
+                <div class="actions-bar">
+
+                    <a asp-controller="ITManager"
+                       asp-action="AddUser"
+                       class="btn-add">
+
+                        <i class="fas fa-plus"></i>
+                        إضافة مستخدم جديد
+
+                    </a>
+
+                    <!-- Search Box -->
+                    <div class="search-container">
+
+                        <select id="searchType" class="search-type">
+                            <option value="">-- اختر نوع البحث --</option>
+
+                            <option value="phone">رقم الهاتف</option>
+                            <option value="nationalid">رقم الهوية</option>
+                        </select>
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search search-icon"></i>
+
+                            <input type="text"
+                                   class="search-input"
+                                   placeholder="ابحث..."
+                                   id="searchInput">
+
+                            <button class="search-clear"
+                                    id="clearSearch"
+                                    style="display:none; background:none; border:none; cursor:pointer;">
+                                <i class="fas fa-times"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ================= Table ================= -->
+                <div class="table-container">
+                    <div class="table-wrapper">
+                    <table class="users-table" id="usersTable">
+
+                        <thead>
+                            <tr>
+                                <th>اسم المستخدم</th>
+                                <th>رقم الهاتف</th>
+                                <th>تاريخ الميلاد</th>
+                                <th>الدور</th>
+                                <th>العنوان</th>
+                                <th>الاجراءات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                          
+
+                            <tr data-nationalid="29801011234567">
+
+                                <td>احمد خالد عبدالله</td>
+                                <td>0557683425</td>
+                                <td>22/05/1985</td>
+                                <td><span class="role-badge student">طالب</span></td>
+                                <td>الإسكندرية - سموحة</td>
+                                <td class="actions-cell">
+
+                                    <a asp-action="EditUser" asp-route-id="1" class="action-edit">
+                                        <i class="fas fa-edit"></i>
+
+                                        تعديل
+                                    </a>
+
+                                    <button type="button"
+                                            class="action-delete"
+                                            onclick="deleteRow(this)">
+                                        <i class="fas fa-trash-alt"></i>
+
+                                        حذف
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            <tr data-nationalid="39801011234568">
+                                <td>بدر محمد صالح</td>
+                                <td>0587345728</td>
+                                <td>10/11/1992</td>
+                                <td><span class="role-badge parent">ولي أمر</span></td>
+                                <td>الجيزة - المهندسين</td>
+                                <td class="actions-cell">
+
+                                    <a asp-action="EditUser" asp-route-id="1" class="action-edit">
+                                        <i class="fas fa-edit"></i>
+
+                                        تعديل
+                                    </a>
+
+                                    <button type="button"
+                                            class="action-delete"
+                                            onclick="deleteRow(this)">
+                                        <i class="fas fa-trash-alt"></i>
+
+                                        حذف
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            <tr data-nationalid="39401011234569">
+                                <td>محمود محمد ياسر</td>
+                                <td>0564536792</td>
+                                <td>05/09/1988</td>
+                                <td><span class="role-badge teacher">مدرس</span></td>
+                                <td>الشرقية - الزقازيق</td>
+                                <td class="actions-cell">
+
+                                    <a asp-action="EditUser" asp-route-id="1" class="action-edit">
+                                        <i class="fas fa-edit"></i>
+
+                                        تعديل
+                                    </a>
+
+                                    <button type="button"
+                                            class="action-delete"
+                                            onclick="deleteRow(this)">
+                                        <i class="fas fa-trash-alt"></i>
+
+                                        حذف
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+           
+
+                                function deleteRow(button) {
+                const row = button.closest('tr');
+                if (row) {
+                    row.remove();
+                }
+            }
+
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            function filterTable() {
+
+                const searchValue =
+                    searchInput.value.toLowerCase().trim();
+
+                const searchType =
+                    document.getElementById('searchType').value;
+
+                const rows =
+                    document.querySelectorAll('#usersTable tbody tr');
+
+                rows.forEach(row => {
+
+                    const phoneNumber =
+                        row.cells[1].textContent.toLowerCase();
+
+                    const nationalId =
+                        row.dataset.nationalid?.toLowerCase() || '';
+
+                    let match = false;
+
+                    if (searchType === "phone") {
+
+                        match =
+                            phoneNumber.includes(searchValue);
+
+                    }
+                    else if (searchType === "nationalid") {
+
+                        match =
+                            nationalId.includes(searchValue);
+
+                    }
+
+                    row.style.display =
+                        (match || searchValue === '')
+                            ? ''
+                            : 'none';
+
+                });
+
+                clearSearchBtn.style.display =
+                    searchValue ? 'inline-block' : 'none';
+            }
+
+            searchInput.addEventListener('keyup', filterTable);
+
+            clearSearchBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                filterTable();
+                searchInput.focus();
+            });
+
+
+                 const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden"); // اخفاء الزر
+            });
+
+            overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden"); // اظهار الزر
+            });
+    </script>
+</body>
+</html>

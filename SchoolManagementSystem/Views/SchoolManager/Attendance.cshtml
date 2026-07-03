@@ -1,0 +1,196 @@
+﻿@model SchoolManagementSystem.ViewModel.SchoolManager.AttendancePageViewModel
+@{
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الغياب و الحضور</title>
+
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/sidebar-layout.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/SchoolManager/attendance.css")" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+
+    <style>
+        .avatar-letter-sidebar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #1d4ed8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 auto;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="profile">
+                <div class="user-avatar">
+                    @if (Model?.NavigationInfo?.ProfilePhotoUrl == null || string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <span class="avatar-letter-sidebar">
+                            @(string.IsNullOrEmpty(Model?.NavigationInfo?.FullName) ? "?" : Model.NavigationInfo.FullName[0].ToString())
+                        </span>
+                    }
+                    else
+                    {
+                        <img src="~/images/users/@Model.NavigationInfo.ProfilePhotoUrl" class="manager-img" alt="Profile Photo">
+                    }
+                </div>
+                <h3 style="color: white; text-align: center; margin-top: 10px;">@Model?.NavigationInfo?.FullName</h3>
+            </div>
+            <ul class="menu">
+                <li><a asp-controller="SchoolManager" asp-action="Home"> الصفحة الرئيسية</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Students"> الطلاب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Teachers"> المعلمين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Supervisors"> المشرفين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="SuccessFailure"> النجاح والرسوب</a></li>
+                <li class="active"><a asp-controller="SchoolManager" asp-action="Attendance"> الغياب والحضور</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="EditProfile"> تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+
+        </aside>
+        <main class="content">
+
+            <div class="top-bar">
+                <h2>الغياب و الحضور</h2>
+
+                <div class="filters">
+
+                    <select id="stageSelect">
+                        @foreach (var stage in Model.Stages)
+                        {
+                            <option value="@stage.Id">@stage.Name</option>
+                        }
+                    </select>
+
+                    <select id="periodSelect">
+                        <option value="week">هذا الأسبوع</option>
+                        <option value="month" selected>هذا الشهر</option>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.getElementById("attendanceChart");
+            const ctx = canvas.getContext("2d");
+            let chart = null;
+
+            function animateUpdate(newData) {
+                if (chart) {
+                    chart.destroy();
+                }
+
+                chart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: ["النسبة المئوية %"],
+                        datasets: [
+                            {
+                                label: "نسبة الحضور",
+                                data: [newData.present],
+                                backgroundColor: "#4CAF50",
+                                borderRadius: 6
+                            },
+                            {
+                                label: "نسبة الغياب",
+                                data: [newData.absent],
+                                backgroundColor: "#e53935",
+                                borderRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        animation: {
+                            duration: 1000,
+                            easing: "easeOutQuart"
+                        },
+                        plugins: {
+                            legend: { display: true }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    stepSize: 10,
+                                    callback: function(value) { return value + '%'; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateChart() {
+                const stageId = document.getElementById("stageSelect").value;
+                const period = document.getElementById("periodSelect").value;
+
+                if(!stageId) return;
+
+                fetch(`/SchoolManager/GetAttendanceChartData?stageId=${stageId}&period=${period}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        animateUpdate(result);
+                    })
+                    .catch(error => console.error("Error fetching attendance data:", error));
+            }
+
+            document.getElementById("stageSelect").addEventListener("change", updateChart);
+            document.getElementById("periodSelect").addEventListener("change", updateChart);
+
+            updateChart();
+        });
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+﻿@using SchoolManagementSystem.ViewModel
+@using SchoolManagementSystem.ViewModel.Supervisor
+@model AbsenceViewModel
+@{
+    Layout = null;
+
+    var levels = (ViewBag.Levels as SelectList) ?? new SelectList(Enumerable.Empty<SelectListItem>());
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل غياب الطلاب</title>
+
+    <link rel="stylesheet" href="~/css/Supervisor/studentsAbsence.css" />
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+
+
+    <style>
+        .absent-row-selected {
+            background-color: #fff5f5;
+        }
+
+        .reason-input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+            .reason-input:disabled {
+                background-color: #f9f9f9;
+                border-color: #eee;
+            }
+
+        .loading-overlay {
+            display: none;
+            margin-right: 10px;
+            color: #555;
+        }
+
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .password-field {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                }
+
+                    .password-field .toggle {
+                        position: absolute;
+                        left: 10px;
+                        cursor: pointer;
+                        color: #777;
+                    }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+        <main class="content">
+            <div class="box">
+                <h3 class="title">تسجيل غياب الطلاب</h3>
+
+                <div class="filters-row">
+                    <div class="date-select-box">
+                        <label for="absenceDate">تاريخ الغياب:</label>
+                        <input type="date" id="absenceDate"
+                               max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                    </div>
+
+                    <div>
+                        <label>المرحلة</label>
+                        <select id="stageSelect" asp-items="levels">
+                            <option value="">اختر المرحلة</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>الصف</label>
+                        <select id="gradeSelect">
+                            <option value="">اختر الصف</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- جدول الطلاب -->
+                <div id="tableContainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب / الطالبة</th>
+                                <th style="width: 80px; text-align: center;">غائب</th>
+                                <th>السبب (اختياري)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTable">
+                            <tr>
+                                <td colspan="3" style="text-align:center;">يرجى اختيار المرحلة والصف أولاً</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- زر الحفظ -->
+                <div style="margin-top: 20px; text-align: center;">
+                    <span id="loadingSpinner" class="loading-overlay"><i class="fas fa-spinner fa-spin"></i> جاري الحفظ...</span>
+                    <button type="button" class="btn-save" id="btnSaveAbsence">
+                        <i class="fas fa-cloud-upload-alt"></i> حفظ وإرسال الغياب
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- القائمة الجانبية (Sidebar) -->
+        <aside class="sidebar">
+            <div class="admin">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+                       
+                    </div>
+                    <h4>
+                        <a asp-controller="Supervisor" asp-action="SupervisorProfile">
+                            @(Model.NavigationInfo?.FullName ?? "مشرف")
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+                <a asp-controller="Supervisor" asp-action="StudentPage"> الطلاب</a>
+                <a asp-controller="Supervisor" asp-action="TeachersPage"> المعلمون</a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable"> جدول الطلاب</a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable"> جدول المعلمين</a>
+
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence"> غياب المعلمين</a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence" class="active"> غياب الطلاب</a>
+                <a asp-controller="Supervisor" asp-action="Notes"> الملاحظات</a>
+                <a asp-controller="Supervisor" asp-action="EditProfile"> تعديل البيانات</a>
+            </nav>
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+               تسجيل الخروج
+            </a>
+        </aside>
+    </div>
+
+    <!-- استدعاء المكتبات البرمجية -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/Supervisor/studentsAbsence.js"></script>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

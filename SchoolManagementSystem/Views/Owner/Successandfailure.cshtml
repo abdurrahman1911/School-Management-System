@@ -1,0 +1,373 @@
+﻿@{
+    ViewData["Title"] = "النجاح والرسوب";
+}
+@using SchoolManagementSystem.ViewModel.Owner;
+@model OwnerSuccessFailerViewModel
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Admin/success.css" />
+    <link rel="stylesheet" href="~/css/Admin/res.css" />
+
+    <style>
+            /* ========== Layout ========== */
+            .layout {
+                display: flex;
+                height: 100vh;
+            }
+
+            /* ========== Sidebar ========== */
+            .sidebar {
+                width: 230px;
+                background: #4387AB;
+                color: #fff;
+                position: fixed;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                padding: 20px 15px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .user-info {
+                display: flex;
+                flex-direction: column; 
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+            .sidebar .logo {
+                padding: 25px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .user-info span {
+                font-size: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            /* ========== Menu ========== */
+            .nav-links {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                flex: 1;
+                padding: 0;
+                margin-top: 20px;
+            }
+
+            .nav-links {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                flex: 1;
+                padding: 0;
+                margin-top: 0;
+            }
+
+                    .nav-links li a.active {
+                        background: rgba(255, 255, 255, 0.15);
+                        font-weight: 600;
+                        border-right-color: white;
+                    }
+
+                    .nav-links li a:hover {
+                        background: #0d3f56;
+                        font-weight: bold;
+                    }
+
+            /* ========== Logout ========== */
+            .logout {
+                margin-top: auto;
+                padding: 12px;
+                background: #2a719d;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                text-decoration: none;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .logout:hover {
+                    background: #0d3f56;
+                }
+
+            /* ========== Custom Table Styles ========== */
+            .custom-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+                background: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            }
+
+                .custom-table th, .custom-table td {
+                    padding: 12px 15px;
+                    text-align: center;
+                    border: 1px solid #eee;
+                }
+
+                .custom-table thead {
+                    background-color: #4387AB;
+                    color: #fff;
+                }
+
+                .custom-table tbody tr:nth-child(even) {
+                    background-color: #f9f9f9;
+                }
+
+                .custom-table tbody tr:hover {
+                    background-color: #f1f1f1;
+                }
+
+            .text-success-custom {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            .text-danger-custom {
+                color: #dc3545;
+                font-weight: bold;
+            }
+
+            .stage-title {
+                color: #2a719d;
+                border-bottom: 2px solid #2a719d;
+                padding-bottom: 5px;
+                display: inline-block;
+                margin-top: 25px;
+                margin-bottom: 10px;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Notifications">الإشعارات</a></li>
+            <li><a asp-controller="Owner" asp-action="Successandfailure" class="active">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="logout">تسجيل الخروج</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h1>النجاح والرسوب</h1>
+        </header>
+
+        <div class="content-body">
+            <div class="filters-section" >
+
+                <div class="filter-group">
+                    <label for="stageSelect">اختيار المرحلة:</label>
+                    <select id="stageSelect" class="form-control">
+                        <option value="all">عرض جميع المراحل</option>
+                        @if (Model.StagesSuccessFailerInfos != null)
+                        {
+                            foreach (var stage in Model.StagesSuccessFailerInfos)
+                            {
+                                <option value="@stage.StageID">@stage.StageName</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="termSelect">الترم:</label>
+                    <select id="termSelect" class="form-control">
+                        @if (Model.termsFiltersInfo != null)
+                        {
+                            foreach (var term in Model.termsFiltersInfo)
+                            {
+                                var isSelected = Context.Request.Query["TermID"] == term.ID.ToString() ? "selected" : "";
+                                <option value="@term.ID" class="@isSelected">
+                                    @term.TermName - @term.YearName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-group filter-button-group">
+                    <a id="applyFiltersBtn"
+                       class="btn filter-btn"
+                       style="background-color: #2a719d; color: white; padding: 8px 20px; text-decoration: none; border-radius: 4px; display: inline-block; cursor: pointer;"
+                       asp-controller="Owner"
+                       asp-action="Successandfailure">تطبيق الفلتر</a>
+                </div>
+            </div>
+
+            <div id="tablesContainer">
+                @if (Model.StagesSuccessFailerInfos != null && Model.StagesSuccessFailerInfos.Any())
+                {
+                    foreach (var stage in Model.StagesSuccessFailerInfos)
+                    {
+                        <div class="stage-data-container" data-stage-id="@stage.StageID">
+
+                            <h2 class="stage-title">@stage.StageName</h2>
+
+                            <div class="table-responsive">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>اسم الصف</th>
+                                            <th>إجمالي الطلاب</th>
+                                            <th>الناجحون</th>
+                                            <th>الراسبون</th>
+                                            <th>نسبة النجاح</th>
+                                            <th>نسبة الرسوب</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (stage.LevelsSuccessFailerInfos != null && stage.LevelsSuccessFailerInfos.Any())
+                                        {
+                                            foreach (var level in stage.LevelsSuccessFailerInfos)
+                                            {
+                                                <tr>
+                                                    <td style="font-weight: 600;">@level.LevelName</td>
+                                                    <td>@level.TotalStudents</td>
+                                                    <td class="text-success-custom">@level.PassedStudentsNumber</td>
+                                                    <td class="text-danger-custom">@level.FailedStudentsNumber</td>
+                                                    <td>@level.SuccessPercentage.ToString("0.00")%</td>
+                                                    <td>@level.FailurePercentage.ToString("0.00")%</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6" style="color: #888;">لا توجد بيانات صفوف لهذه المرحلة في هذا الترم.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="padding: 20px; background: #e9ecef; border-radius: 8px; text-align: center; color: #555; margin-top: 20px;">
+                        لا توجد بيانات نجاح ورسوب متاحة.
+                    </div>
+                }
+            </div>
+
+          
+        </div>
+    </main>
+
+    <script src="~/js/Admin/success.js"></script>
+</body>
+</html>
+
+@section Scripts {
+    <script>
+        // 1. Term Filter Logic (Server-Side Navigation)
+        document.getElementById('applyFiltersBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        var selectedTermId = document.getElementById('termSelect').value;
+        var baseUrl = this.getAttribute('href');
+        window.location.href = baseUrl + '?TermID=' + selectedTermId;
+        });
+
+        // 2. Stage Filter Logic (Client-Side Instant Toggle)
+        document.getElementById('stageSelect').addEventListener('change', function () {
+        var selectedStage = this.value;
+        var stageContainers = document.querySelectorAll('.stage-data-container');
+
+        stageContainers.forEach(function (container) {
+        if (selectedStage === 'all' || container.getAttribute('data-stage-id') === selectedStage) {
+        container.style.display = 'block'; // Show
+        } else {
+        container.style.display = 'none'; // Hide
+        }
+        });
+        });
+
+        // 3. Pre-select the correct Term in the dropdown based on URL when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const termId = urlParams.get('TermID');
+        if (termId) {
+        const termDropdown = document.getElementById('termSelect');
+        if(termDropdown.querySelector(`option[value="${termId}"]`)) {
+        termDropdown.value = termId;
+        }
+        }
+        });
+
+        // 4. Sidebar Toggle Logic
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden");
+        });
+    </script>
+}

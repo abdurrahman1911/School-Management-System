@@ -1,0 +1,146 @@
+﻿@using SchoolManagementSystem.ViewModel
+@model SettingViewModel
+@{
+    ViewData["Title"] = "تعديل البيانات";
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>تعديل البيانات</title>
+<link rel="stylesheet" href="~/css/Teacher/setting.css"/>
+
+
+</head>
+<body>
+
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+        <aside class="sidebar">
+    
+            
+        <div class="logo">
+            <div class="user-info">
+                <div class="user-avatar">
+                    @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                    {
+                        <text>@Model.NavigationInfo.FullName[0]</text>
+                    }
+                    else
+                    {
+                        <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                    }
+                </div>
+                <span>@Model.NavigationInfo.FullName</span>
+            </div>
+        </div>
+            
+        
+        <!-- Navigation links -->
+         <ul class="nav-links">
+            <li><a asp-controller="Teacher" asp-action="Teacherdashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notes">الملاحظات والتنبيهات </a></li>
+            <li><a asp-controller="Teacher" asp-action="Students">الطلاب</a></li>
+            <li><a asp-controller="Teacher" asp-action="Schedule">الجدول الدراسي</a></li>
+            <li><a asp-controller="Teacher" asp-action="Grades">الدرجات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Notesstudents">ملاحظات الطلاب </a></li>
+            <li><a asp-controller="Teacher" asp-action="Assignments">الواجبات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Exams">الاختبارات</a></li>
+            <li><a asp-controller="Teacher" asp-action="Setting" class="active">تعديل البيانات</a></li>
+        </ul>
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+    
+     <main class="content">
+        <div class="box">
+
+            <h3 class="title">تعديل كلمة المرور</h3>
+
+            <form asp-action="Setting" asp-controller="Teacher">
+                <div class="form-group">
+                    <label>كلمة المرور الحالية</label>
+                    <div class="password-field">
+                        <input  asp-for="CurrentPassword" type="password" id="currentPassword" placeholder="ادخل كلمة المرور الحالية">
+                        <span class="toggle" onclick="togglePassword('currentPassword', this)" >
+                            <i class="fa-solid fa-eye-slash"></i>
+                            
+                        </span>
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>كلمة المرور الجديدة</label>
+                    <div class="password-field">
+                        <input asp-for="NewPassword" type="password" id="newPassword" placeholder="ادخل كلمة المرور الجديدة">
+                        <span class="toggle" onclick="togglePassword('newPassword', this)" >
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </span>
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تأكيد كلمة المرور</label>
+                    <div class="password-field">
+                        <input asp-for="ConfirmPassword" type="password" id="confirmPassword" placeholder="اعد كتابة كلمة المرور الجديدة">
+                        <span class="toggle" onclick="togglePassword('confirmPassword', this)" >
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </span>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">حفظ التعديلات</button>
+            </form>
+
+        </div>
+    </main>
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const menuToggle = document.getElementById("menuToggle");
+                const sidebar = document.querySelector(".sidebar");
+
+                menuToggle.addEventListener("click", function () {
+                    sidebar.classList.toggle("active");
+                });
+
+                document.addEventListener("click", function (e) {
+                    const isClickInside = sidebar.contains(e.target);
+                    const isClickOnButton = menuToggle.contains(e.target);
+
+                    if (!isClickInside && !isClickOnButton) {
+                        sidebar.classList.remove("active");
+                    }
+                });
+            });
+
+
+                        function togglePassword(inputId, icon) {
+                const input = document.getElementById(inputId);
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.firstElementChild.classList.remove("fa-eye-slash");
+                    icon.firstElementChild.classList.add("fa-eye");
+                } else {
+                    input.type = "password";
+                    icon.firstElementChild.classList.remove("fa-eye");
+                    icon.firstElementChild.classList.add("fa-eye-slash");
+                }
+            }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+</body>
+</html>

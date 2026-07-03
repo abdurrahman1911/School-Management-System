@@ -1,0 +1,353 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إدارة الطلاب</title>
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+
+
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+    <link rel="stylesheet" href="~/css/ITManager/fix.css" />
+
+</head>
+
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout" >
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="profile">
+                <img src="~/images/users/@ViewBag.NavigationInfo.ProfilePhotoUrl" class="manager-img">
+
+                <h4>
+                    <span>@ViewBag.NavigationInfo.FullName</span>
+                </h4>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li class="active"><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account"
+               asp-action="Logout"
+               class="logout">
+                تسجيل الخروج
+            </a>
+
+        </aside>
+
+        <!-- Content -->
+        <div class="page-container">
+
+            <form asp-action="AddSubjectforStudent" method="post" onsubmit="return validateForm()">
+
+                <h1>تسجيل المواد للطلاب</h1>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success" style="padding: 10px; margin-bottom: 15px; border-radius: 5px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger" style="padding: 10px; margin-bottom: 15px; border-radius: 5px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <hr>
+
+                <h2>البحث عن الطالب</h2>
+
+                <div id="searchValidationMessage" class="alert alert-danger" style="display: none; padding: 10px; margin-bottom: 15px; border-radius: 5px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;"></div>
+
+                <div class="search-section">
+                    <select id="studentSearchType">
+                        <option value="">-- اختر نوع البحث --</option>
+                        <option value="phone">رقم الهاتف</option>
+                        <option value="nationalid">رقم الهوية</option>
+                    </select>
+
+                    <input type="text"
+                           id="studentSearch"
+                           placeholder="ابحث هنا">
+
+                    <button type="button"
+                            onclick="searchStudent()">
+                        بحث
+                    </button>
+
+                    <a asp-action="AddNewStudent" asp-route-SSN="-1" class="btn-add">
+                        إضافة
+                    </a>
+                </div>
+
+                <br><br>
+
+                <!-- بيانات الطالب -->
+                <div id="studentResult" style="display:none;"   >
+
+                    <p>
+                        <strong>اسم الطالب:</strong>
+                        <span id="studentName"></span>
+                    </p>
+
+                    <p>
+                        <strong>المرحلة:</strong>
+                        <span id="studentStage"></span>
+                    </p>
+
+                    <p>
+                        <strong>الصف:</strong>
+                        <span id="studentClass"></span>
+                    </p>
+
+                    <p>
+                        <strong>السنة الدراسية:</strong>
+                        <span id="studentYear"></span>
+                    </p>
+
+                    <hr>
+
+                    <h3>المواد الدراسية</h3>
+
+                    <div class="subjects-grid">
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="Math">
+                            الرياضيات
+                        </label>
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="Arabic">
+                            اللغة العربية
+                        </label>
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="English">
+                            اللغة الإنجليزية
+                        </label>
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="Science">
+                            العلوم
+                        </label>
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="Religion">
+                            التربية الإسلامية
+                        </label>
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="Computer">
+                            الحاسب الآلي
+                        </label>
+
+                        <label>
+                            <input type="checkbox" name="Subjects" value="LifeSkills">
+                            المهارات الحياتية
+                        </label>
+
+                        <label>
+                            <input type="checkbox" id="selectAll">
+                            تحديد الكل
+                        </label>
+
+                    </div>
+
+                    <div class="form-actions" >
+                        <input type="hidden" name="StudentId" id="hiddenStudentId" />
+                        <button type="submit" class="btn-save" id="saveSubjectsBtn" style="display:none;">
+                            حفظ المواد
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+            function validateForm() {
+                const studentId = document.getElementById("hiddenStudentId").value;
+                if (!studentId || studentId === "0" || studentId === "") {
+                    alert("يرجى البحث عن الطالب وتأكيد هويته قبل الحفظ.");
+                    return false;
+                }
+                return true;
+            }
+
+            async function searchStudent() {
+                const value = document.getElementById("studentSearch").value.trim();
+                const type = document.getElementById("studentSearchType").value;
+                const validationMsg = document.getElementById("searchValidationMessage");
+                const saveBtn = document.getElementById("saveSubjectsBtn");
+
+                // إخفاء الزر في بداية كل بحث
+                saveBtn.style.display = "none";
+
+                validationMsg.style.display = "none";
+                validationMsg.textContent = "";
+
+                if (!type) {
+                    validationMsg.textContent = "يرجى اختيار نوع البحث أولاً";
+                    validationMsg.style.display = "block";
+                    return;
+                }
+
+                if (!value) {
+                    validationMsg.textContent = "يرجى إدخال قيمة البحث";
+                    validationMsg.style.display = "block";
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/ITManager/SearchStudentForEnrollment?type=${type}&value=${value}`);
+
+                    if (!response.ok) {
+                        document.getElementById("studentResult").style.display = "none";
+                        validationMsg.textContent = "الطالب غير موجود أو غير مسجل في أي فصل";
+                        validationMsg.style.display = "block";
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    document.getElementById("studentName").textContent = data.name;
+                    document.getElementById("studentStage").textContent = data.stage;
+                    document.getElementById("studentClass").textContent = data.class;
+                    document.getElementById("studentYear").textContent = data.term;
+                    document.getElementById("hiddenStudentId").value = data.studentId;
+
+                    const grid = document.querySelector(".subjects-grid");
+                    grid.innerHTML = "";
+
+                    if (data.availableSubjects && data.availableSubjects.length > 0) {
+
+                        data.availableSubjects.forEach(sub => {
+                            const label = document.createElement("label");
+
+                            const checkbox = document.createElement("input");
+                            checkbox.type = "checkbox";
+                            checkbox.name = "Subjects";
+                            checkbox.value = sub.subjectId;
+
+                            if (sub.isEnrolled) {
+                                checkbox.checked = true;
+                            }
+
+                            label.appendChild(checkbox);
+                            label.appendChild(document.createTextNode(" " + sub.subjectName));
+
+                            grid.appendChild(label);
+                        });
+
+                        // زر تحديد الكل
+                        const selectAllLabel = document.createElement("label");
+
+                        const selectAllCb = document.createElement("input");
+                        selectAllCb.type = "checkbox";
+                        selectAllCb.id = "selectAll";
+
+                        selectAllCb.addEventListener("change", function () {
+                            const checkboxes = document.querySelectorAll('input[name="Subjects"]');
+                            checkboxes.forEach(c => {
+                                c.checked = this.checked;
+                            });
+                        });
+
+                        selectAllLabel.appendChild(selectAllCb);
+                        selectAllLabel.appendChild(document.createTextNode(" تحديد الكل"));
+
+                        grid.appendChild(selectAllLabel);
+
+                        // إظهار زر الحفظ
+                        saveBtn.style.display = "inline-block";
+                    }
+                    else {
+                    grid.innerHTML = '<p>لا توجد مواد متاحة لفصل هذا الطالب حالياً. يرجى ربط المعلمين بالمواد أولاً.</p>';
+
+                        // إخفاء زر الحفظ
+                        saveBtn.style.display = "none";
+                    }
+
+                    document.getElementById("studentResult").style.display = "block";
+
+                }
+                catch (error) {
+                    console.error("Error fetching student:", error);
+                    alert("حدث خطأ أثناء البحث");
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+
+                // إخفاء زر الحفظ أول ما الصفحة تفتح
+                document.getElementById("saveSubjectsBtn").style.display = "none";
+
+                var preFillSSN = '@(ViewBag.PreFillSSN ?? "")';
+
+                if (preFillSSN) {
+                    document.getElementById("studentSearchType").value = "nationalid";
+                    document.getElementById("studentSearch").value = preFillSSN;
+                    searchStudent();
+                }
+            });
+
+            const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,926 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-color: #2b5876;       
+    --primary-dark: #1e3c72;        
+    --secondary-color: #4e54c8;     
+    --accent-color: #ff4b5c;       
+    --bg-color: #f4f7f6;          
+    --card-bg: #ffffff;         
+    --text-color: #333333;       
+    --text-muted: #777777;       
+    --border-color: #e0e0e0;        
+    --radius: 10px;                 
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+    --transition: all 0.3s ease;   
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.page-container, .form-page, .modal-content {
+    background-color: var(--card-bg);
+    max-width: 650px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.modal {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+}
+
+h1, h2, .modal-header h2, .box .title {
+    color: var(--primary-dark);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; 
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+label {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.form-control, .input, input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="password"], select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fafafa;
+    color: var(--text-color);
+    font-size: 15px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-control:focus, .input:focus, input:focus, select:focus {
+    border-color: var(--primary-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(43, 88, 118, 0.1);
+}
+
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    padding-left: 45px; 
+}
+
+.password-field .toggle {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.password-field .toggle:hover {
+    color: var(--primary-color);
+}
+
+
+.form-actions, .actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    direction: ltr; 
+}
+
+button[type="submit"], .btn-save, .save-btn {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+button[type="submit"]:hover, .btn-save:hover, .save-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2);
+}
+button.action-delete[type="submit"] {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+
+    padding: 6px 12px;      
+    min-width: 80px;       
+    height: 34px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    display: inline-flex;
+    justify-content: center; 
+    align-items: center;    
+    gap: 5px;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+button.action-delete[type="submit"]:hover {
+    background: #b52a37;
+}
+.form-actions a, .actions a, .btn-cancel {
+    background-color: #f0f0f0;
+    color: #555555;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+.form-actions a:hover, .actions a:hover, .btn-cancel:hover {
+    background-color: #e0e0e0;
+    color: #333333;
+}
+
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: var(--primary-dark);
+    color: #ffffff;
+    padding: 30px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.sidebar .profile {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar .profile .manager-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar .profile h4 a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.sidebar .menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar .menu li a {
+    display: block;
+    color: #ced4da;
+    padding: 12px 15px;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    transition: var(--transition);
+}
+
+.sidebar .menu li a:hover, .sidebar .menu li.active a {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding-right: 20px; 
+}
+
+
+.sidebar .logout {
+
+    display: block;
+    color: #ced4da;
+    padding: 12px 15px;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    transition: var(--transition);
+}
+
+
+.sidebar .logout:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding-right: 20px
+}
+
+
+.content {
+    flex: 1;
+    padding: 40px;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.content .box {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .page-container, .form-page, .modal-content {
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .form-actions, .actions {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+
+    button[type="submit"], .btn-save, .save-btn, .form-actions a, .actions a, .btn-cancel {
+        width: 100%;
+    }
+}
+
+
+/* ==================================
+   Student Parent Binding Page
+================================== */
+
+.search-section,
+.link-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+}
+
+.search-section h2,
+.link-section h2 {
+    margin-bottom: 20px;
+    border: none;
+    padding: 0;
+    text-align: right;
+    font-size: 20px;
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.search-box input {
+    flex: 1;
+}
+
+.search-box button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 25px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.search-box button:hover {
+    background: var(--primary-dark);
+}
+
+.result-card {
+    display: none;
+    margin-top: 20px;
+    background: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 20px;
+    align-items: center;
+    gap: 20px;
+}
+
+.result-card img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+}
+
+.result-card p {
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.result-card strong {
+    color: var(--primary-dark);
+}
+
+.result-info {
+    flex: 1;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.binding-container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.link-section .form-group {
+    margin-bottom: 20px;
+}
+
+.divider {
+    margin: 25px 0;
+    border: none;
+    height: 1px;
+    background: var(--border-color);
+}
+
+/* ===============================
+   Responsive
+================================ */
+
+@media (max-width: 768px) {
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-box input,
+    .search-box button {
+        width: 100%;
+    }
+
+    .result-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .result-info {
+        width: 100%;
+    }
+}
+
+
+.search-type {
+  /* Layout & Spacing */
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* Colors */
+  background-color: #f8f9fa;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  
+  /* Shape */
+  border-radius: 8px;
+  cursor: pointer;
+  
+  /* Transition for smooth effects */
+  transition: all 0.3s ease;
+  
+  /* Width - adjust as needed */
+  min-width: 150px;
+  
+  /* Remove default arrow (optional - for custom styling) */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Custom arrow (if removing default) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+/* Hover effect */
+.search-type:hover {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* Focus effect */
+.search-type:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Active/Open state */
+.search-type:active {
+  background-color: #e9ecef;
+}
+
+/* Disabled state (if needed) */
+.search-type:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* For RTL languages (since you have Arabic text) */
+[dir="rtl"] .search-type {
+  background-position: left 12px center;
+  padding: 12px 16px 12px 32px;
+}
+
+/* Optional: Style the dropdown options */
+.search-type option {
+  padding: 10px;
+  background-color: white;
+  color: #333;
+}
+
+/* ==================================
+   Add Student Page Specific Styles
+   Matching the existing design system
+================================== */
+
+/* Override page-container to match your existing layout */
+.page-container {
+    background-color: var(--card-bg);
+    max-width: 700px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* Main title */
+.page-container h1 {
+    color: var(--primary-dark);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+/* Section titles (البحث عن الطالب, البحث عن ولي الأمر) */
+.page-container h2 {
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 25px 0 15px 0;
+    padding-right: 10px;
+    border-right: 3px solid var(--primary-color);
+    text-align: right;
+}
+
+/* Search input fields */
+.page-container input[type="text"] {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fafafa;
+    color: var(--text-color);
+    font-size: 15px;
+    transition: var(--transition);
+    font-family: 'Cairo', sans-serif;
+}
+
+.page-container input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(43, 88, 118, 0.1);
+}
+
+.page-container input[type="text"]::placeholder {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Search buttons */
+.page-container button[type="button"] {
+    background-color:rgb(153, 151, 151);
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Cairo', sans-serif;
+    margin-right: 12px;
+    margin-top: 10px;
+}
+
+.page-container button[type="button"]:hover {
+    background-color:rgb(110, 109, 109);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2);
+}
+
+/* Result cards (student and parent results) */
+/* #studentResult,
+#parentResult {
+    background: #fafafa;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius) !important;
+    padding: 20px !important;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+} */
+
+/* #studentResult img,
+#parentResult img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+}
+
+#studentResult p,
+#parentResult p {
+    margin: 8px 0;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+#studentResult strong,
+#parentResult strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+    display: inline-block;
+    width: 95px;
+}
+
+#studentResult span,
+#parentResult span {
+    color: var(--text-color);
+} */
+
+/* Horizontal divider */
+.page-container hr {
+    margin: 30px 0;
+    border: none;
+    height: 1px;
+    background: var(--border-color);
+}
+
+/* Form groups for selects and labels */
+.page-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.page-container .form-group label {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+/* Select dropdowns */
+.page-container select.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fafafa;
+    color: var(--text-color);
+    font-size: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Cairo', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232b5876' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 15px center;
+    background-size: 14px;
+}
+
+.page-container select.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(43, 88, 118, 0.1);
+}
+
+/* Date input */
+.page-container input[type="date"] {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fafafa;
+    color: var(--text-color);
+    font-size: 15px;
+    transition: var(--transition);
+    font-family: 'Cairo', sans-serif;
+}
+
+.page-container input[type="date"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(43, 88, 118, 0.1);
+}
+
+/* Form actions (buttons at bottom) */
+.page-container .form-actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    direction: ltr;
+}
+
+.page-container .form-actions a {
+    background-color: #f0f0f0;
+    color: #555555;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+.page-container .form-actions a:hover {
+    background-color: #e0e0e0;
+    color: #333333;
+}
+
+.page-container .form-actions button[type="submit"] {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+.page-container .form-actions button[type="submit"]:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2);
+}
+
+/* Search type selector (if you add it later) */
+.search-type {
+    padding: 12px 16px;
+    font-size: 15px;
+    font-family: 'Cairo', sans-serif;
+    background-color: #fafafa;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 150px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232b5876' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 12px center;
+    background-size: 14px;
+}
+
+.search-type:hover {
+    border-color: var(--primary-color);
+    background-color: #ffffff;
+}
+
+.search-type:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(43, 88, 118, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .page-container h1 {
+        font-size: 22px;
+    }
+    
+    .page-container h2 {
+        font-size: 16px;
+    }
+    
+    /* #studentResult,
+    #parentResult {
+        flex-direction: column;
+        text-align: center;
+    } */
+    
+    #studentResult strong,
+    #parentResult strong {
+        width: auto;
+        display: inline-block;
+        margin-left: 5px;
+    }
+    
+    .page-container button[type="button"] {
+        width: 100%;
+        margin-right: 0;
+    }
+    
+    .page-container .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .page-container .form-actions a,
+    .page-container .form-actions button[type="submit"] {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+[dir="rtl"] .search-type {
+    background-position: right 12px center;
+    padding: 12px 16px 12px 32px;
+}
+
+[dir="rtl"] .page-container h2 {
+    border-right: 3px solid var(--primary-color);
+    border-left: none;
+    padding-right: 10px;
+    padding-left: 0;
+}
+
+.search-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-actions input {
+    flex: 1;
+}
+
+.btn-add {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Cairo', sans-serif;
+    margin-right: 12px;
+    margin-top: 10px;
+        text-decoration: none;
+
+}
+
+.btn-add:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+
+.linked-students {
+    margin-top: 20px;
+}
+
+.student-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.student-info {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-delete-student {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-delete-student:hover {
+    background: #bb2d3b;
+}
+
+

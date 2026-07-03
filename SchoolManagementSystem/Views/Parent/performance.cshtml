@@ -1,0 +1,257 @@
+@using SchoolManagementSystem.ViewModel
+@model ParentPerformanceViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداء الطلاب - بوابة ولي الأمر</title>
+    <meta name="description" content="متابعة أداء الطلاب - بوابة ولي الأمر الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@Model.ParentFirstLetter</div>
+                    <span>@Model.ParentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Parent" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Parent" asp-action="Performance" class="active">أداء الطلاب</a></li>
+                <li><a asp-controller="Parent" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Parent" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Parent" asp-action="Attendance">الحضور</a></li>
+                <li><a asp-controller="Parent" asp-action="Assignments">الواجبات</a></li>
+                <li><a asp-controller="Parent" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">📊 أداء الطلاب</h1>
+                <div class="child-selector">
+                    <label class="child-selector-label">اختر الطالب:</label>
+                    <select id="child-select" class="child-selector-dropdown" onchange="changeChild()">
+                        @foreach (var child in Model.Children)
+                        {
+                            <option value="@child.StudentId">@child.FullName - @child.GradeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Performance Overview -->
+            <div class="performance-grid">
+                <!-- Card 1: Average -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-average" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-average">0%</div>
+                    </div>
+                    <div class="performance-icon excellent"></div>
+                    <div class="performance-value" id="kpi-average-hidden">0%</div>
+                    <div class="performance-label">المعدل العام</div>
+                </div>
+
+                <!-- Card 2: Attendance -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-attendance" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-attendance">0%</div>
+                    </div>
+                    <div class="performance-icon good"></div>
+                    <div class="performance-value" id="kpi-attendance-hidden">0%</div>
+                    <div class="performance-label">نسبة الحضور</div>
+                </div>
+
+                <!-- Card 3: Homework -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-homework" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-homework">0%</div>
+                    </div>
+                    <div class="performance-icon good"></div>
+                    <div class="performance-value" id="kpi-homework-hidden">0%</div>
+                    <div class="performance-label">الواجبات المسلمة</div>
+                </div>
+
+                <!-- Card 4: Upcoming Exams -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-exams" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-exams">0</div>
+                    </div>
+                    <div class="performance-icon average"></div>
+                    <div class="performance-value" id="kpi-exams-hidden">0</div>
+                    <div class="performance-label">اختبارات قادمة</div>
+                </div>
+            </div>
+
+            <!-- Recent Grades -->
+            <h2 class="section-title">آخر الدرجات</h2>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المادة</th>
+                            <th>نوع الاختبار</th>
+                            <th>الدرجة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grades-tbody">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">لا توجد درجات</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Parent/parent_script.js"></script>
+    <script>
+        // ── Circumference for r=40 ──
+        var CIRC = 2 * Math.PI * 40; // ≈251.33
+
+        function setRing(id, pct) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            var offset = CIRC - (CIRC * Math.min(pct, 100) / 100);
+            el.style.strokeDasharray = CIRC;
+            el.style.strokeDashoffset = offset;
+        }
+
+        // ── Count-up animation ──
+        function animateValue(el, end, suffix, duration) {
+            if (!el) return;
+            var start = 0;
+            var startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                var current = Math.floor(progress * end);
+                el.textContent = current + (suffix || '');
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = end + (suffix || '');
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Performance data per child - from database
+        var performanceByChild = @Html.Raw(Json.Serialize(
+            Model.Children.ToDictionary(
+                c => c.StudentId.ToString(),
+                c => new {
+                    average = c.OverallAverage,
+                    attendance = c.AttendanceRate,
+                    homework = c.HomeworkSubmissionRate,
+                    exams = c.UpcomingExamsCount,
+                    grades = c.RecentGrades.Select(g => new {
+                        subject = g.SubjectName,
+                        examName = g.ExamName,
+                        score = g.Score,
+                        date = g.Date
+                    })
+                }
+            )
+        ));
+
+        var defaultChildId = '@(Model.Children.FirstOrDefault()?.StudentId)';
+
+        function updatePerformanceUI() {
+            var savedChild = localStorage.getItem('selectedChild') || defaultChildId;
+            var data = performanceByChild[savedChild] || performanceByChild[defaultChildId];
+
+            if (!data) return;
+
+            // Animate rings
+            setRing('ring-average', data.average);
+            setRing('ring-attendance', data.attendance);
+            setRing('ring-homework', data.homework);
+            // For exams, treat count as percentage out of 10 for visual
+            setRing('ring-exams', Math.min(data.exams * 20, 100));
+
+            // Animate values
+            animateValue(document.getElementById('kpi-average'), data.average, '%', 900);
+            animateValue(document.getElementById('kpi-attendance'), data.attendance, '%', 900);
+            animateValue(document.getElementById('kpi-homework'), data.homework, '%', 900);
+            animateValue(document.getElementById('kpi-exams'), data.exams, '', 900);
+
+            // Update recent grades table
+            var tbody = document.getElementById('grades-tbody');
+            tbody.innerHTML = '';
+
+            if (data.grades && data.grades.length > 0) {
+                data.grades.forEach(function (g, i) {
+                    var tr = document.createElement('tr');
+                    tr.style.animation = 'fadeInUp .4s ease both';
+                    tr.style.animationDelay = (i * 0.06) + 's';
+
+                    // Determine score class
+                    var scoreNum = parseFloat(g.score);
+                    var cls = 'medium';
+                    if (scoreNum >= 85) cls = 'high';
+                    else if (scoreNum < 60) cls = 'low';
+
+                    tr.innerHTML =
+                        '<td>' + g.subject + '</td>' +
+                        '<td>' + g.examName + '</td>' +
+                        '<td><span class="grade-score ' + cls + '">' + g.score + '</span></td>' +
+                        '<td>' + g.date + '</td>';
+                    tbody.appendChild(tr);
+                });
+            } else {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="4" style="text-align:center; padding:24px; color:#999;">لا توجد درجات</td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Override changeChild to also update performance data
+        var originalChangeChild = changeChild;
+        changeChild = function () {
+            originalChangeChild();
+            updatePerformanceUI();
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('selectedChild') && defaultChildId) {
+                localStorage.setItem('selectedChild', defaultChildId);
+            }
+            syncUIWithSelection();
+            updatePerformanceUI();
+        });
+    </script>
+</body>
+
+</html>

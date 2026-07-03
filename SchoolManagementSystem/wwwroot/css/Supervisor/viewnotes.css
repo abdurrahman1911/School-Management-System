@@ -1,0 +1,118 @@
+ @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #eef2f5;
+}
+
+/* الهيكل */
+.dashboard-container {
+    display: flex;
+    flex-direction: row-reverse;
+    min-height: 100vh;
+}
+
+/* المحتوى */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.content-card {
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 1000px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* العنوان */
+.header-section {
+    margin-bottom: 25px;
+}
+
+.header-section h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.header-section p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* الجدول */
+.table-container {
+    overflow-x: auto;
+}
+
+.notes-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.notes-table th,
+.notes-table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+.notes-table th {
+    background: #f3f6f9;
+    font-weight: bold;
+}
+
+.notes-table tbody tr:hover {
+    background: #f8fbfd;
+}
+
+/* عدد الملاحظات */
+.notes-count {
+    margin-top: 20px;
+    padding: 10px 20px;
+    display: inline-block;
+    background: #8aa9c2;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+
+
+
+
+
+/* زر الهامبرجر */
+.menu-toggle {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .content-card {
+        max-width: 100%;
+        padding: 20px;
+    }
+
+  
+}
+

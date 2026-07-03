@@ -1,0 +1,183 @@
+﻿@using SchoolManagementSystem.ViewModel.Owner
+@model OwnerEditDataViewModel
+
+@{
+    ViewData["Title"] = "تعديل البيانات";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+
+        
+    
+
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>تعديل البيانات</title>
+    <link rel="stylesheet" href="~/css/Admin/edit-data.css"/>
+    <link rel="stylesheet" href="~/css/Admin/res.css" />
+
+
+    <style>
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .sidebar .logo {
+                padding: 25px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .user-info span {
+                font-size: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+    </style>
+
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Side navigation bar -->
+  <aside class="sidebar">    
+        <div class="logo">
+            <div class="user-info">
+    <div class="user-avatar">
+        @if (string.IsNullOrEmpty(Model.NavigationViewModel.ProfilePhotoUrl))
+        {
+            <text>@Model.NavigationViewModel.FullName[0]</text>
+        }
+        else
+        {
+           <img src="/images/users/@Model.NavigationViewModel.ProfilePhotoUrl" alt="Profile Photo" />
+        }
+    </div>
+    <span>@Model.NavigationViewModel.FullName</span>
+</div>
+        </div>
+        
+        <!-- Navigation links -->
+          <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Notifications">الإشعارات</a></li>
+
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata" class="active">تعديل البيانات</a></li>
+</ul>
+<a asp-controller="Home"
+               asp-action="Index"
+               class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+
+    <!-- Main content -->
+
+   
+     <main class="content">
+        <div class="page-wrapper">
+
+        <div class="box">
+
+            <h3 class="title">تعديل كلمة المرور</h3>
+
+            <form asp-action="Editdata" method="post" asp-controller="Owner">
+                <div class="form-group">
+                    <label>كلمة المرور الحالية</label>
+                    <div class="password-field">
+                        <input asp-for="CurrentPassword" type="password" id="currentPassword" placeholder="ادخل كلمة المرور الحالية">
+                        <span class="toggle" onclick="togglePassword('currentPassword', this)">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </span>
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>كلمة المرور الجديدة</label>
+                    <div class="password-field">
+                        <input asp-for="NewPassword" type="password" id="newPassword" placeholder="ادخل كلمة المرور الجديدة">
+                        <span class="toggle" onclick="togglePassword('newPassword', this)">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </span>
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تأكيد كلمة المرور</label>
+                    <div class="password-field">
+                        <input asp-for="ConfirmPassword" type="password" id="confirmPassword" placeholder="اعد كتابة كلمة المرور الجديدة">
+                        <span class="toggle" onclick="togglePassword('confirmPassword', this)">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </span>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">حفظ التعديلات</button>
+            </form>
+
+        </div>
+        </div>
+
+    </main>
+    <script src="~/js/Admin/edit-data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); 
+        });
+    </script>
+</body>
+</html>

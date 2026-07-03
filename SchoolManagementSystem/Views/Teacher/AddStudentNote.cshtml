@@ -1,0 +1,53 @@
+﻿@using SchoolManagementSystem.ViewModel.Teacher
+@model AddNoteViewModel
+
+@{
+    ViewData["Title"] = "إضافة ملاحظة";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Teacher/AddStudentNote.css" />
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="form-card">
+            <h2>إضافة ملاحظة للطالب</h2>
+
+            <form asp-controller="Teacher" asp-action="AddStudentNote" method="post">
+
+                <input type="hidden" asp-for="StudentId" />
+
+                <div class="form-group">
+                    <label asp-for="Note">الملاحظة</label>
+
+                    <textarea asp-for="Note"
+                              class="form-control"
+                              rows="6"
+                              placeholder="اكتب الملاحظة هنا..."></textarea>
+
+                    <span asp-validation-for="Note" class="text-danger"></span>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-controller="Teacher" asp-action="Notesstudents" class="btn btn-cancel">
+                        إلغاء
+                    </a>
+
+                    <button type="submit" class="btn btn-save">
+                        حفظ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

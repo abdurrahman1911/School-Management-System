@@ -1,0 +1,308 @@
+@using SchoolManagementSystem.ViewModel.Parent
+@model ChildrenAssignmentsViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الواجبات - بوابة ولي الأمر</title>
+    <meta name="description" content="واجبات الطلاب - بوابة ولي الأمر الإلكترونية">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Parent/parent_styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/Parent/performance.css" asp-append-version="true">
+    <style>
+        /* ── 3-column KPI grid ───────────────────────────────── */
+        .perf-page .performance-grid.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* ── Status Pills ────────────────────────────────────── */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .status-pill.submitted {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            color: #2e7d32;
+        }
+
+        .status-pill.late {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            color: #c62828;
+        }
+
+        .status-pill.pending {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            color: #e65100;
+        }
+
+        .status-pill .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-pill.submitted .status-dot { background: #2e7d32; }
+        .status-pill.late .status-dot { background: #c62828; }
+        .status-pill.pending .status-dot { background: #e65100; }
+
+        @@media (max-width: 900px) {
+            .perf-page .performance-grid.three-cols {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @@media (max-width: 600px) {
+            .perf-page .performance-grid.three-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="user-info">
+                    <div class="user-avatar">@(Model.ParentFullName?.FirstOrDefault() ?? 'و')</div>
+                    <span>@Model.ParentFullName</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a asp-controller="Parent" asp-action="Index">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="Parent" asp-action="Performance">أداء الطلاب</a></li>
+                <li><a asp-controller="Parent" asp-action="Schedule">الجدول الدراسي</a></li>
+                <li><a asp-controller="Parent" asp-action="Grades">الدرجات</a></li>
+                <li><a asp-controller="Parent" asp-action="Attendance">الحضور</a></li>
+                <li><a asp-controller="Parent" asp-action="Assignments" class="active">الواجبات</a></li>
+                <li><a asp-controller="Parent" asp-action="Edit">تعديل البيانات</a></li>
+            </ul>
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content perf-page">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">📚 الواجبات</h1>
+                <div class="child-selector">
+                    <label class="child-selector-label">اختر الطالب:</label>
+                    <select id="child-select" class="child-selector-dropdown" onchange="changeChild()">
+                        @if(Model != null && Model.ChildrenAssignments != null)
+                        {
+                            @foreach (var child in Model.ChildrenAssignments)
+                            {
+                                <option value="@child.StudentId">@child.FullName</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Assignments Summary -->
+            <div class="performance-grid three-cols">
+                <!-- Card 1: Current -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-current" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-current">0</div>
+                    </div>
+                    <div class="performance-icon good"></div>
+                    <div class="performance-value" id="kpi-current-hidden">0</div>
+                    <div class="performance-label">واجبات حالية</div>
+                </div>
+
+                <!-- Card 2: Submitted -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-submitted" cx="45" cy="45" r="40"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-submitted">0</div>
+                    </div>
+                    <div class="performance-icon excellent"></div>
+                    <div class="performance-value" id="kpi-submitted-hidden">0</div>
+                    <div class="performance-label">واجبات مسلمة</div>
+                </div>
+
+                <!-- Card 3: Late -->
+                <div class="performance-card">
+                    <div class="progress-ring-wrap">
+                        <svg viewBox="0 0 90 90">
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="40"></circle>
+                            <circle class="progress-ring-fill" id="ring-late" cx="45" cy="45" r="40" style="stroke: #ef4444;"></circle>
+                        </svg>
+                        <div class="progress-ring-value" id="kpi-late">0</div>
+                    </div>
+                    <div class="performance-icon needs-improvement"></div>
+                    <div class="performance-value" id="kpi-late-hidden">0</div>
+                    <div class="performance-label">واجبات متأخرة</div>
+                </div>
+            </div>
+
+            <!-- Current Assignments -->
+            <h2 class="section-title">الواجبات الحالية</h2>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المادة</th>
+                            <th>عنوان الواجب</th>
+                            <th>تاريخ التسليم</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assignments-tbody">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">جاري تحميل البيانات...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/js/Parent/parent_script.js"></script>
+    <script>
+        // ── Circumference for r=40 ──
+        var CIRC = 2 * Math.PI * 40;
+
+        function setRing(id, pct) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            var offset = CIRC - (CIRC * Math.min(pct, 100) / 100);
+            el.style.strokeDasharray = CIRC;
+            el.style.strokeDashoffset = offset;
+        }
+
+        function animateValue(el, end, suffix, duration) {
+            if (!el) return;
+            var start = 0;
+            var startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                var current = Math.floor(progress * end);
+                el.textContent = current + (suffix || '');
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = end + (suffix || '');
+            }
+            requestAnimationFrame(step);
+        }
+
+        var assignmentsByChild = @Html.Raw(Model?.ChildrenAssignments != null ? Json.Serialize(
+            Model.ChildrenAssignments.ToDictionary(
+                c => c.StudentId.ToString(),
+                c => new {
+                    current = c.Assignments.Count(a => !a.IsSolved && a.LastDate >= DateTime.Now),
+                    submitted = c.Assignments.Count(a => a.IsSolved),
+                    late = c.Assignments.Count(a => !a.IsSolved && a.LastDate < DateTime.Now),
+                    total = c.Assignments.Count,
+                    list = c.Assignments.Select(a => new {
+                        subject = a.subjectName,
+                        title = a.Title,
+                        dueDate = a.LastDate.ToString("yyyy-MM-dd"),
+                        isSolved = a.IsSolved,
+                        isLate = !a.IsSolved && (a.LastDate < DateTime.Now)
+                    }).ToList()
+                }
+            )
+        ) : "{}");
+
+        var defaultChildId = '@(Model?.ChildrenAssignments?.FirstOrDefault()?.StudentId)';
+
+        function updateAssignmentsUI() {
+            var savedChild = localStorage.getItem('selectedChild') || defaultChildId;
+            var data = assignmentsByChild[savedChild] || assignmentsByChild[defaultChildId];
+
+            if (!data) return;
+
+            var total = data.total || 1;
+            var currentPct = total > 0 ? Math.round((data.current / total) * 100) : 0;
+            var submittedPct = total > 0 ? Math.round((data.submitted / total) * 100) : 0;
+            var latePct = total > 0 ? Math.round((data.late / total) * 100) : 0;
+
+            // Animate rings
+            setRing('ring-current', currentPct);
+            setRing('ring-submitted', submittedPct);
+            setRing('ring-late', latePct);
+
+            // Animate values
+            animateValue(document.getElementById('kpi-current'), data.current, '', 900);
+            animateValue(document.getElementById('kpi-submitted'), data.submitted, '', 900);
+            animateValue(document.getElementById('kpi-late'), data.late, '', 900);
+
+            var tbody = document.getElementById('assignments-tbody');
+            tbody.innerHTML = '';
+
+            if (data.list && data.list.length > 0) {
+                data.list.forEach(function (a, i) {
+                    var tr = document.createElement('tr');
+                    tr.style.animation = 'fadeInUp .4s ease both';
+                    tr.style.animationDelay = (i * 0.06) + 's';
+
+                    var statusHtml = '';
+                    if (a.isSolved) {
+                        statusHtml = '<span class="status-pill submitted"><span class="status-dot"></span>تم التسليم</span>';
+                    } else if (a.isLate) {
+                        statusHtml = '<span class="status-pill late"><span class="status-dot"></span>متأخر</span>';
+                    } else {
+                        statusHtml = '<span class="status-pill pending"><span class="status-dot"></span>لم يسلم بعد</span>';
+                    }
+
+                    tr.innerHTML =
+                        '<td>' + a.subject + '</td>' +
+                        '<td>' + a.title + '</td>' +
+                        '<td>' + a.dueDate + '</td>' +
+                        '<td>' + statusHtml + '</td>';
+                    tbody.appendChild(tr);
+                });
+            } else {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="4" style="text-align:center; padding:24px; color:#999;">لا توجد واجبات</td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        var originalChangeChild = changeChild;
+        changeChild = function () {
+            if (typeof originalChangeChild === 'function') {
+                originalChangeChild();
+            }
+            updateAssignmentsUI();
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('selectedChild') && defaultChildId) {
+                localStorage.setItem('selectedChild', defaultChildId);
+            }
+            if (typeof syncUIWithSelection === 'function') {
+                syncUIWithSelection();
+            }
+            updateAssignmentsUI();
+        });
+    </script>
+</body>
+
+</html>

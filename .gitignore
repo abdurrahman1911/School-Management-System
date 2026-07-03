@@ -1,0 +1,24 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build folders
+**/bin/
+**/obj/
+
+bin/
+obj/
+.vs/
+
+# .NET
+*.dll
+*.exe
+*.pdb
+
+appsettings.Development.json
+# Package Restore Files
+*.nuget.dgspec.json
+/SchoolManagementSystem/SchoolManagementSystem.csproj

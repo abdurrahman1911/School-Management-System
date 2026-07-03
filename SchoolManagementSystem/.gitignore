@@ -1,0 +1,19 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build folders
+**/bin/
+**/obj/
+
+# .NET
+*.dll
+*.exe
+*.pdb
+
+appsettings.Development.json
+# Package Restore Files
+*.nuget.dgspec.json

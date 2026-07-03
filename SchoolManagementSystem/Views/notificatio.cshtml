@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "الإشعارات";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/Admin/Notifications.css" />
+    <link rel="stylesheet" href="~/css/Admin/res.css" />
+</head>
+
+<body>
+
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="user-info">
+
+                <div class="user-avatar">
+                    م
+                </div>
+
+                <span>عمر خالد وليد الشافعي </span>
+
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="Notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Notifications" class="active">الإشعارات</a></li>
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+        </ul>
+
+        <a asp-controller="Home" asp-action="Index" class="logout">
+            تسجيل الخروج
+        </a>
+
+    </aside>
+
+    <main class="main-content">
+
+        <div class="box">
+
+            <h1 class="content-header">
+                الإشعارات
+            </h1>
+
+            <div class="table-wrapper">
+
+                <table class="notifications-table">
+
+                    <thead>
+                        <tr>
+                            <th>من قام بالإجراء</th>
+                            <th>نوع الإجراء</th>
+                            <th>تم على</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>مدير أمن المعلومات</td>
+                            <td>إضافة طالب</td>
+                            <td>أحمد محمد علي</td>
+                            <td>2026/06/29 - 10:30 AM</td>
+                        </tr>
+
+                        <tr>
+                            <td>مدير أمن المعلومات</td>
+                            <td>حذف معلم</td>
+                            <td>محمد إبراهيم</td>
+                            <td>2026/06/29 - 11:15 AM</td>
+                        </tr>
+
+                        <tr>
+                            <td>المدير</td>
+                            <td>تعديل بيانات طالب</td>
+                            <td>يوسف خالد</td>
+                            <td>2026/06/29 - 12:20 PM</td>
+                        </tr>
+
+                        <tr>
+                            <td>مدير أمن المعلومات</td>
+                            <td>إضافة مشرف</td>
+                            <td>محمود أحمد</td>
+                            <td>2026/06/28 - 02:45 PM</td>
+                        </tr>
+
+                        <tr>
+                            <td>المدير</td>
+                            <td>حذف طالب</td>
+                            <td>عمر حسن</td>
+                            <td>2026/06/28 - 04:10 PM</td>
+                        </tr>
+
+                        <tr>
+                            <td>مدير أمن المعلومات</td>
+                            <td>تعديل بيانات معلم</td>
+                            <td>سارة علي</td>
+                            <td>2026/06/27 - 09:00 AM</td>
+                        </tr>
+
+                        <tr>
+                            <td>مدير أمن المعلومات</td>
+                            <td>إضافة طالب</td>
+                            <td>عبدالله محمد</td>
+                            <td>2026/06/27 - 01:35 PM</td>
+                        </tr>
+
+                        <tr>
+                            <td>المدير</td>
+                            <td>إضافة معلم</td>
+                            <td>أسماء حسن</td>
+                            <td>2026/06/26 - 03:50 PM</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+
+            const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+                menuToggle.classList.add("hidden");
+            });
+
+            overlay.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+                menuToggle.classList.remove("hidden");
+            });
+
+    </script>
+
+</body>
+
+</html>

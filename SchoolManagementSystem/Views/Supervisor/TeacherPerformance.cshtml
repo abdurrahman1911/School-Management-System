@@ -1,0 +1,221 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>أداء المعلم</title>
+
+    <!-- Style for performance charts and layout -->
+    <link rel="stylesheet" href="~/css/Supervisor/teacherPerformance.css" />
+    <!-- Icons: Standard FontAwesome set -->
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+    <style>
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+            .password-field {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+                .password-field .toggle {
+                    position: absolute;
+                    left: 10px;
+                    cursor: pointer;
+                    color: #777;
+                }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+    <div class="layout">
+
+        <!-- Main Content Section -->
+        <main class="content">
+            <div class="box">
+
+                <!-- Teacher Selector: Triggers updatePerformance() in JS -->
+                <div class="selectors single">
+                    <label>اختيار اسم المعلم :</label>
+                    <select id="teacherSelect" onchange="updatePerformance()">
+                        <option value="">اختر المعلم</option>
+                        <option value="mohamed">محمد أحمد السيد</option>
+                        <option value="fatma">فاطمة محمود حسن</option>
+                        <option value="khaled">خالد السيد محمد</option>
+                        <option value="mazen">مازن محمد عبدالرحمن</option>
+                        <option value="rawan">روان محمد ياسر</option>
+                    </select>
+                </div>
+
+                <h3 class="table-title">أداء المعلم :</h3>
+
+                <!-- Performance Visualization: Bars and Ratings -->
+                <div class="performance-box">
+
+                    <!-- Overall dynamic rating text -->
+                    <div class="overall">
+                        التقييم العام :
+                        <span id="overallRate" class="rate good">---</span>
+                    </div>
+
+                    <div class="bars">
+                        <!-- Commitment Bar -->
+                        <div class="bar-item">
+                            <span>الالتزام</span>
+                            <div class="bar">
+                                <div id="commitment" class="fill"></div>
+                            </div>
+                        </div>
+
+                        <!-- Interaction Bar -->
+                        <div class="bar-item">
+                            <span>التفاعل</span>
+                            <div class="bar">
+                                <div id="interaction" class="fill"></div>
+                            </div>
+                        </div>
+
+                        <!-- Explanation/Teaching Quality Bar -->
+                        <div class="bar-item">
+                            <span>الشرح</span>
+                            <div class="bar">
+                                <div id="explanation" class="fill"></div>
+                            </div>
+                        </div>
+
+                        <!-- Discipline/Control Bar -->
+                        <div class="bar-item">
+                            <span>الانضباط</span>
+                            <div class="bar">
+                                <div id="discipline" class="fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Sidebar Navigation: Unified and Cleaned -->
+        <aside class="sidebar">
+            <div class="admin">
+                <img src="~/images/supervisorImage.jpg" alt="Supervisor Avatar" />
+                <h4>
+                    <a asp-controller="Supervisor" asp-action="SupervisorProfile">أحمد علي</a>
+                </h4>
+            </div>
+
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+                <a asp-controller="Supervisor" asp-action="StudentPage">
+                    الطلاب
+                </a>
+                <!-- Active Link for Teachers Page -->
+                <a asp-controller="Supervisor" asp-action="TeachersPage" >
+                    المعلمون
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable">
+                     جدول الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable">
+                    جدول المعلمين
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeacherPerformance" class="active">
+                    أداء المعلم
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence">
+                    غياب المعلمين
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence">
+                    غياب الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="Notes">
+                    الملاحظات
+                </a>
+                <a asp-controller="Supervisor" asp-action="EditProfile">
+                    تعديل البيانات
+                </a>
+            </nav>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+
+    </div>
+
+    <!--
+        JS Logic:
+        Contains the dictionary of teacher scores and the updatePerformance function
+    -->
+    <script src="~/js/Supervisor/teacherPerformance.js"></script>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+
+</body>
+</html>

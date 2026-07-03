@@ -1,0 +1,145 @@
+﻿/* ========== Reset ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Tahoma, Arial;
+}
+
+html, body {
+    height: 100%;
+    direction: rtl;
+}
+
+body {
+    background: #eef3f6;
+    overflow: hidden;
+}
+
+/* ========== Layout ========== */
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 230px;
+    background: #125174;
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+      overflow-y: auto;   /* سكرول رأسي */
+    overflow-x: hidden; /* يمنع سكرول أفقي */
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.manager-img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.profile h4 a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* ========== Menu ========== */
+.menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+}
+
+    .menu li a {
+        display: block;
+        padding: 8px;
+        background: #2c4761;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        .menu li.active a,
+        .menu li a:hover {
+            background: #0d3f56;
+            font-weight: bold;
+        }
+
+/* ========== Logout ========== */
+.logout {
+    margin-top: auto;
+    padding: 12px;
+    background: #2c4761;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .logout:hover {
+        background: #233649;
+    }
+
+/* ========== Content ========== */
+.content {
+    margin-right: 230px;
+    width: calc(100% - 230px);
+    height: 100vh;
+    overflow-y: auto;
+    padding: 25px;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    body {
+        overflow: auto;
+    }
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .menu {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .content {
+        margin-right: 0;
+        width: 100%;
+        height: auto;
+    }
+}
+body {
+    background: #eef3f6;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

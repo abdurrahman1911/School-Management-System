@@ -1,0 +1,267 @@
+﻿@model SchoolManagementSystem.ViewModel.Supervisor.AddNotesViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        @{
+            ViewData["Title"] = "الملاحظات";
+        }
+        @ViewData["Title"]
+    </title>
+
+    <link rel="stylesheet" href="~/css/Supervisor/notes.css" />
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+
+
+    <style>
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .form-select.input-validation-error,
+        .form-textarea.input-validation-error {
+            border: 1px solid #dc3545 !important;
+            background-color: #fff8f8;
+        }
+
+            
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .password-field {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                }
+
+                    .password-field .toggle {
+                        position: absolute;
+                        left: 10px;
+                        cursor: pointer;
+                        color: #777;
+                    }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+      
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <main class="content">
+            <div class="box">
+
+                <h3 class="table-title center">الملاحظات</h3>
+
+                <div class="teacher-notes-section">
+
+                    <h2 class="section-title">
+                        <i class="fas fa-sticky-note"></i>
+                        ملاحظات على المعلمين
+                    </h2>
+
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-success">@ViewBag.Message</div>
+                    }
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+
+                    <form asp-controller="Supervisor" asp-action="Notes" method="post" class="notes-form">
+
+                        <div class="form-group">
+                            <label asp-for="TeacherId">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                اختر المعلم:
+                            </label>
+
+                            <select asp-for="TeacherId" class="form-select" id="teacherSelect">
+                                <option value="">-- اختر معلم --</option>
+                                @if (Model.Teachers != null)
+                                {
+                                    foreach (var teacher in Model.Teachers)
+                                    {
+                                        <option value="@teacher.Id">@teacher.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="TeacherId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Note">
+                                <i class="fas fa-pen"></i>
+                                نص الملاحظة:
+                            </label>
+
+                            <textarea asp-for="Note"
+                                      id="noteContent"
+                                      class="form-textarea"
+                                      rows="4"
+                                      placeholder="اكتب ملاحظاتك هنا..."></textarea>
+                            <span asp-validation-for="Note" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="save-note-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            إرسال الملاحظة
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="admin">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+                    </div>
+                    <h4>
+                        <a asp-controller="Supervisor" asp-action="SupervisorProfile">
+                            @(Model.NavigationInfo?.FullName ?? "مشرف")
+                        </a>
+                    </h4>
+                </div>
+            </div>
+
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+                <a asp-controller="Supervisor" asp-action="StudentPage">الطلاب</a>
+                <a asp-controller="Supervisor" asp-action="TeachersPage">المعلمون</a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable">جدول الطلاب</a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable">جدول المعلمين</a>
+     
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence">غياب للمعلمين</a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence">غياب للطلاب</a>
+                <a asp-controller="Supervisor" asp-action="Notes" class="active">الملاحظات</a>
+                <a asp-controller="Supervisor" asp-action="EditProfile">تعديل البيانات</a>
+            </nav>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var alertElements = document.querySelectorAll('.alert');
+
+            alertElements.forEach(function(ئ) {
+                if (alertElement) {
+                    setTimeout(function () {
+                        alertElement.style.transition = "opacity 0.5s ease";
+                        alertElement.style.opacity = "0";
+
+                        setTimeout(function () {
+                            alertElement.style.display = "none";
+                            alertElement.remove();
+                        }, 500);
+                    }, 3000);
+                }
+            });
+        });
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+  
+    </script>
+
+</body>
+</html>

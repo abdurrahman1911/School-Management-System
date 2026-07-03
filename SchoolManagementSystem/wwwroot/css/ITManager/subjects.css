@@ -1,0 +1,189 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Cairo", sans-serif;
+    background-color: #eef3f6;
+    direction: rtl;
+}
+
+/* ================= Page Container ================= */
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+/* ================= Card ================= */
+form {
+    background: #fff;
+    width: 500px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* ================= Title ================= */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+/* ================= Form Group ================= */
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+/* ================= Inputs ================= */
+.form-control {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-control:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74,144,226,0.3);
+}
+
+/* ================= Buttons ================= */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Save Button */
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Cancel Link */
+.form-actions a {
+    text-decoration: none;
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.form-actions a:hover {
+    background-color: #c82333;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 600px) {
+    form {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button, .form-actions a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.search-type {
+  /* Layout & Spacing */
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* Colors */
+  background-color: #f8f9fa;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  
+  /* Shape */
+  border-radius: 8px;
+  cursor: pointer;
+  
+  /* Transition for smooth effects */
+  transition: all 0.3s ease;
+  
+  /* Width - adjust as needed */
+  min-width: 150px;
+  
+  /* Remove default arrow (optional - for custom styling) */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Custom arrow (if removing default) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+/* Hover effect */
+.search-type:hover {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* Focus effect */
+.search-type:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Active/Open state */
+.search-type:active {
+  background-color: #e9ecef;
+}
+
+/* Disabled state (if needed) */
+.search-type:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* For RTL languages (since you have Arabic text) */
+[dir="rtl"] .search-type {
+  background-position: left 12px center;
+  padding: 12px 16px 12px 32px;
+}
+
+/* Optional: Style the dropdown options */
+.search-type option {
+  padding: 10px;
+  background-color: white;
+  color: #333;
+}

@@ -1,0 +1,225 @@
+﻿@model SchoolManagementSystem.ViewModel.Supervisor.TeacherTableViewModel
+@{
+    ViewData["Title"] = "جدول المعلمين";
+    Layout = null; // تأكد من ضبط الـ Layout حسب نظام مشروعك
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ربط ملف الـ CSS الخاص بالتنسيق -->
+<link rel="stylesheet" href="~/css/Supervisor/teachersTable.css" />
+<link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+    <style>
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+            .password-field {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+                .password-field .toggle {
+                    position: absolute;
+                    left: 10px;
+                    cursor: pointer;
+                    color: #777;
+                }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<div class="layout">
+
+    <!-- المحتوى الرئيسي -->
+    <main class="content">
+        <div class="box">
+
+            <h2 class="page-title">جدول المعلمين</h2>
+
+            <!-- اختيار اسم المعلم (يتم ملؤه من الموديل) -->
+            <div class="selectors single">
+                <label><i class="fas fa-chalkboard-user"></i> اختيار اسم المعلم :</label>
+                <select id="teacherSelect" onchange="loadTeacherTable()">
+                    <option value="">-- اختر المعلم --</option>
+                    @foreach (var teacher in Model.Teachers)
+                    {
+                        <option value="@teacher.Id">@teacher.Name</option>
+                    }
+                </select>
+            </div>
+
+            <!-- عنوان الجدول (يتحدث تلقائياً عبر الـ JS) -->
+            <h3 class="table-title" id="tableTitle">
+                جدول المعلم :
+            </h3>
+
+            <!-- حاوية عرض الجدول: يتم حقن الـ Partial View هنا -->
+            <div id="teacherTableContainer">
+                <div class="no-table" id="noTableMsg">
+                    <i class="fas fa-folder-open"></i>
+                    <p>برجاء اختيار معلم لعرض الجدول</p>
+                </div>
+            </div>
+
+            <!-- قسم رفع الجدول: يظهر فقط عند الحاجة (إضافة أو تعديل) -->
+            <div class="upload-section" id="teacherUploadSection" style="display: none;">
+                <h3 id="teacherUploadTitle" style="text-align:center; margin-bottom:15px; color: #1e6d92;">إضافة جدول جديد</h3>
+
+                <div class="upload-area" id="uploadArea" onclick="handleTeacherAreaClick()">
+                    <!-- معاينة الصورة المختارة قبل الحفظ -->
+                    <div id="teacherPreviewContainer" style="display:none; text-align:center;">
+                        <img id="teacherImagePreview" src="#" style="max-width: 100%; border-radius: 8px; margin-bottom:10px; border: 2px solid #3498db;" />
+                    </div>
+
+                    <div id="teacherUploadPlaceholder">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>اسحب الصورة هنا أو اضغط للرفع</p>
+                    </div>
+                    <input type="file" id="teacherFileInput" accept="image/*" style="display: none;" onchange="handleTeacherFileSelect(this)">
+                </div>
+
+                <!-- أزرار التحكم في الرفع -->
+                <div id="teacherSaveAction" style="display: none; text-align: center; margin-top:20px;">
+                    <button type="button" onclick="uploadTeacherTable()" class="btn-save-teacher"
+                            style="background:#27ae60; color:white; padding:10px 25px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+                        <i class="fas fa-save"></i> حفظ الجدول
+                    </button>
+                    <button type="button" onclick="resetTeacherUI(); loadTeacherTable();"
+                            style="background:#e74c3c; color:white; padding:10px 25px; border:none; border-radius:5px; cursor:pointer; margin-right:10px; font-weight:bold;">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- القائمة الجانبية (Sidebar) - نسخة موحدة ونظيفة -->
+    <aside class="sidebar">
+            <div class="admin">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+
+                    </div>
+
+                    <h4>
+                        <a asp-controller="Supervisor" asp-action="SupervisorProfile">
+                            @(Model.NavigationInfo?.FullName ?? "مشرف")
+                        </a>
+                    </h4>
+                </div>
+            </div>
+
+        <nav>
+            <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+            <a asp-controller="Supervisor" asp-action="StudentPage">
+                الطلاب
+            </a>
+            <a asp-controller="Supervisor" asp-action="TeachersPage">
+               المعلمون
+            </a>
+            <a asp-controller="Supervisor" asp-action="StudentsTable">
+                جدول الطلاب
+            </a>
+            <!-- الصفحة الحالية نشطة -->
+            <a asp-controller="Supervisor" asp-action="TeachersTable" class="active">
+               جدول المعلمين
+            </a>
+
+            <a asp-controller="Supervisor" asp-action="TeachersAbsence">
+               غياب المعلمين
+            </a>
+            <a asp-controller="Supervisor" asp-action="StudentsAbsence">
+            غياب الطلاب
+            </a>
+            <a asp-controller="Supervisor" asp-action="Notes">
+               الملاحظات
+            </a>
+            <a asp-controller="Supervisor" asp-action="EditProfile">
+              تعديل البيانات
+            </a>
+        </nav>
+
+        <a asp-controller="Account" asp-action="Logout" class="logout">
+             تسجيل الخروج
+        </a>
+    </aside>
+
+</div>
+
+<!-- استدعاء المكتبات والملفات اللازمة -->
+<script src="~/js/Supervisor/teachersTable.js" asp-append-version="true"></script>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
+        menuToggle.classList.add("hidden"); // اخفاء الزر
+        });
+
+        overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        menuToggle.classList.remove("hidden"); // اظهار الزر
+        });
+    </script>
+</body>
+</html>

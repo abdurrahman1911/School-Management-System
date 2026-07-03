@@ -1,0 +1,244 @@
+﻿@model SchoolManagementSystem.ViewModel.Supervisor.AbsenceViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل غياب المعلمين</title>
+
+    <link rel="stylesheet" href="~/css/Supervisor/studentsAbsence.css" />
+    <link rel="stylesheet" href="~/css/Supervisor/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Supervisor/res.css" />
+
+    <style>
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 10px;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+            .password-field {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+                .password-field .toggle {
+                    position: absolute;
+                    left: 10px;
+                    cursor: pointer;
+                    color: #777;
+                }
+
+            nav a {
+                display: block !important;
+                text-decoration: none !important;
+                color: #000 !important;
+                background: #c8d8e4 !important;
+                margin-bottom: 10px !important;
+                padding: 5px 10px !important;
+                text-align: center !important;
+                border-radius: 5px !important;
+                transition: 0.3s !important;
+                width: 100%;
+                margin-top: -3px;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+    <div class="layout">
+        <main class="content">
+            <div class="box">
+                <h3 class="title">تسجيل غياب المعلمين</h3>
+
+                <div class="filters-row" style="text-align: center; margin-bottom: 25px; background: #fdfdfd; padding: 15px; border-radius: 8px;">
+                    <label for="absenceDate" style="font-weight: bold; margin-left: 10px;"> تاريخ الغياب:</label>
+                    <input type="date"
+                           id="absenceDate"
+                           max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           value="@Model.AbsenceDate.ToString("yyyy-MM-dd")"
+                           style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit;">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم المعلم / المعلمة</th>
+                                <th style="width: 100px; text-align: center;">غائب</th>
+                                <th>السبب (اختياري)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersTable">
+                            @if (Model.Users != null && Model.Users.Any())
+                            {
+                                foreach (var user in Model.Users)
+                                {
+                                    <tr class="teacher-row">
+                                        <td class="teacher-info">
+                                            <!-- Hidden field for User ID -->
+                                            <input type="hidden" class="user-id" value="@user.UserId" />
+                                            <strong>@user.UserName</strong>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <input type="checkbox" class="absent-check"
+                                                   style="width: 20px; height: 20px; cursor: pointer;"
+                                                   @(user.IsAbsent ? "checked" : "")
+                                                   onchange="toggleReason(this)">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="reason-input"
+                                                   placeholder="اكتب سبب الغياب هنا..."
+                                                   value="@user.Reason"
+                                                   @(user.IsAbsent ? "" : "disabled")>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="no-data">
+                                        <i class="fas fa-user-slash"></i> لا يوجد معلمون مسجلون في النظام حالياً.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (Model.Users != null && Model.Users.Any())
+                {
+                    <button type="button" class="btn-save" onclick="saveTeacherAttendance()">
+                        <i class="fas fa-cloud-upload-alt"></i> حفظ وإرسال الغياب
+                    </button>
+                }
+            </div>
+        </main>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="admin">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                        {
+                            <text>@Model.NavigationInfo.FullName[0]</text>
+                        }
+                        else
+                        {
+                            <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                        }
+                    </div>
+                    <h4>
+                        <a asp-controller="Supervisor" asp-action="SupervisorProfile">
+                            @(Model.NavigationInfo?.FullName ?? "مشرف")
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <nav>
+                <a asp-controller="Supervisor" asp-action="Viewnotes">الملاحظات والتنبيهات </a>
+
+                <a asp-controller="Supervisor" asp-action="StudentPage">
+                    الطلاب
+                </a>
+                <!-- Active Link for Teachers Page -->
+                <a asp-controller="Supervisor" asp-action="TeachersPage">
+                    المعلمون
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsTable">
+                  جدول الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="TeachersTable">
+                    جدول المعلمين
+                </a>
+              
+                <a asp-controller="Supervisor" asp-action="TeachersAbsence" class="active">
+                    غياب المعلمين
+                </a>
+                <a asp-controller="Supervisor" asp-action="StudentsAbsence">
+                    غياب الطلاب
+                </a>
+                <a asp-controller="Supervisor" asp-action="Notes">
+                    الملاحظات
+                </a>
+                <a asp-controller="Supervisor" asp-action="EditProfile">
+                    تعديل البيانات
+                </a>
+            </nav>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">
+                تسجيل الخروج
+            </a>
+        </aside>
+    </div>
+
+    <!-- jQuery is required for the script -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/Supervisor/teachersAbsence.js"></script>
+
+    <script>
+        // عند تغيير تاريخ الغياب، يتم تحويل المستخدم لجلب بيانات اليوم المختار
+        $(document).ready(function () {
+            $('#absenceDate').on('change', function () {
+                var selectedDate = this.value;
+                if (selectedDate) {
+                    window.location.href = '/Supervisor/TeachersAbsence?date=' + selectedDate;
+                }
+            });
+        });
+
+        // Simple function to toggle the reason input
+        function toggleReason(checkbox) {
+            const row = $(checkbox).closest('tr');
+            row.find('.reason-input').prop('disabled', !checkbox.checked);
+            if (!checkbox.checked) row.find('.reason-input').val('');
+        }
+
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>

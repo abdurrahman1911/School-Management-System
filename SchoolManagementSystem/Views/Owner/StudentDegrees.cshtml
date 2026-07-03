@@ -1,0 +1,157 @@
+﻿@using System.Globalization
+@using SchoolManagementSystem.ViewModel.Owner
+@model OwnerStudentDegreesViewModel
+@{
+    ViewData["Title"] = "درجات الطالب";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+      
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>قائمة الطلاب</title>
+    <link rel="stylesheet" href="~/css/Admin/students.css" />
+    <style>
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .sidebar .logo {
+                padding: 25px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            }
+
+                .user-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .user-info span {
+                font-size: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+    </style>
+
+</head>
+<body>
+    <!-- sidebar-->
+    <aside class="sidebar">
+
+    <div class="logo">
+         <div class="user-info">
+            <div class="user-avatar">
+                @if (string.IsNullOrEmpty(Model.NavigationInfo.ProfilePhotoUrl))
+                {
+                    <text>@Model.NavigationInfo.FullName[0]</text>
+                }
+                else
+                {
+                    <img src="/images/users/@Model.NavigationInfo.ProfilePhotoUrl" alt="Profile Photo" />
+                }
+            </div>
+        <span>@Model.NavigationInfo.FullName</span>
+        </div>
+    </div>
+
+        <ul class="nav-links">
+            <li><a asp-controller="Owner" asp-action="Dashboard">الصفحة الرئيسية</a></li>
+            <li><a asp-controller="Owner" asp-action="notes">الملاحظات</a></li>
+            <li><a asp-controller="Owner" asp-action="Notifications">الإشعارات</a></li>
+
+            <li><a asp-controller="Owner" asp-action="Successandfailure">النجاح والرسوب</a></li>
+            <li><a asp-controller="Owner" asp-action="Student" class="active">الطلاب</a></li>
+            <li><a asp-controller="Owner" asp-action="Teachers">المعلمين</a></li>
+            <li><a asp-controller="Owner" asp-action="Supervisors">المشرفين</a></li>
+            <li><a asp-controller="Owner" asp-action="Editdata">تعديل البيانات</a></li>
+        </ul>
+        <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+    </aside>
+    <main class="main-content">
+        <header class="content-header">
+            <h1>@Model.StudentDegree.StudentFullName</h1>
+            <h1>@Model.StudentDegree.ExamsDegree.Count : عدد الامتحانات</h1>
+            <div class="header-info">
+            </div>
+        </header>
+
+        <div class="content-body">
+
+            
+
+        
+            <div class="students-table">
+                @if (Model.StudentDegree.ExamsDegree.Count == 0)
+                {
+
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <h2>لا يوجد امتحانات لعرضها</h2>
+                    </div>
+
+                }
+                else
+                {
+                    <table class="table table-hover table-striped table-bordered ">
+
+                        <thead>
+                            <tr>
+                                <th>المادة</th>
+                                <th>اسم الامتحان</th>
+                                <th>تاريخ الامتحان</th>
+                                <th>(مدة الامتحان (دقيقة</th>
+                                <th>الدرجة الكلية</th>
+                                <th>درجة الطالب</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var Degree in Model.StudentDegree.ExamsDegree)
+                            {
+                                <tr>
+
+                                    <td>@Degree.SubjectName</td>
+                                    <td>@Degree.ExamName</td>
+                                    <td>@Degree.ExamDate.ToString("dddd", new CultureInfo("ar"))، @Degree.ExamDate.ToString("yyyy/MM/dd")</td>
+                                    <td>@Degree.ExamDurationMinutes</td>
+                                    <td>@Degree.TotalDegree</td>
+                                    <td>@Degree.StudentDegree</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    
+                    </table>
+                }
+            </div>
+        </div>
+    </main>
+
+   
+</body>
+</html>

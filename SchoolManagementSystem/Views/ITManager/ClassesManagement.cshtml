@@ -1,0 +1,289 @@
+﻿@model List<SchoolManagementSystem.ViewModel.ITManager.ClassViewModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الفصول</title>
+
+    <link rel="stylesheet" href="~/css/ITManager/SubjectsTeachersManagement.css" />
+ 
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/ITManager/addandeditforms.css" />
+    <link rel="stylesheet" href="~/css/ITManager/sidebar-layout.css" />
+    <link rel="stylesheet" href="~/css/ITManager/res.css" />
+
+    <style>
+            .action-submit {
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 13px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: 0.2s;
+            }
+
+            .action-edit {
+                background: #1e6d92;
+                color: white;
+                padding: 8px 14px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: 13px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: 0.2s;
+            }
+            .page-title {
+                color: #1b3a57;
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 25px;
+                border-right: 5px solid #1e6d92;
+                padding-right: 15px;
+                text-align: right;
+            }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <img src="~/images/users/@ViewBag.NavigationInfo.ProfilePhotoUrl" class="manager-img">
+                <h4>
+                    <span>@ViewBag.NavigationInfo.FullName</span>
+                </h4>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="ITManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddNewUserRole">اضافة مستخدم</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="StudentManagement">ادارة الطلاب</a></li>
+                <li><a asp-controller="ITManager" asp-action="TeacherManagement">ادارة المعلمين</a></li>
+                <li><a asp-controller="ITManager" asp-action="SupervisorsManagement">ادارة المشرفين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManagersManagement">ادارة المديرين</a></li>
+                <li><a asp-controller="ITManager" asp-action="ParentManagement">ادارة أولياء الأمور</a></li>
+                <li><a asp-controller="ITManager" asp-action="ITManagersManagement">ادارة مديري تقنية المعلومات</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="SubjectsManagement">ادارة المواد الدراسية</a></li>
+                <li><a asp-controller="ITManager" asp-action="SubjectsTeachersManagement">ادارة المعلمين بالمواد</a></li>
+                <li><a asp-controller="ITManager" asp-action="AddSubjectforStudent">تسجيل المواد للطلاب</a></li>
+
+                <li class="active"><a asp-controller="ITManager" asp-action="ClassesManagement">إدارة الفصول</a></li>
+                <li><a asp-controller="ITManager" asp-action="SudentClassEnrollment">تسجيل الطلاب في الفصول</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicYear">إدارة السنة الدراسية </a></li>
+
+                <li><a asp-controller="ITManager" asp-action="AcademicTerm">إدارة التيرم الدراسي </a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageSuccess">ترقية الطلاب للترم التالي</a></li>
+                <li><a asp-controller="ITManager" asp-action="ManageRegisterClassSubjects">تسجيل مواد الفصل للترم التالي</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="UsersChangePassword">تغير كلمه المرور للمستخدمين</a></li>
+
+                <li><a asp-controller="ITManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+        </aside>
+
+        <main class="content">
+
+            <div class="subjects-teachers-container">
+
+                <h1 class="page-title">إدارة الفصول</h1>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success" style="background:#d4edda; color:#155724; padding:12px 20px; border-radius:8px; margin-bottom:15px; border:1px solid #c3e6cb;">
+                        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger" style="background:#f8d7da; color:#721c24; padding:12px 20px; border-radius:8px; margin-bottom:15px; border:1px solid #f5c6cb;">
+                        <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <!-- Actions -->
+                <div class="actions-bar">
+
+                    <a asp-controller="ITManager"
+                       asp-action="AddClass"
+                       class="btn-add">
+                        <i class="fas fa-plus"></i>
+                        إضافة فصل جديد
+                    </a>
+
+                    <!-- صندوق البحث المدمج -->
+                    <div class="search-container">
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search search-icon"></i>
+
+                            <input type="text"
+                                   class="search-input"
+                                   placeholder="ابحث عن مرحلة، صف، أو فصل..."
+                                   id="searchInput"
+                                   onkeyup="filterTable()">
+
+                            <button class="search-clear"
+                                    id="clearSearch"
+                                    style="display:none; background:none; border:none; cursor:pointer;"
+                                    onclick="clearSearchInput()">
+                                <i class="fas fa-times"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <div class="table-wrapper">
+
+                    <table class="subjects-teachers-table" id="bindingsTable">
+
+                        <thead>
+                            <tr>
+                                <th>مرحلة الفصل</th>
+                                <th>الصف</th>
+                                <th>اسم الفصل</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var cls in Model)
+                                {
+                                    <tr>
+                                        <td>@cls.StageName</td>
+                                        <td>@cls.LevelName</td>
+                                        <td>@cls.ClassName</td>
+                                        <td>
+                                            <a asp-controller="ITManager"
+                                               asp-action="EditClass"
+                                               asp-route-id="@cls.ID"
+                                               class="action-edit">
+                                                <i class="fas fa-edit"></i>
+                                                تعديل
+                                            </a>
+
+                                            <form asp-controller="ITManager" asp-action="DeleteClass" asp-route-id="@cls.ID" method="post" style="display:inline;" onsubmit="confirmDelete(event, this);">
+                                                <button type="submit" class="action-delete">
+                                                    <i class="fas fa-trash"></i>
+                                                    حذف
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('#bindingsTable tbody tr');
+                
+                if (searchValue.length > 0) {
+                    clearSearchBtn.style.display = 'inline-block';
+                } else {
+                    clearSearchBtn.style.display = 'none';
+                }
+
+                rows.forEach(row => {
+                    const stage = row.cells[0].textContent.toLowerCase();
+                    const level = row.cells[1].textContent.toLowerCase();
+                    const clsName = row.cells[2].textContent.toLowerCase();
+
+                    if (
+                        stage.includes(searchValue) ||
+                        level.includes(searchValue) ||
+                        clsName.includes(searchValue)
+                    ) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            clearSearchBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                filterTable();
+                searchInput.focus();
+            });
+
+            function confirmDelete(event, form) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'هل أنت متأكد؟',
+                    text: "لن تتمكن من التراجع عن حذف هذا الفصل!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'نعم، احذف!',
+                    cancelButtonText: 'إلغاء'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+                             const menuToggle = document.getElementById("menuToggle");
+            const sidebar = document.querySelector(".sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            menuToggle.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            menuToggle.classList.add("hidden"); // اخفاء الزر
+            });
+
+            overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            menuToggle.classList.remove("hidden"); // اظهار الزر
+            });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

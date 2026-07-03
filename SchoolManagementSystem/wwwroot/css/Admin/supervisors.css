@@ -1,0 +1,584 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    display: flex;
+    background-color: #f5f5f5;
+    color: #333;
+    direction: rtl;
+    min-height: 100vh;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+    width: 230px;
+    background: #4387AB;
+    color: #fff;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.sidebar .logo {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* ========== Menu ========== */
+.nav-links {
+    list-style: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    flex: 1 !important;
+    padding-right: 0 !important;
+}
+
+.nav-links li a {
+    display: block;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav-links li a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.nav-links a:hover {
+    background: #0d3f56 !important;
+    font-weight: bold !important;
+}
+
+/* ========== Logout ========== */
+.logout {
+    margin-top: auto;
+    padding: 12px;
+    background: #2a719d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+}
+
+.logout:hover {
+    background: #0d3f56;
+    color: #fff;
+}
+
+/* ========== Main content ========== */
+.main-content {
+    flex: 1;
+    margin-right: 230px;
+    padding: 20px;
+    background: #f8fafc;
+    width: calc(100% - 230px);
+}
+
+.content-header {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #4387AB;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.content-header h1 {
+    color: #4387AB;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.date {
+    background: #edf7fc;
+    color: #4387AB;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Page content */
+.content-body {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ========== supervisorsTable ========== */
+.table-section {
+    width: 100%;
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow-x: auto;
+}
+
+#supervisorsTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+#supervisorsTable th {
+    background: #4387AB;
+    color: white;
+    padding: 4px 6px; 
+    text-align: center;
+    border: 1px solid #367599;
+    white-space: nowrap; 
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#supervisorsTable td {
+    padding: 4px 6px;
+    text-align: center;
+    border: 1px solid #e8f4fc;
+    white-space: nowrap; 
+    font-size: 13px;
+    color: #495057;
+    vertical-align: middle;
+}
+
+#supervisorsTable tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+#supervisorsTable tbody tr:hover {
+    background: #f5f7fb;
+    transition: 0.3s;
+}
+
+#supervisorsTable th:last-child,
+#supervisorsTable td:last-child {
+    width: 250px;
+}
+
+/* ========== Action buttons inside table ========== */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+/* توحيد ستايل الأزرار لتطابق تماماً صورة الجدول المعتمد */
+.action-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+    color: white !important;
+    min-width: 70px;
+    text-align: center;
+}
+
+/* البيانات (Blue) */
+.view-btn {
+    background: #2563eb;
+}
+
+/* الغياب (Red) */
+.attendance-btn {
+    background: #dc3545;
+}
+
+/* المواد (Green) */
+.grades-btn {
+    background: #28a745;
+}
+
+.action-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+/* ========== Status badges ========== */
+.status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
+}
+
+.status.present {
+    background: #d4edda;
+    color: #000000;
+}
+
+.status.absent {
+    background: #f8d7da;
+    color: #000000;
+}
+
+.performance {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    display: inline-block;
+    min-width: 90px;
+    text-align: center;
+}
+
+.performance.excellent {
+    background: #d4edda;
+    color: #155724;
+}
+
+.performance.very-good {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.performance.good {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.grade {
+    font-weight: bold;
+    color: #4387AB;
+    font-size: 16px;
+}
+
+/* ========== Modal Styles ========== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 25px;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    color: #4387AB;
+}
+
+.modal-header h2 {
+    font-size: 1.3rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.form-group label i {
+    color: #4387AB;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: white;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4387AB;
+    box-shadow: 0 0 0 3px rgba(67, 135, 171, 0.1);
+}
+
+.form-control[readonly] {
+    background-color: #f8fafc;
+    cursor: not-allowed;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn {
+    flex: 1;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+/* Attendance days grid */
+.attendance-days {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.day-attendance {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.day-name {
+    font-weight: bold;
+    color: #4387AB;
+    margin-bottom: 8px;
+}
+
+.att-status {
+    font-weight: 600;
+}
+
+.att-status.present {
+    color: #28a745;
+}
+
+.att-status.absent {
+    color: #dc3545;
+}
+
+.attendance-summary {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* Subjects list */
+.subjects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.subject-item {
+    display: flex;
+    justify-content: center;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.subject-name {
+    color: #000000;
+    font-weight: 500;
+}
+
+.subject-type {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 12px;
+}
+
+/* Demo note */
+.demo-note {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background-color: #fef9e3;
+    border-radius: 12px;
+    color: #b45309;
+    font-size: 0.85rem;
+    text-align: center;
+    border-right: 4px solid #ff9800;
+}
+
+/* ========== Responsive Design ========== */
+@media (max-width: 768px) {
+    .main-content {
+        margin-right: 0;
+        padding: 15px;
+        width: 100%;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .content-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    #supervisorsTable {
+        min-width: 800px;
+    }
+
+    #supervisorsTable th,
+    #supervisorsTable td {
+        font-size: 13px;
+        padding: 10px 6px;
+    }
+
+    .action-btn {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+    .attendance-days {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+ol, ul {
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+}
+
+.absence-count-full {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 15px;
+    font-size: 18px;
+}
+
+
+body .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+

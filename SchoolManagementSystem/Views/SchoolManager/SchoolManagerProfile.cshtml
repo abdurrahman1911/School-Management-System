@@ -1,0 +1,97 @@
+﻿@model SchoolManagementSystem.ViewModel.SchoolManager.SchoolManagerProfile
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="~/css/SchoolManager/sidebar-layout.css" />
+
+    <link rel="stylesheet" href="~/css/SchoolManager/schoolManagerProfile.css" />
+    <link rel="stylesheet" href="~/css/SchoolManager/res.css" />
+
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        ☰
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <img src="~/images/schoolManagerImage.jpg" class="manager-img">
+                <h4>
+                    <a asp-controller="SchoolManager"
+                       asp-action="SchoolManagerProfile">
+                        أحمد علي
+                    </a>
+                </h4>
+            </div>
+
+            <ul class="menu">
+                <li><a asp-controller="SchoolManager" asp-action="Home">الصفحة الرئيسية</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Students">الطلاب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Teachers">المعلمين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Supervisors">المشرفين</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="SuccessFailure">النجاح والرسوب</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="Attendance">الغياب والحضور</a></li>
+                <li><a asp-controller="SchoolManager" asp-action="EditProfile">تعديل البيانات</a></li>
+            </ul>
+
+            <a asp-controller="Account" asp-action="Logout" class="logout">تسجيل الخروج</a>
+
+        </aside>
+
+        <main class="content">
+            <div class="profile-card">
+
+                <div class="profile-image">
+                    <img src="@Model.ImageUrl" alt="Manager">
+                </div>
+
+                <div class="profile-info">
+                    <div class="name-role">
+                        <h2>@Model.Name</h2>
+                        <span class="role">مدير المدرسة</span>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item"><span>البريد الإلكتروني :</span><p>@Model.Email</p></div>
+                        <div class="info-item"><span>رقم الهاتف :</span><p>@Model.Phone</p></div>
+                        <div class="info-item"><span>المدرسة :</span><p>مدرسة الأوائل</p></div>
+                        <div class="info-item"><span>تاريخ الانضمام :</span><p>@Model.JoinDate.ToString("dd / MM / yyyy")</p></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+    <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.querySelector(".sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    menuToggle.addEventListener("click", () => {
+    sidebar.classList.add("active");
+    overlay.classList.add("active");
+    menuToggle.classList.add("hidden"); // اخفاء الزر
+    });
+
+    overlay.addEventListener("click", () => {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+    menuToggle.classList.remove("hidden"); // اظهار الزر
+    });
+</script>
+
+</body>
+</html>
